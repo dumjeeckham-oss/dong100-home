@@ -52,8 +52,13 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-background/20 text-center text-background/50 text-sm">
-          © {new Date().getFullYear()} 부천의료복지사회적협동조합 동백 장애인활동지원센터. All rights reserved.
+        <div className="mt-8 pt-6 border-t border-background/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-background/50 text-sm">
+          <div className="text-center sm:text-left">
+            © {new Date().getFullYear()} 부천의료복지사회적협동조합 동백 장애인활동지원센터. All rights reserved.
+          </div>
+          <a href="/admin" className="hover:text-background transition-colors flex items-center gap-1 opacity-50 hover:opacity-100">
+            관리자 로그인 🔒
+          </a>
         </div>
       </div>
     </footer>

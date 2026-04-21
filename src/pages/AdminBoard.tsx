@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -42,18 +42,18 @@ const AdminBoard = () => {
     }
   }, [user, isAdmin, authLoading, navigate]);
 
-  useEffect(() => {
-    fetchPosts();
-  }, [activeTab]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     const { data } = await supabase
       .from('posts')
       .select('*')
       .eq('board_type', activeTab)
       .order('created_at', { ascending: false });
     setPosts(data || []);
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const openNew = () => {
     setEditingPost(null);
