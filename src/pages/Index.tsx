@@ -23,7 +23,9 @@ const Index = () => {
     const handleShowDetails = () => {
       setShowDetails(true);
     };
+    // @ts-expect-error: Custom event bypassing window event signature
     window.addEventListener('show-details', handleShowDetails);
+    // @ts-expect-error: Custom event bypassing window event signature
     return () => window.removeEventListener('show-details', handleShowDetails);
   }, []);
 

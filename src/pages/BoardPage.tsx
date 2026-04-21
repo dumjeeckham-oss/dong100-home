@@ -100,6 +100,11 @@ const BoardPage = () => {
   };
 
   const openWrite = () => {
+    if (!isAdmin) {
+      toast.error('관리자 권한이 필요합니다. 로그인 페이지로 이동합니다.');
+      navigate(`/admin?from=/board?tab=${tab}`);
+      return;
+    }
     setEditingPost(null);
     setTitle('');
     setContent('');
@@ -217,11 +222,9 @@ const BoardPage = () => {
                 );
               })}
             </TabsList>
-            {isAdmin && (
-              <Button onClick={openWrite} className="flex items-center gap-1.5 whitespace-nowrap">
-                <Plus size={16} /> 글쓰기
-              </Button>
-            )}
+            <Button onClick={openWrite} className="flex items-center gap-1.5 whitespace-nowrap">
+              <Plus size={16} /> 글쓰기
+            </Button>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">

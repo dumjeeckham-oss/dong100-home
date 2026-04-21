@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Menu, X, Phone, ChevronDown } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown, Lock } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 type NavItem = {
@@ -121,6 +121,15 @@ const Header = () => {
             {showAAC ? '🔤 글자' : '🎨 AAC'}
           </button>
           <a
+            href="/admin"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-accent transition-colors"
+            title="관리자 페이지"
+            aria-label="관리자 로그인"
+          >
+            <Lock size={16} aria-hidden="true" />
+            관리자
+          </a>
+          <a
             href="tel:032-675-7517"
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
             aria-label="문의 전화 032-675-7517 내선 2번"
@@ -188,6 +197,14 @@ const Header = () => {
                 </a>
               )
             )}
+            <a
+              href="/admin"
+              className="flex items-center gap-3 px-4 py-3 mt-2 bg-accent text-accent-foreground rounded-lg font-semibold text-lg justify-center border border-border"
+              aria-label="관리자 로그인"
+            >
+              <Lock size={22} aria-hidden="true" />
+              관리자 로그인
+            </a>
             <a
               href="tel:032-675-7517"
               className="flex items-center gap-3 px-4 py-3 mt-2 bg-primary text-primary-foreground rounded-lg font-semibold text-lg justify-center"
