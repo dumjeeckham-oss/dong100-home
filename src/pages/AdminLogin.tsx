@@ -19,15 +19,23 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { error: err } = await signIn(email, password);
-    if (err) {
-      setError('이메일 또는 비밀번호가 올바르지 않습니다.');
-    } else {
-      // Redirect to the page user came from, or board
-      const from = new URLSearchParams(window.location.search).get('from');
-      navigate(from || '/board');
+    
+    try {
+      const { error: err } = await signIn(email, password);
+      if (err) {
+        setError(err.message || '이메일 또는 비밀번호가 올바르지 않습니다.');
+      } else {
+        // Redirect to the page user came from, or board
+        const from = new URLSearchParams(window.location.search).get('from');
+        navigate(from || '/board');
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      const errorMsg = err instanceof Error ? err.message : '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

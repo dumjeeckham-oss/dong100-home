@@ -7,6 +7,7 @@ import QuickMenu from '@/components/QuickMenu';
 import BannersContainer from '@/components/BannersContainer';
 import AboutSection from '@/components/AboutSection';
 import ServiceSection from '@/components/ServiceSection';
+import ApplicationStepsSection from '@/components/ApplicationStepsSection';
 import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
 import BoardSection from '@/components/BoardSection';
@@ -43,7 +44,7 @@ const Index = () => {
           <BannersContainer />
           
           <div id="service-apply">
-            <ServiceSection />
+            <ApplicationStepsSection />
           </div>
 
           {!showDetails ? (
@@ -58,6 +59,7 @@ const Index = () => {
             </div>
           ) : (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <ServiceSection />
               <CostSection />
               <BusinessSection />
               <AboutSection />

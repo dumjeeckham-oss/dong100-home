@@ -29,13 +29,7 @@ const serviceDetails = [
   },
 ];
 
-const steps = [
-  { step: '1', title: '읍·면·동 내방', desc: '신규/갱신 등 신청서 제출' },
-  { step: '2', title: '국민연금공단', desc: '방문조사 (종합조사)' },
-  { step: '3', title: '시·군·구', desc: '수급자격 및 등급결정' },
-  { step: '4', title: '사회보장정보원', desc: '통지서 수령 및 바우처카드 발급' },
-  { step: '5', title: '동백 활동지원센터', desc: '활동지원급여 매칭 및 서비스 제공' },
-];
+
 
 const BusinessSection = () => {
   return (
@@ -60,29 +54,7 @@ const BusinessSection = () => {
             </p>
           </div>
 
-          {/* Application steps */}
-          <div>
-            <SpeakableText as="h3" className="text-xl font-bold text-primary mb-4">신청 절차</SpeakableText>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-              {steps.map((s, i) => (
-                <React.Fragment key={i}>
-                  <div className="flex flex-col items-center text-center p-4 bg-accent rounded-xl min-w-[120px] flex-1">
-                    <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg mb-2">
-                      {s.step}
-                    </div>
-                    <p className="font-semibold text-sm">{s.title}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{s.desc}</p>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <ChevronRight className="hidden sm:block text-primary shrink-0" size={28} />
-                  )}
-                  {i < steps.length - 1 && (
-                    <ChevronDown className="block sm:hidden text-primary shrink-0" size={28} />
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
+
 
           {/* Service details */}
           <div>
