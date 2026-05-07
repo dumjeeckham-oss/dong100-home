@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin } from 'lucide-react';
-import logo from '@/assets/logo-footer.png';
+import flower from '@/assets/logo-flower.png';
 
 const Footer = () => {
   return (
@@ -7,13 +7,13 @@ const Footer = () => {
       <div className="container">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <div className="h-14 mb-4 flex items-center">
-              <img src={logo} alt="동백 장애인활동지원센터 로고" className="h-12 w-auto object-contain" />
+            <div className="flex items-center gap-3 mb-4">
+              <img src={flower} alt="동백꽃 로고" className="h-12 w-12 object-contain shrink-0" />
+              <p className="text-background/90 text-sm leading-relaxed font-medium">
+                부천의료복지사회적협동조합<br />
+                동백 장애인활동지원센터
+              </p>
             </div>
-            <p className="text-background/70 text-sm leading-relaxed">
-              부천의료복지사회적협동조합<br />
-              동백 장애인활동지원센터
-            </p>
           </div>
 
           <div className="space-y-3">

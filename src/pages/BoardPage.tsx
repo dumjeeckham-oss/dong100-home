@@ -13,8 +13,8 @@ import type { Tables } from '@/integrations/supabase/types';
 import RichTextEditor from '@/components/RichTextEditor';
 import logo from '@/assets/logo.png';
 
-type BoardPost = Tables<'posts'>;
-type BoardType = 'notice' | 'archive' | 'info';
+type BoardPost = Tables<'board_posts'>;
+type BoardType = 'notice' | 'resource' | 'user_info';
 
 const boardMeta: Record<string, { label: string; icon: React.ElementType; desc: string; external?: string }> = {
   notice: { label: '📢 공지사항', icon: Bell, desc: '센터의 주요 소식과 안내사항을 확인하세요.' },
@@ -23,12 +23,12 @@ const boardMeta: Record<string, { label: string; icon: React.ElementType; desc: 
   recruit: { label: '🤝 활동지원사 모집', icon: UserPlus, desc: '활동지원사로 지원하세요.', external: 'https://docs.google.com/forms/d/e/1FAIpQLSfN7sbIDGSZRxTYq6z-z6doJVNyBfITRntE2yeDaVpIGTstXg/viewform?pli=1' },
 };
 
-const boardTypes: BoardType[] = ['notice', 'archive', 'info'];
+const boardTypes: BoardType[] = ['notice', 'resource', 'user_info'];
 const PAGE_SIZE = 10;
 
 const fetchBoardPosts = async (boardType: BoardType, page: number, query: string): Promise<{ data: BoardPost[], count: number }> => {
   let request = supabase
-    .from('posts')
+    .from('board_posts')
     .select('*', { count: 'exact' })
     .eq('board_type', boardType);
 
@@ -61,7 +61,7 @@ const BoardPage = () => {
   const [selectedPost, setSelectedPost] = useState<BoardPost | null>(null);
 
   const { data: response, isLoading: loading, error: queryError } = useQuery({
-    queryKey: ['posts', tab, page, searchTerm],
+    queryKey: ['board_posts', tab, page, searchTerm],
     queryFn: () => fetchBoardPosts(tab, page, searchTerm),
     staleTime: 1000 * 30,
     retry: 2,
@@ -80,7 +80,7 @@ const BoardPage = () => {
   const [saving, setSaving] = useState(false);
 
   const invalidateAll = () => {
-    queryClient.invalidateQueries({ queryKey: ['posts'] });
+    queryClient.invalidateQueries({ queryKey: ['board_posts'] });
   };
 
   const changeTab = (v: string) => {
@@ -123,7 +123,7 @@ const BoardPage = () => {
 
   const handleDelete = async (post: BoardPost) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const { error } = await supabase.from('posts').delete().eq('id', post.id);
+    const { error } = await supabase.from('board_posts').delete().eq('id', post.id);
     if (error) toast.error('삭제 실패');
     else {
       toast.success('삭제되었습니다.');
@@ -171,11 +171,11 @@ const BoardPage = () => {
     };
 
     if (editingPost) {
-      const { error } = await supabase.from('posts').update(payload).eq('id', editingPost.id);
+      const { error } = await supabase.from('board_posts').update(payload).eq('id', editingPost.id);
       if (error) toast.error('수정 실패: ' + error.message);
       else toast.success('수정되었습니다.');
     } else {
-      const { error } = await supabase.from('posts').insert(payload);
+      const { error } = await supabase.from('board_posts').insert(payload);
       if (error) toast.error('등록 실패: ' + error.message);
       else toast.success('등록되었습니다.');
     }
@@ -229,7 +229,7 @@ const BoardPage = () => {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-3">
             <p className="text-muted-foreground text-sm flex-1">{boardMeta[tab]?.desc}</p>
-            {tab !== 'recruit' && (
+            {(tab as string) !== 'recruit' && (
               <div className="flex items-center gap-2 max-w-sm w-full">
                 <Input 
                   placeholder="제목이나 내용으로 검색" 

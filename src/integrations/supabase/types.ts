@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      posts: {
+      board_posts: {
         Row: {
           author_id: string | null
           board_type: Database["public"]["Enums"]["board_type"]
@@ -86,7 +86,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
-      board_type: "notice" | "archive" | "info"
+      board_type: "notice" | "resource" | "user_info"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -215,7 +215,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      board_type: ["notice", "archive", "info"],
+      board_type: ["notice", "resource", "user_info"],
     },
   },
 } as const

@@ -12,13 +12,13 @@ import { toast } from 'sonner';
 import type { Tables } from '@/integrations/supabase/types';
 import RichTextEditor from '@/components/RichTextEditor';
 
-type BoardPost = Tables<'posts'>;
-type BoardType = 'notice' | 'archive' | 'info';
+type BoardPost = Tables<'board_posts'>;
+type BoardType = 'notice' | 'resource' | 'user_info';
 
 const boardLabels: Record<BoardType, { label: string; icon: React.ElementType }> = {
   notice: { label: '공지사항', icon: Bell },
-  archive: { label: '자료실', icon: FileText },
-  info: { label: '이용자 정보', icon: Users },
+  resource: { label: '자료실', icon: FileText },
+  user_info: { label: '이용자 정보', icon: Users },
 };
 
 const AdminBoard = () => {
@@ -44,7 +44,7 @@ const AdminBoard = () => {
 
   const fetchPosts = useCallback(async () => {
     const { data } = await supabase
-      .from('posts')
+      .from('board_posts')
       .select('*')
       .eq('board_type', activeTab)
       .order('created_at', { ascending: false });
@@ -112,11 +112,11 @@ const AdminBoard = () => {
     };
 
     if (editingPost) {
-      const { error } = await supabase.from('posts').update(payload).eq('id', editingPost.id);
+      const { error } = await supabase.from('board_posts').update(payload).eq('id', editingPost.id);
       if (error) toast.error('수정 실패: ' + error.message);
       else toast.success('수정되었습니다.');
     } else {
-      const { error } = await supabase.from('posts').insert(payload);
+      const { error } = await supabase.from('board_posts').insert(payload);
       if (error) toast.error('등록 실패: ' + error.message);
       else toast.success('등록되었습니다.');
     }
@@ -134,7 +134,7 @@ const AdminBoard = () => {
 
   const handleDelete = async (id: string) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
-    const { error } = await supabase.from('posts').delete().eq('id', id);
+    const { error } = await supabase.from('board_posts').delete().eq('id', id);
     if (error) toast.error('삭제 실패');
     else {
       toast.success('삭제되었습니다.');

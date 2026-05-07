@@ -28,7 +28,8 @@ const navItems: NavItem[] = [
     children: [
       { label: '공지사항', emoji: '📢', href: '/board?tab=notice' },
       { label: '자료실', emoji: '📁', href: '/board?tab=resource' },
-      { label: '이용자 정보', emoji: '👥', href: '/board?tab=user_info' },
+      { label: '활동 소식', emoji: '📰', href: '#activity-news' },
+      { label: '이용자 정보', emoji: '👥', href: '#user-info' },
       { label: '활동지원사 모집', emoji: '🤝', href: 'https://docs.google.com/forms/d/e/1FAIpQLSfN7sbIDGSZRxTYq6z-z6doJVNyBfITRntE2yeDaVpIGTstXg/viewform?pli=1', external: true },
     ],
   },

@@ -11,6 +11,7 @@ import ApplicationStepsSection from '@/components/ApplicationStepsSection';
 import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
 import BoardSection from '@/components/BoardSection';
+import ActivityNewsSection from '@/components/ActivityNewsSection';
 import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
@@ -24,9 +25,7 @@ const Index = () => {
     const handleShowDetails = () => {
       setShowDetails(true);
     };
-    // @ts-expect-error: Custom event bypassing window event signature
     window.addEventListener('show-details', handleShowDetails);
-    // @ts-expect-error: Custom event bypassing window event signature
     return () => window.removeEventListener('show-details', handleShowDetails);
   }, []);
 
@@ -80,6 +79,7 @@ const Index = () => {
           )}
           
           <BoardSection />
+          <ActivityNewsSection />
           <DirectionsSection />
         </main>
         <Footer />
