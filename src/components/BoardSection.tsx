@@ -1,158 +1,124 @@
-import { useState } from 'react';
-import { ChevronRight, Newspaper, Users } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
+import { ChevronRight, Bell, FileText, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { Tables } from '@/integrations/supabase/types';
+import { sanityClient, fileUrl, type SanityNotice, type SanityArchive } from '@/lib/sanity';
 
-type BoardPost = Tables<'board_posts'>;
-type RssItem = { title: string; link: string; pubDate: string; description: string };
-
-const fetchPosts = async (type: string): Promise<BoardPost[]> => {
-  const { data } = await supabase
-    .from('board_posts')
-    .select('*')
-    .eq('board_type', type as 'notice' | 'resource' | 'user_info')
-    .order('created_at', { ascending: false })
-    .limit(5);
-  return data || [];
-};
-
-const fetchRss = async (boTable: string): Promise<RssItem[]> => {
-  const { data, error } = await supabase.functions.invoke('fetch-rss', { body: { bo_table: boTable } });
-  if (error) throw error;
-  return (data?.items ?? []) as RssItem[];
-};
-
-const RssCard = ({
-  label,
-  icon: Icon,
-  boTable,
-}: {
-  label: string;
-  icon: typeof Newspaper;
-  boTable: string;
-}) => {
-  const [expanded, setExpanded] = useState(false);
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ['rss', boTable],
-    queryFn: () => fetchRss(boTable),
-    staleTime: 1000 * 60 * 10,
+const NoticeCard = () => {
+  const { data: notices = [], isLoading } = useQuery({
+    queryKey: ['sanity-notices', 'preview'],
+    queryFn: (): Promise<SanityNotice[]> =>
+      sanityClient.fetch(
+        `*[_type == "notice"] | order(important desc, publishedAt desc)[0...5] {
+          _id, title, publishedAt, important
+        }`
+      ),
+    staleTime: 1000 * 60,
   });
-  const visible = expanded ? items : items.slice(0, 5);
 
   return (
     <div className="bg-card rounded-2xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Icon size={22} className="text-primary" aria-hidden="true" />
-          <h3 className="text-xl font-bold">{label}</h3>
+          <Bell size={22} className="text-primary" aria-hidden="true" />
+          <h3 className="text-xl font-bold">공지사항</h3>
         </div>
+        <Link to="/notice" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+          더보기 <ChevronRight size={14} />
+        </Link>
       </div>
       <ul className="space-y-3" role="list">
         {isLoading ? (
-          <>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <li key={i} className="py-2"><Skeleton className="h-4 w-full" /></li>
-            ))}
-          </>
-        ) : items.length === 0 ? (
-          <li className="text-sm text-muted-foreground text-center py-4">소식이 없습니다.</li>
+          <li className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin mb-3" />
+            <p className="text-sm">데이터를 불러오는 중입니다...</p>
+          </li>
+        ) : notices.length === 0 ? (
+          <li className="text-sm text-muted-foreground text-center py-4">등록된 공지가 없습니다.</li>
         ) : (
-          visible.map((item, idx) => (
-            <li key={idx} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => console.log(`[RSS:${boTable}] open:`, item.link)}
-                className="text-foreground hover:text-primary transition-colors font-medium text-sm truncate flex-1 mr-3"
+          notices.map(n => (
+            <li key={n._id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+              <Link
+                to={`/notice/${n._id}`}
+                className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors font-medium text-sm truncate flex-1 mr-3"
               >
-                {item.title}
-              </a>
+                {n.important && <AlertCircle size={12} className="text-destructive shrink-0" />}
+                <span className="truncate">{n.title}</span>
+              </Link>
               <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {item.pubDate ? new Date(item.pubDate).toLocaleDateString('ko-KR') : ''}
+                {new Date(n.publishedAt).toLocaleDateString('ko-KR')}
               </span>
             </li>
           ))
         )}
       </ul>
-      {items.length > 5 && (
-        <button
-          onClick={() => setExpanded(v => !v)}
-          className="mt-4 w-full text-xs text-primary hover:underline flex items-center justify-center gap-0.5"
-        >
-          {expanded ? '접기' : `더보기 (${items.length - 5})`} <ChevronRight size={14} />
-        </button>
-      )}
     </div>
   );
 };
 
-const standardBoards = [
-  { key: 'notice', label: '공지사항', emoji: '📢', tab: 'notice' },
-  { key: 'resource', label: '자료실', emoji: '📁', tab: 'resource' },
-];
+const ArchiveCard = () => {
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ['sanity-archives', 'preview'],
+    queryFn: (): Promise<SanityArchive[]> =>
+      sanityClient.fetch(
+        `*[_type == "archive"] | order(publishedAt desc)[0...5] {
+          _id, title, publishedAt,
+          file { asset-> { _ref:_id, url, originalFilename, extension } }
+        }`
+      ),
+    staleTime: 1000 * 60,
+  });
+
+  return (
+    <div className="bg-card rounded-2xl p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <FileText size={22} className="text-primary" aria-hidden="true" />
+          <h3 className="text-xl font-bold">서식 자료실</h3>
+        </div>
+        <Link to="/archive" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+          더보기 <ChevronRight size={14} />
+        </Link>
+      </div>
+      <ul className="space-y-3" role="list">
+        {isLoading ? (
+          <li className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+            <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin mb-3" />
+            <p className="text-sm">데이터를 불러오는 중입니다...</p>
+          </li>
+        ) : items.length === 0 ? (
+          <li className="text-sm text-muted-foreground text-center py-4">등록된 자료가 없습니다.</li>
+        ) : (
+          items.map(it => {
+            const url = it.file?.asset?.url || fileUrl(it.file?.asset?._ref);
+            return (
+              <li key={it._id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                <Link to="/archive" className="text-foreground hover:text-primary transition-colors font-medium text-sm truncate flex-1 mr-3">
+                  {it.title}
+                </Link>
+                <span className="text-xs text-muted-foreground whitespace-nowrap">
+                  {url ? (it.file?.asset?.extension?.toUpperCase() || '파일') : ''}
+                </span>
+              </li>
+            );
+          })
+        )}
+      </ul>
+    </div>
+  );
+};
 
 const BoardSection = () => {
-  const { data: notices = [] } = useQuery({ queryKey: ['board_posts', 'notice'], queryFn: () => fetchPosts('notice') });
-  const { data: resources = [] } = useQuery({ queryKey: ['board_posts', 'resource'], queryFn: () => fetchPosts('resource') });
-  const itemsMap: Record<string, BoardPost[]> = { notice: notices, resource: resources };
-
   return (
     <section id="board" className="py-12 md:py-16 bg-muted" aria-label="공지사항 및 자료실">
       <div className="container">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">게시판</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 max-w-7xl mx-auto">
-          {standardBoards.map(board => {
-            const items = itemsMap[board.key];
-            return (
-              <div key={board.key} className="bg-card rounded-2xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl" aria-hidden="true">{board.emoji}</span>
-                    <h3 className="text-xl font-bold">{board.label}</h3>
-                  </div>
-                  <a
-                    href={`/board?tab=${board.tab}`}
-                    className="text-xs text-primary hover:underline flex items-center gap-0.5"
-                    aria-label={`${board.label} 더보기`}
-                  >
-                    더보기 <ChevronRight size={14} />
-                  </a>
-                </div>
-                <ul className="space-y-3" role="list">
-                  {items.length === 0 ? (
-                    <li className="text-sm text-muted-foreground text-center py-4">등록된 글이 없습니다.</li>
-                  ) : (
-                    items.map(item => (
-                      <li key={item.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                        <a
-                          href={`/board?tab=${board.tab}`}
-                          className="text-foreground hover:text-primary transition-colors font-medium text-sm truncate flex-1 mr-3"
-                        >
-                          {item.title}
-                        </a>
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {new Date(item.created_at).toLocaleDateString('ko-KR')}
-                        </span>
-                      </li>
-                    ))
-                  )}
-                </ul>
-              </div>
-            );
-          })}
-
-          <div id="activity-news">
-            <RssCard label="활동 소식" icon={Newspaper} boTable="support4" />
-          </div>
-          <div id="user-info">
-            <RssCard label="이용자 정보" icon={Users} boTable="support5" />
-          </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <NoticeCard />
+          <ArchiveCard />
 
           <div className="bg-card rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center text-center">
-            <span className="text-4xl mb-3">🤝</span>
+            <span className="text-4xl mb-3" aria-hidden="true">🤝</span>
             <h3 className="text-xl font-bold mb-2">활동지원사 모집</h3>
             <p className="text-sm text-muted-foreground mb-4">활동지원사로 지원하세요</p>
             <a

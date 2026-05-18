@@ -13,16 +13,16 @@ const MobileTabBar = () => {
       aria-label="모바일 하단 메뉴"
       role="navigation"
     >
-      <div className="flex items-center justify-around py-2">
+      <div className="flex items-center justify-around py-1.5">
         {tabs.map(tab => (
           <a
             key={tab.label}
             href={tab.href}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 text-muted-foreground hover:text-primary transition-colors min-w-[56px]"
+            className="flex flex-col items-center gap-0.5 px-3 py-2 text-muted-foreground hover:text-primary active:text-primary transition-colors min-w-[60px] min-h-[52px] justify-center"
             aria-label={tab.label}
           >
-            <span className="text-xl" aria-hidden="true">{tab.emoji}</span>
-            <span className="text-[11px] font-medium">{tab.label}</span>
+            <span className="text-2xl" aria-hidden="true">{tab.emoji}</span>
+            <span className="text-[12px] font-semibold">{tab.label}</span>
           </a>
         ))}
       </div>

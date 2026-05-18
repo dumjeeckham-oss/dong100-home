@@ -58,7 +58,7 @@ const AboutSection = () => {
     if (touchStart === null) return;
     const diff = touchStart - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
-      diff > 0 ? next() : prev();
+      if (diff > 0) next(); else prev();
     }
     setTouchStart(null);
   };

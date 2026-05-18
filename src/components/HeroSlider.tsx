@@ -62,7 +62,7 @@ const HeroSlider = () => {
         </div>
       ))}
 
-      <div className="container py-20 md:py-28 lg:py-36 relative z-10">
+      <div className="container py-14 sm:py-20 md:py-28 lg:py-36 relative z-10">
         <div className="max-w-2xl">
           {slides.map((slide, i) => (
             <div
@@ -81,7 +81,7 @@ const HeroSlider = () => {
               </p>
             </div>
           ))}
-          <div className="mt-10 flex flex-wrap gap-3 relative z-20 pointer-events-auto">
+          <div className="mt-8 sm:mt-10 flex flex-wrap gap-3 relative z-20 pointer-events-auto">
             <button 
               onClick={() => {
                 window.dispatchEvent(new CustomEvent('show-details'));
@@ -89,13 +89,13 @@ const HeroSlider = () => {
                   document.getElementById('service-apply')?.scrollIntoView({ behavior: 'smooth' });
                 }, 50);
               }}
-              className="bg-primary text-primary-foreground px-6 py-3.5 rounded-lg font-bold text-sm sm:text-base hover:bg-primary/90 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:-translate-y-1"
+              className="bg-primary text-primary-foreground px-6 py-4 min-h-[48px] rounded-lg font-bold text-base hover:bg-primary/90 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:-translate-y-1"
             >
               서비스 신청하기
             </button>
             <a 
-              href="tel:032-675-7517" 
-              className="bg-white text-slate-800 px-6 py-3.5 rounded-lg font-bold text-sm sm:text-base hover:bg-gray-50 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:-translate-y-1 flex items-center gap-2"
+              href="tel:070-4127-1611" 
+              className="bg-white text-slate-800 px-6 py-4 min-h-[48px] rounded-lg font-bold text-base hover:bg-gray-50 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:-translate-y-1 flex items-center gap-2"
             >
               <Phone size={18} className="text-primary" /> 
               <span className="hidden sm:inline">전화문의 (032-675-7517)</span>

@@ -1,5 +1,5 @@
 import { Phone, Mail, MapPin } from 'lucide-react';
-import flower from '@/assets/logo-flower.png';
+import logoWhite from '@/assets/logo-white.png';
 
 const Footer = () => {
   return (
@@ -7,13 +7,11 @@ const Footer = () => {
       <div className="container">
         <div className="grid md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src={flower} alt="동백꽃 로고" className="h-12 w-12 object-contain shrink-0" />
-              <p className="text-background/90 text-sm leading-relaxed font-medium">
-                부천의료복지사회적협동조합<br />
-                동백 장애인활동지원센터
-              </p>
-            </div>
+            <img
+              src={logoWhite}
+              alt="부천의료복지사회적협동조합 동백 장애인활동지원센터 로고"
+              className="h-14 sm:h-16 w-auto max-w-full mb-4 object-contain"
+            />
           </div>
 
           <div className="space-y-3">
@@ -52,13 +50,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-background/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-background/50 text-sm">
-          <div className="text-center sm:text-left">
-            © {new Date().getFullYear()} 부천의료복지사회적협동조합 동백 장애인활동지원센터. All rights reserved.
-          </div>
-          <a href="/admin" className="hover:text-background transition-colors flex items-center gap-1 opacity-50 hover:opacity-100">
-            관리자 로그인 🔒
-          </a>
+        <div className="mt-8 pt-6 border-t border-background/20 text-center text-background/50 text-sm">
+          © {new Date().getFullYear()} 부천의료복지사회적협동조합 동백 장애인활동지원센터. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Newspaper, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import { Users, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { fetchGnuboardRss } from '@/lib/rss';
@@ -12,30 +12,31 @@ const formatDate = (s?: string) => {
   return d.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
 };
 
-const ActivityNewsSection = () => {
+const UserInfoSection = () => {
   const [expanded, setExpanded] = useState(false);
   const { data: items = [], isLoading, isError } = useQuery({
-    queryKey: ['rss', 'support4'],
-    queryFn: () => fetchGnuboardRss('support4'),
+    queryKey: ['rss', 'support5'],
+    queryFn: () => fetchGnuboardRss('support5'),
     staleTime: 1000 * 60 * 10,
   });
 
   const visible = expanded ? items : items.slice(0, 5);
 
   return (
-    <section id="activity-news" className="py-12 md:py-16 bg-muted/30" aria-label="활동 소식">
+    <section id="user-info" className="py-12 md:py-16 bg-background" aria-label="이용자 정보">
       <div className="container">
         <div className="flex items-center justify-center gap-2 mb-8">
-          <Newspaper className="text-primary" />
-          <h2 className="text-2xl md:text-3xl font-bold text-center">활동 소식</h2>
+          <Users className="text-primary" />
+          <h2 className="text-2xl md:text-3xl font-bold text-center">이용자 정보</h2>
         </div>
 
         <div className="bg-card rounded-2xl p-6 shadow-sm max-w-3xl mx-auto">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
-              <p>데이터를 불러오는 중입니다...</p>
-            </div>
+            <ul className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <li key={i} className="py-2"><Skeleton className="h-5 w-full" /></li>
+              ))}
+            </ul>
           ) : isError ? (
             <p className="text-center text-muted-foreground py-8">
               소식을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
@@ -51,7 +52,7 @@ const ActivityNewsSection = () => {
                       href={item.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      onClick={() => console.log('[활동소식] open:', item.link)}
+                      onClick={() => console.log('[이용자정보] open:', item.link)}
                       className="flex items-start justify-between gap-3 group"
                     >
                       <span className="flex-1 text-foreground group-hover:text-primary transition-colors font-medium text-base leading-snug">
@@ -85,4 +86,4 @@ const ActivityNewsSection = () => {
   );
 };
 
-export default ActivityNewsSection;
+export default UserInfoSection;

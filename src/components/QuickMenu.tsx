@@ -51,21 +51,21 @@ const QuickMenu = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
           자주 찾는 서비스
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {quickItems.map(item => (
             <a
               key={item.label}
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex flex-col items-center gap-3 p-6 rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 transition-all text-center group"
+              className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group"
               aria-label={`${item.label} - ${item.desc}`}
             >
-              <div className={`w-16 h-16 rounded-2xl ${item.color} flex items-center justify-center text-3xl group-hover:scale-110 transition-transform`}>
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.color} flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
                 {item.emoji}
               </div>
-              <span className="font-semibold text-base text-foreground">{item.label}</span>
-              <span className="text-sm text-muted-foreground">{item.desc}</span>
+              <span className="font-semibold text-[15px] sm:text-base text-foreground">{item.label}</span>
+              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{item.desc}</span>
             </a>
           ))}
         </div>

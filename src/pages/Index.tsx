@@ -12,9 +12,12 @@ import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
 import BoardSection from '@/components/BoardSection';
 import ActivityNewsSection from '@/components/ActivityNewsSection';
+import UserInfoSection from '@/components/UserInfoSection';
+
 import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
+import FloatingCallButton from '@/components/FloatingCallButton';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -22,10 +25,19 @@ const Index = () => {
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    const handleShowDetails = () => {
-      setShowDetails(true);
-    };
+    const handleShowDetails = () => setShowDetails(true);
     window.addEventListener('show-details', handleShowDetails);
+
+    // Scroll to hash target if present (e.g. arriving from /notice with /#user-info)
+    const detailIds = new Set(['about', 'service', 'cost', 'business']);
+    const hash = window.location.hash?.slice(1);
+    if (hash) {
+      if (detailIds.has(hash)) setShowDetails(true);
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, detailIds.has(hash) ? 350 : 100);
+    }
     return () => window.removeEventListener('show-details', handleShowDetails);
   }, []);
 
@@ -79,10 +91,12 @@ const Index = () => {
           )}
           
           <BoardSection />
+          <UserInfoSection />
           <ActivityNewsSection />
           <DirectionsSection />
         </main>
         <Footer />
+        <FloatingCallButton />
         <MobileTabBar />
       </div>
     </AccessibilityProvider>

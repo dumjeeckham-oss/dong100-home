@@ -1,4 +1,1 @@
 project_id = "xwunqilotkgcdxqpysok"
-
-[functions.fetch-rss]
-verify_jwt = false

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Menu, X, Phone, ChevronDown, Lock } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
 type NavItem = {
@@ -26,10 +26,10 @@ const navItems: NavItem[] = [
     emoji: '📌',
     href: '#board',
     children: [
-      { label: '공지사항', emoji: '📢', href: '/board?tab=notice' },
-      { label: '자료실', emoji: '📁', href: '/board?tab=resource' },
-      { label: '활동 소식', emoji: '📰', href: '#activity-news' },
+      { label: '공지사항', emoji: '📢', href: '/notice' },
+      { label: '서식 자료실', emoji: '📁', href: '/archive' },
       { label: '이용자 정보', emoji: '👥', href: '#user-info' },
+      { label: '활동 소식', emoji: '📰', href: '#activity-news' },
       { label: '활동지원사 모집', emoji: '🤝', href: 'https://docs.google.com/forms/d/e/1FAIpQLSfN7sbIDGSZRxTYq6z-z6doJVNyBfITRntE2yeDaVpIGTstXg/viewform?pli=1', external: true },
     ],
   },
@@ -53,12 +53,32 @@ const Header = () => {
 
   useEffect(() => () => clearTimeout(dropdownTimeout.current), []);
 
+  const detailIds = new Set(['about', 'service', 'cost', 'business']);
+  const handleAnchorClick = (e: React.MouseEvent, href: string) => {
+    if (!href.startsWith('#')) return;
+    e.preventDefault();
+    const id = href.slice(1);
+    setOpenDropdown(null);
+    setMobileOpen(false);
+    // If we are not on the home route, navigate home with the hash and let Index handle it
+    if (window.location.pathname !== '/') {
+      window.location.href = `/${href}`;
+      return;
+    }
+    if (detailIds.has(id)) window.dispatchEvent(new Event('show-details'));
+    const scroll = () => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    setTimeout(scroll, detailIds.has(id) ? 250 : 0);
+  };
+
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
 
   return (
-    <header className="bg-background border-b border-border sticky top-0 z-50" role="banner">
+    <header className="bg-background shadow-md border-b border-border sticky top-0 z-[100]" role="banner">
       <div className="container flex items-center justify-between py-3">
-        <a href="#" className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈">
+        <a href="/" className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈">
           <img src={logo} alt="동백 장애인활동지원센터 로고" className="h-12 md:h-14 w-auto" />
         </a>
 
@@ -72,7 +92,9 @@ const Header = () => {
                 onMouseEnter={() => handleMouseEnter(item.label)}
                 onMouseLeave={handleMouseLeave}
               >
-                <button
+                <a
+                  href={item.href}
+                  onClick={(e) => handleAnchorClick(e, item.href)}
                   className="flex items-center gap-1 px-4 py-2 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors font-medium text-[15px]"
                   aria-expanded={openDropdown === item.label}
                   aria-haspopup="true"
@@ -80,7 +102,7 @@ const Header = () => {
                   {showAAC && <span className="text-lg">{item.emoji}</span>}
                   {item.label}
                   <ChevronDown size={14} className={`transition-transform ${openDropdown === item.label ? 'rotate-180' : ''}`} />
-                </button>
+                </a>
                 {openDropdown === item.label && (
                   <div className="absolute top-full left-0 mt-1 bg-background border border-border rounded-xl shadow-lg min-w-[180px] py-1 z-50">
                     {item.children.map(child => (
@@ -90,7 +112,10 @@ const Header = () => {
                         target={child.external ? '_blank' : undefined}
                         rel={child.external ? 'noopener noreferrer' : undefined}
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-accent hover:text-accent-foreground transition-colors font-medium"
-                        onClick={() => setOpenDropdown(null)}
+                        onClick={(e) => {
+                          if (!child.external) handleAnchorClick(e, child.href);
+                          setOpenDropdown(null);
+                        }}
                       >
                         {showAAC && <span className="text-base">{child.emoji}</span>}
                         {child.label}
@@ -103,6 +128,7 @@ const Header = () => {
               <a
                 key={item.label}
                 href={item.href}
+                onClick={(e) => handleAnchorClick(e, item.href)}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors font-medium text-[15px]"
               >
                 {showAAC && <span className="text-lg">{item.emoji}</span>}
@@ -122,16 +148,7 @@ const Header = () => {
             {showAAC ? '🔤 글자' : '🎨 AAC'}
           </button>
           <a
-            href="/admin"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-accent transition-colors"
-            title="관리자 페이지"
-            aria-label="관리자 로그인"
-          >
-            <Lock size={16} aria-hidden="true" />
-            관리자
-          </a>
-          <a
-            href="tel:032-675-7517"
+            href="tel:070-4127-1611"
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm"
             aria-label="문의 전화 032-675-7517 내선 2번"
           >
@@ -176,7 +193,10 @@ const Header = () => {
                           href={child.href}
                           target={child.external ? '_blank' : undefined}
                           rel={child.external ? 'noopener noreferrer' : undefined}
-                          onClick={() => setMobileOpen(false)}
+                          onClick={(e) => {
+                            if (!child.external) handleAnchorClick(e, child.href);
+                            setMobileOpen(false);
+                          }}
                           className="flex items-center gap-2 px-4 py-2.5 rounded-lg hover:bg-accent transition-colors font-medium text-base text-muted-foreground"
                         >
                           <span>{child.emoji}</span>
@@ -190,7 +210,7 @@ const Header = () => {
                 <a
                   key={item.label}
                   href={item.href}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => handleAnchorClick(e, item.href)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-accent transition-colors font-medium text-lg"
                 >
                   <span className="text-xl">{item.emoji}</span>
@@ -199,15 +219,7 @@ const Header = () => {
               )
             )}
             <a
-              href="/admin"
-              className="flex items-center gap-3 px-4 py-3 mt-2 bg-accent text-accent-foreground rounded-lg font-semibold text-lg justify-center border border-border"
-              aria-label="관리자 로그인"
-            >
-              <Lock size={22} aria-hidden="true" />
-              관리자 로그인
-            </a>
-            <a
-              href="tel:032-675-7517"
+              href="tel:070-4127-1611"
               className="flex items-center gap-3 px-4 py-3 mt-2 bg-primary text-primary-foreground rounded-lg font-semibold text-lg justify-center"
               aria-label="문의 전화 연결"
             >
