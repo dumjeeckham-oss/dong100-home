@@ -1,18 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Calendar, ChevronRight, ArrowLeft, AlertCircle } from "lucide-react";
-import { sanityClient, type SanityNotice } from "@/lib/sanity";
-import { Skeleton } from "@/components/ui/skeleton";
+import { fetchNotices } from "@/lib/sanity";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-const fetchNotices = async (): Promise<SanityNotice[]> => {
-  return sanityClient.fetch(
-    `*[_type == "notice"] | order(important desc, publishedAt desc) {
-      _id, title, publishedAt, important, coverImage
-    }`
-  );
-};
 
 const NoticePage = () => {
   const { data: notices = [], isLoading, error } = useQuery({
@@ -37,10 +28,9 @@ const NoticePage = () => {
 
         <div className="bg-card rounded-2xl shadow-sm overflow-hidden">
           {isLoading ? (
-            <div className="divide-y divide-border">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="p-5"><Skeleton className="h-5 w-3/4" /></div>
-              ))}
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+              <p>데이터를 불러오는 중입니다...</p>
             </div>
           ) : error ? (
             <div className="text-center py-12 text-destructive">불러오기 실패</div>

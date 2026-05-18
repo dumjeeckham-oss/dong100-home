@@ -2,20 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, AlertCircle } from "lucide-react";
 import { PortableText } from "@portabletext/react";
-import { sanityClient, urlFor, type SanityNotice } from "@/lib/sanity";
+import { urlFor, fetchNotice } from "@/lib/sanity";
 import { portableComponents } from "@/components/portableComponents";
-import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-const fetchNotice = async (id: string): Promise<SanityNotice | null> => {
-  return sanityClient.fetch(
-    `*[_type == "notice" && _id == $id][0] {
-      _id, title, content, publishedAt, important, coverImage
-    }`,
-    { id }
-  );
-};
 
 const NoticeDetailPage = () => {
   const { id = "" } = useParams<{ id: string }>();
@@ -35,11 +25,10 @@ const NoticeDetailPage = () => {
 
         <article className="bg-card rounded-2xl shadow-sm p-6 md:p-8">
           {isLoading ? (
-            <>
-              <Skeleton className="h-7 w-3/4 mb-3" />
-              <Skeleton className="h-4 w-32 mb-6" />
-              <Skeleton className="h-40 w-full" />
-            </>
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+              <p>데이터를 불러오는 중입니다...</p>
+            </div>
           ) : error || !notice ? (
             <div className="text-center py-10 text-muted-foreground">공지를 찾을 수 없습니다.</div>
           ) : (

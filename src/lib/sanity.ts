@@ -70,9 +70,10 @@ export interface ArchiveItem {
 export interface NoticeItem {
   _id: string;
   title: string;
-  body?: any[];
+  content?: any[];
   publishedAt?: string;
-  isPinned?: boolean;
+  important?: boolean;
+  coverImage?: any;
 }
 
 export type SanityArchive = ArchiveItem;
@@ -147,17 +148,26 @@ export const fetchArchivesPreview = async (): Promise<ArchiveItem[]> => {
 
 export const fetchNotices = async (): Promise<NoticeItem[]> => {
   const data = await sanityClient.fetch(`
-    *[_type == "notice"] | order(publishedAt desc) {
-      _id, title, body, publishedAt, isPinned
+    *[_type == "notice"] | order(important desc, publishedAt desc) {
+      _id, title, content, publishedAt, important, coverImage
     }
   `);
   return data ?? [];
 };
 
+export const fetchNotice = async (id: string): Promise<NoticeItem | null> => {
+  const data = await sanityClient.fetch(`
+    *[_type == "notice" && _id == $id][0] {
+      _id, title, content, publishedAt, important, coverImage
+    }
+  `, { id });
+  return data ?? null;
+};
+
 export const fetchNoticesPreview = async (): Promise<NoticeItem[]> => {
   const data = await sanityClient.fetch(`
-    *[_type == "notice"] | order(isPinned desc, publishedAt desc)[0...5] {
-      _id, title, publishedAt, isPinned
+    *[_type == "notice"] | order(important desc, publishedAt desc)[0...5] {
+      _id, title, publishedAt, important
     }
   `);
   return data ?? [];

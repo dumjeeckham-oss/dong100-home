@@ -2,22 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, Download, FileText } from "lucide-react";
 import { PortableText } from "@portabletext/react";
-import { sanityClient, fileUrl, formatBytes, type SanityArchive } from "@/lib/sanity";
+import { fileUrl, formatBytes, fetchArchive } from "@/lib/sanity";
 import { portableComponents } from "@/components/portableComponents";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
-const fetchArchive = async (id: string): Promise<SanityArchive | null> => {
-  return sanityClient.fetch(
-    `*[_type == "archive" && _id == $id][0] {
-      _id, title, description, body, publishedAt,
-      file { asset-> { _ref:_id, url, originalFilename, size, extension } }
-    }`,
-    { id }
-  );
-};
 
 const ArchiveDetailPage = () => {
   const { id = "" } = useParams<{ id: string }>();
@@ -40,11 +29,10 @@ const ArchiveDetailPage = () => {
 
         <article className="bg-card rounded-2xl shadow-sm p-6 md:p-8">
           {isLoading ? (
-            <>
-              <Skeleton className="h-7 w-3/4 mb-3" />
-              <Skeleton className="h-4 w-32 mb-6" />
-              <Skeleton className="h-40 w-full" />
-            </>
+            <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+              <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+              <p>데이터를 불러오는 중입니다...</p>
+            </div>
           ) : error || !item ? (
             <div className="text-center py-10 text-muted-foreground">자료를 찾을 수 없습니다.</div>
           ) : (

@@ -2,17 +2,12 @@ import { Link } from 'react-router-dom';
 import { ChevronRight, Bell, FileText, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
-import { sanityClient, fileUrl, type SanityNotice, type SanityArchive } from '@/lib/sanity';
+import { fileUrl, fetchNoticesPreview, fetchArchivesPreview } from '@/lib/sanity';
 
 const NoticeCard = () => {
   const { data: notices = [], isLoading } = useQuery({
     queryKey: ['sanity-notices', 'preview'],
-    queryFn: (): Promise<SanityNotice[]> =>
-      sanityClient.fetch(
-        `*[_type == "notice"] | order(important desc, publishedAt desc)[0...5] {
-          _id, title, publishedAt, important
-        }`
-      ),
+    queryFn: fetchNoticesPreview,
     staleTime: 1000 * 60,
   });
 
@@ -59,13 +54,7 @@ const NoticeCard = () => {
 const ArchiveCard = () => {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['sanity-archives', 'preview'],
-    queryFn: (): Promise<SanityArchive[]> =>
-      sanityClient.fetch(
-        `*[_type == "archive"] | order(publishedAt desc)[0...5] {
-          _id, title, publishedAt,
-          file { asset-> { _ref:_id, url, originalFilename, extension } }
-        }`
-      ),
+    queryFn: fetchArchivesPreview,
     staleTime: 1000 * 60,
   });
 
