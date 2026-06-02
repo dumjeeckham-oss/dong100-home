@@ -44,8 +44,11 @@ export const portableComponents: PortableTextComponents = {
     normal: ({ children }) => <p className="leading-relaxed my-3">{children}</p>,
   },
   marks: {
-    color: ({ children, value }: { children?: React.ReactNode; value?: { value?: string } }) => (
-      <span style={{ color: value?.value }}>{children}</span>
+    color: ({ children, value }: { children?: React.ReactNode; value?: { hex?: string; hsl?: { h: number; s: number; l: number } } }) => (
+      <span style={{ color: value?.hex || value?.hsl ? `hsl(${value.hsl.h}, ${value.hsl.s}%, ${value.hsl.l}%)` : undefined }}>{children}</span>
+    ),
+    highlight: ({ children, value }: { children?: React.ReactNode; value?: { hex?: string; hsl?: { h: number; s: number; l: number } } }) => (
+      <span style={{ backgroundColor: value?.hex || value?.hsl ? `hsl(${value.hsl.h}, ${value.hsl.s}%, ${value.hsl.l}%)` : undefined }}>{children}</span>
     ),
     size: ({ children, value }: { children?: React.ReactNode; value?: { value?: string } }) => (
       <span className={sizeClass[value?.value ?? "base"] ?? "text-base"}>{children}</span>

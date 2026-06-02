@@ -28,26 +28,12 @@ export const richBlock = [
         {
           name: "color",
           title: "글자 색상",
-          type: "object",
-          fields: [
-            defineField({
-              name: "value",
-              title: "색상",
-              type: "string",
-              options: {
-                list: [
-                  { title: "검정", value: "#111111" },
-                  { title: "회색", value: "#6b7280" },
-                  { title: "빨강", value: "#dc2626" },
-                  { title: "주황", value: "#ea580c" },
-                  { title: "노랑", value: "#ca8a04" },
-                  { title: "초록", value: "#16a34a" },
-                  { title: "파랑", value: "#2563eb" },
-                  { title: "보라", value: "#7c3aed" },
-                ],
-              },
-            }),
-          ],
+          type: "color",
+        },
+        {
+          name: "highlight",
+          title: "글자 배경색",
+          type: "color",
         },
         {
           name: "size",

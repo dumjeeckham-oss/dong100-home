@@ -43,6 +43,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@sanity/client": "^7.22.0",
+    "@sanity/color-input": "^6.0.6",
     "@sanity/image-url": "^2.1.1",
     "@sanity/table": "^2.0.1",
     "@sanity/vision": "^3.99.0",
