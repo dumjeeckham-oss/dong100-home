@@ -1,34 +1,58 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { urlFor } from '@/lib/sanity';
 import { Button } from '@/components/ui/button';
+import useEmblaCarousel from 'embla-carousel-react';
 
 interface ImageGalleryProps {
   images: Array<{ image: any; alt?: string }>;
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
   if (!images || images.length === 0) return null;
 
   const handlePrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  }, [images.length]);
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
 
   const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  }, [images.length]);
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   const openLightbox = (index: number) => {
-    setCurrentIndex(index);
+    setSelectedIndex(index);
     setIsLightboxOpen(true);
   };
 
   const closeLightbox = () => {
     setIsLightboxOpen(false);
   };
+
+  const handleLightboxPrevious = useCallback(() => {
+    setSelectedIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  }, [images.length]);
+
+  const handleLightboxNext = useCallback(() => {
+    setSelectedIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  }, [images.length]);
+
+  // 키보드 네비게이션
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handleLightboxPrevious();
+      if (e.key === 'ArrowRight') handleLightboxNext();
+      if (e.key === 'Escape') closeLightbox();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLightboxOpen, handleLightboxPrevious, handleLightboxNext]);
 
   // 단일 이미지인 경우
   if (images.length === 1) {
@@ -45,29 +69,62 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
     );
   }
 
-  // 다중 이미지인 경우 - 그리드 레이아웃
+  // 다중 이미지인 경우 - 슬라이더 레이아웃
   return (
     <div className="my-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="relative">
+        <div className="overflow-hidden rounded-lg" ref={emblaRef}>
+          <div className="flex">
+            {images.map((img, index) => (
+              <div key={index} className="flex-[0_0_100%] min-w-0">
+                <figure className="relative cursor-pointer" onClick={() => openLightbox(index)}>
+                  <img
+                    src={urlFor(img.image).width(1200).url()}
+                    alt={img.alt || ''}
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                    {index + 1} / {images.length}
+                  </div>
+                </figure>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 슬라이더 네비게이션 버튼 */}
+        <button
+          onClick={handlePrevious}
+          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
+          aria-label="이전 이미지"
+        >
+          <ChevronLeft size={24} />
+        </button>
+        <button
+          onClick={handleNext}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
+          aria-label="다음 이미지"
+        >
+          <ChevronRight size={24} />
+        </button>
+      </div>
+
+      {/* 썸네일 네비게이션 */}
+      <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
         {images.map((img, index) => (
-          <figure
+          <button
             key={index}
-            className={`relative group cursor-pointer overflow-hidden rounded-lg ${
-              index === 0 && images.length > 2 ? 'sm:col-span-2' : ''
+            onClick={() => emblaApi?.scrollTo(index)}
+            className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+              index === selectedIndex ? 'border-primary' : 'border-transparent hover:border-gray-300'
             }`}
-            onClick={() => openLightbox(index)}
           >
             <img
-              src={urlFor(img.image).width(800).url()}
+              src={urlFor(img.image).width(100).url()}
               alt={img.alt || ''}
-              className="w-full h-auto object-cover transition-transform group-hover:scale-105"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-              <span className="opacity-0 group-hover:opacity-100 text-white font-medium bg-black/50 px-3 py-1 rounded-full text-sm transition-opacity">
-                {index + 1} / {images.length}
-              </span>
-            </div>
-          </figure>
+          </button>
         ))}
       </div>
 
@@ -83,7 +140,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
           </button>
 
           <button
-            onClick={handlePrevious}
+            onClick={handleLightboxPrevious}
             className="absolute left-4 text-white hover:text-gray-300 transition-colors z-[210]"
             aria-label="이전 이미지"
           >
@@ -92,14 +149,14 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
 
           <div className="max-w-5xl max-h-[90vh] relative">
             <img
-              src={urlFor(images[currentIndex].image).width(1600).url()}
-              alt={images[currentIndex].alt || ''}
+              src={urlFor(images[selectedIndex].image).width(1600).url()}
+              alt={images[selectedIndex].alt || ''}
               className="max-w-full max-h-[90vh] object-contain"
             />
           </div>
 
           <button
-            onClick={handleNext}
+            onClick={handleLightboxNext}
             className="absolute right-4 text-white hover:text-gray-300 transition-colors z-[210]"
             aria-label="다음 이미지"
           >
@@ -107,7 +164,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
           </button>
 
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
-            {currentIndex + 1} / {images.length}
+            {selectedIndex + 1} / {images.length}
           </div>
         </div>
       )}

@@ -124,4 +124,7 @@ export const richBlock = [
       }),
     ],
   }),
+  defineArrayMember({
+    type: "table",
+  }),
 ];

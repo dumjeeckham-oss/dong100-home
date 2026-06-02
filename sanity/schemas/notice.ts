@@ -44,8 +44,21 @@ export const notice = defineType({
           fields: [
             defineField({ name: "alt", title: "대체 텍스트", type: "string" }),
           ],
+          preview: {
+            select: {
+              media: "asset",
+              alt: "alt",
+            },
+            prepare: (selection) => ({
+              media: selection.media,
+              title: selection.alt || "이미지",
+            }),
+          },
         }),
       ],
+      options: {
+        layout: "grid",
+      },
     }),
   ],
   orderings: [

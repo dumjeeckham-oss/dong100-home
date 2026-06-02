@@ -35,6 +35,7 @@ export const portableComponents: PortableTextComponents = {
     h1: ({ children }) => <h1 className="text-3xl md:text-4xl font-bold mt-6 mb-4">{children}</h1>,
     h2: ({ children }) => <h2 className="text-2xl md:text-3xl font-bold mt-5 mb-3">{children}</h2>,
     h3: ({ children }) => <h3 className="text-xl md:text-2xl font-semibold mt-4 mb-2">{children}</h3>,
+    h4: ({ children }) => <h4 className="text-lg md:text-xl font-semibold mt-3 mb-2">{children}</h4>,
     blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">
         {children}
@@ -49,11 +50,11 @@ export const portableComponents: PortableTextComponents = {
     size: ({ children, value }: { children?: React.ReactNode; value?: { value?: string } }) => (
       <span className={sizeClass[value?.value ?? "base"] ?? "text-base"}>{children}</span>
     ),
-    link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string } }) => (
+    link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string; openInNewTab?: boolean } }) => (
       <a
         href={value?.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={value?.openInNewTab ? "_blank" : undefined}
+        rel={value?.openInNewTab ? "noopener noreferrer" : undefined}
         className="text-primary underline underline-offset-2 hover:opacity-80"
       >
         {children}
@@ -81,6 +82,28 @@ export const portableComponents: PortableTextComponents = {
             className={`rounded-lg h-auto w-full inline-block ${imgWrapClass[size] ?? imgWrapClass.medium}`}
           />
         </figure>
+      );
+    },
+    table: ({ value }: { value?: { rows?: any[] } }) => {
+      if (!value?.rows || value.rows.length === 0) return null;
+      return (
+        <div className="my-6 overflow-x-auto">
+          <table className="min-w-full border-collapse border border-border">
+            <tbody>
+              {value.rows.map((row, rowIndex) => (
+                <tr key={rowIndex} className="border-b border-border">
+                  {row.cells?.map((cell: any, cellIndex: number) => (
+                    <td
+                      key={cellIndex}
+                      className="border border-border px-4 py-2 text-sm"
+                      dangerouslySetInnerHTML={{ __html: cell }}
+                    />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       );
     },
   },
