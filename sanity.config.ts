@@ -1,7 +1,7 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
-import { tableTool } from '@sanity/table'
+import { table } from '@sanity/table'
 import { colorInput } from '@sanity/color-input'
 import { schemaTypes } from './sanity/schemas'
 
@@ -13,7 +13,7 @@ export default defineConfig({
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   basePath: '/studio',
 
-  plugins: [structureTool(), visionTool(), tableTool(), colorInput()],
+  plugins: [structureTool(), visionTool(), colorInput()],
 
   schema: {
     types: schemaTypes,
