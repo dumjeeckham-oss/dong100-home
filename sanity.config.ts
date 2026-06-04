@@ -13,7 +13,7 @@ export default defineConfig({
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   basePath: '/studio',
 
-  plugins: [structureTool(), visionTool(), tableTool(), colorInput()],
+  plugins: [structureTool(), visionTool(), table(), colorInput()],
 
   schema: {
     types: schemaTypes,
