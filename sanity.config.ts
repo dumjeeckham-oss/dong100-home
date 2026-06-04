@@ -1,7 +1,6 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
-import { table } from '@sanity/table'
 import { colorInput } from '@sanity/color-input'
 import { schemaTypes } from './sanity/schemas'
 
