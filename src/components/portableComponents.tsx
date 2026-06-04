@@ -87,27 +87,5 @@ export const portableComponents: PortableTextComponents = {
         </figure>
       );
     },
-    table: ({ value }: { value?: { rows?: any[] } }) => {
-      if (!value?.rows || value.rows.length === 0) return null;
-      return (
-        <div className="my-6 overflow-x-auto">
-          <table className="min-w-full border-collapse border border-border">
-            <tbody>
-              {value.rows.map((row, rowIndex) => (
-                <tr key={rowIndex} className="border-b border-border">
-                  {row.cells?.map((cell: any, cellIndex: number) => (
-                    <td
-                      key={cellIndex}
-                      className="border border-border px-4 py-2 text-sm"
-                      dangerouslySetInnerHTML={{ __html: cell }}
-                    />
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    },
   },
 };
