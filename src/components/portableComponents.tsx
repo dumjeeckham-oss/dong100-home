@@ -63,6 +63,7 @@ export const portableComponents: PortableTextComponents = {
     normal: ({ children }) => <p className="leading-relaxed my-3">{children}</p>,
   },
   marks: {
+    ...decoratorMarks,
     color: ({ children, value }: { children?: React.ReactNode; value?: { hex?: string; hsl?: { h: number; s: number; l: number } } }) => (
       <span style={{ color: value?.hex || value?.hsl ? `hsl(${value.hsl.h}, ${value.hsl.s}%, ${value.hsl.l}%)` : undefined }}>{children}</span>
     ),
