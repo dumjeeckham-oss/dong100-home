@@ -1,5 +1,24 @@
 import type { PortableTextComponents } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity";
+import { TEXT_COLORS, HIGHLIGHT_COLORS, TEXT_SIZES } from "../../sanity/schemas/textStyles";
+
+// 에디터에서 한 번 클릭으로 적용한 색상/형광/크기 데코레이터를 프런트엔드에서 동일하게 렌더링
+const decoratorMarks: PortableTextComponents["marks"] = {};
+TEXT_COLORS.forEach((c) => {
+  decoratorMarks[c.value] = ({ children }: { children?: React.ReactNode }) => (
+    <span style={{ color: c.color }}>{children}</span>
+  );
+});
+HIGHLIGHT_COLORS.forEach((c) => {
+  decoratorMarks[c.value] = ({ children }: { children?: React.ReactNode }) => (
+    <span style={{ backgroundColor: c.color, borderRadius: 3, padding: "0 2px" }}>{children}</span>
+  );
+});
+TEXT_SIZES.forEach((s) => {
+  decoratorMarks[s.value] = ({ children }: { children?: React.ReactNode }) => (
+    <span style={{ fontSize: s.em }}>{children}</span>
+  );
+});
 
 const sizeClass: Record<string, string> = {
   xs: "text-xs",
@@ -44,6 +63,7 @@ export const portableComponents: PortableTextComponents = {
     normal: ({ children }) => <p className="leading-relaxed my-3">{children}</p>,
   },
   marks: {
+    ...decoratorMarks,
     color: ({ children, value }: { children?: React.ReactNode; value?: { hex?: string; hsl?: { h: number; s: number; l: number } } }) => (
       <span style={{ color: value?.hex || value?.hsl ? `hsl(${value.hsl.h}, ${value.hsl.s}%, ${value.hsl.l}%)` : undefined }}>{children}</span>
     ),

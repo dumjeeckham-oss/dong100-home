@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField } from "sanity";
+import { colorDecorators, highlightDecorators, sizeDecorators } from "./marks";
 
 // Reusable rich content (Block Content) with color, text size, headings, table, and image with size/alignment.
 export const richBlock = [
@@ -23,6 +24,10 @@ export const richBlock = [
         { title: "밑줄", value: "underline" },
         { title: "취소선", value: "strike-through" },
         { title: "코드", value: "code" },
+        // 한 번 클릭으로 적용 + 에디터 내 실시간 미리보기 (WYSIWYG)
+        ...colorDecorators,
+        ...highlightDecorators,
+        ...sizeDecorators,
       ],
       annotations: [
         {
