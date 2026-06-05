@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Sanity packages import "react/compiler-runtime" (React 19 only).
+      // Map it to the runtime shim so the build works on React 18.
+      "react/compiler-runtime": "react-compiler-runtime",
     },
     dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "@tanstack/react-query", "@tanstack/query-core"],
   },
