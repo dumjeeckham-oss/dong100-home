@@ -12,6 +12,18 @@ export const userArchive = defineType({
       type: "string",
       validation: (r) => r.required().max(150),
     }),
+    {
+      name: 'category',
+      title: '게시판 분류',
+      type: 'string',
+      options: {
+        list: [
+          { title: '서비스제공 관련', value: 'service' },
+          { title: '필요 정보', value: 'info' }
+        ],
+        layout: 'radio'
+      }
+    },
     defineField({
       name: "description",
       title: "한 줄 요약 (목록 표시용)",

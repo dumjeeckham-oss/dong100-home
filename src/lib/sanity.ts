@@ -57,6 +57,7 @@ export const formatBytes = formatFileSize;
 export interface ArchiveItem {
   _id: string;
   title: string;
+  category?: 'service' | 'info';
   description?: string;
   body?: any[];
   publishedAt?: string;
@@ -158,6 +159,7 @@ export const fetchUserArchives = async (): Promise<ArchiveItem[]> => {
     *[_type == "userArchive"] | order(publishedAt desc) {
       _id,
       title,
+      category,
       description,
       publishedAt,
       "file": {
@@ -179,6 +181,7 @@ export const fetchUserArchive = async (id: string): Promise<ArchiveItem | null> 
     *[_type == "userArchive" && _id == $id][0] {
       _id,
       title,
+      category,
       description,
       body,
       publishedAt,
@@ -195,6 +198,26 @@ export const fetchUserArchive = async (id: string): Promise<ArchiveItem | null> 
     }
   `, { id });
   return data ?? null;
+};
+
+export const fetchUserArchivesPreview = async (): Promise<ArchiveItem[]> => {
+  const data = await sanityClient.fetch<any[]>(`
+    *[_type == "userArchive"] | order(publishedAt desc)[0...5] {
+      _id,
+      title,
+      category,
+      publishedAt,
+      "file": {
+        "asset": {
+          "_ref": file.asset._ref,
+          "url": file.asset->url,
+          "originalFilename": file.asset->originalFilename,
+          "extension": file.asset->extension
+        }
+      }
+    }
+  `);
+  return data ?? [];
 };
 
 export const fetchNotices = async (): Promise<NoticeItem[]> => {
