@@ -7,16 +7,10 @@ export const projectId = 'xczp11sl';
 export const dataset = 'production';
 
 // Detect preview mode by reading the sanity_preview cookie
-function getPreviewToken(): string | null {
-  if (typeof document === 'undefined') return null; // SSR context
+function isPreviewMode(): boolean {
+  if (typeof document === 'undefined') return false; // SSR context
   const cookies = document.cookie.split(';');
-  for (const cookie of cookies) {
-    const [key, value] = cookie.trim().split('=');
-    if (key === 'sanity_preview' && value) {
-      return decodeURIComponent(value);
-    }
-  }
-  return null;
+  return cookies.some(c => c.trim().startsWith('sanity_preview='));
 }
 
 export const sanityClient = createClient({
@@ -30,24 +24,29 @@ export const sanityClient = createClient({
   },
 });
 
-// Preview client: if a preview token (draft mode) is detected, use it
-export function getSanityClient() {
-  const token = getPreviewToken();
-  if (token) {
-    console.log('[preview] Draft mode enabled via token');
-    return createClient({
-      projectId,
-      dataset,
-      apiVersion: '2024-01-01',
-      useCdn: false,
-      token,
-      stega: {
-        enabled: true,
-        studioUrl: '/studio',
-      },
-    });
+// Fetch from server-side preview endpoint when in preview mode
+async function fetchPreviewData<T>(query: string, params?: Record<string, any>): Promise<T> {
+  const response = await fetch('/api/preview-data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query, variables: params }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Preview fetch failed: ${response.status}`);
   }
-  return sanityClient;
+
+  const data = await response.json();
+  return data.result;
+}
+
+// Wrapper function: fetch from preview endpoint if in preview mode, otherwise use regular client
+async function fetchData<T>(query: string, params?: Record<string, any>): Promise<T> {
+  if (isPreviewMode()) {
+    console.log('[preview] Fetching draft content from /api/preview-data');
+    return fetchPreviewData<T>(query, params);
+  }
+  return sanityClient.fetch<T>(query, params);
 }
 
 const builder = createImageUrlBuilder(sanityClient);
@@ -146,8 +145,7 @@ export type SanityNotice = NoticeItem;
 
 // ===== GROQ 쿼리 =====
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
-  const client = getSanityClient();
-  const data = await client.fetch<SiteSettings>(`
+  const data = await fetchData<SiteSettings>(`
     *[_type == "siteSettings"][0] {
       title,
       description,
@@ -166,8 +164,7 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
 };
 
 export const fetchFaqItems = async (): Promise<FaqItem[]> => {
-  const client = getSanityClient();
-  const data = await client.fetch<FaqItem[]>(`
+  const data = await fetchData<FaqItem[]>(`
     *[_type == "faq"] | order(order asc, _createdAt desc) {
       _id,
       question,
