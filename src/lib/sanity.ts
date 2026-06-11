@@ -6,6 +6,19 @@ import { createImageUrlBuilder } from '@sanity/image-url';
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
 
+// Detect preview mode by reading the sanity_preview cookie
+function getPreviewToken(): string | null {
+  if (typeof document === 'undefined') return null; // SSR context
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [key, value] = cookie.trim().split('=');
+    if (key === 'sanity_preview' && value) {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
+
 export const sanityClient = createClient({
   projectId,
   dataset,
@@ -16,6 +29,26 @@ export const sanityClient = createClient({
     studioUrl: '/studio',
   },
 });
+
+// Preview client: if a preview token (draft mode) is detected, use it
+export function getSanityClient() {
+  const token = getPreviewToken();
+  if (token) {
+    console.log('[preview] Draft mode enabled via token');
+    return createClient({
+      projectId,
+      dataset,
+      apiVersion: '2024-01-01',
+      useCdn: false,
+      token,
+      stega: {
+        enabled: true,
+        studioUrl: '/studio',
+      },
+    });
+  }
+  return sanityClient;
+}
 
 const builder = createImageUrlBuilder(sanityClient);
 export const urlFor = (source: any) => builder.image(source);
@@ -113,7 +146,8 @@ export type SanityNotice = NoticeItem;
 
 // ===== GROQ 쿼리 =====
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
-  const data = await sanityClient.fetch<SiteSettings>(`
+  const client = getSanityClient();
+  const data = await client.fetch<SiteSettings>(`
     *[_type == "siteSettings"][0] {
       title,
       description,
@@ -132,7 +166,8 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
 };
 
 export const fetchFaqItems = async (): Promise<FaqItem[]> => {
-  const data = await sanityClient.fetch<FaqItem[]>(`
+  const client = getSanityClient();
+  const data = await client.fetch<FaqItem[]>(`
     *[_type == "faq"] | order(order asc, _createdAt desc) {
       _id,
       question,
