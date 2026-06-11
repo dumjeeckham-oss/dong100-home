@@ -16,6 +16,7 @@ const FAQPage = () => {
   });
 
   const [openItems, setOpenItems] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
 
   const toggleItem = (id: string) => {
     setOpenItems((prev) => {
@@ -38,6 +39,14 @@ const FAQPage = () => {
     acc[category].push(faq);
     return acc;
   }, {} as Record<string, FaqItem[]>) || {};
+
+  // 카테고리 목록 추출 (전체 포함)
+  const categories = ['전체', ...Object.keys(groupedFaqs)];
+
+  // 선택된 카테고리에 따라 필터링
+  const filteredFaqs = selectedCategory === '전체' 
+    ? groupedFaqs 
+    : { [selectedCategory]: groupedFaqs[selectedCategory] };
 
   if (isLoading) {
     return (
@@ -74,11 +83,28 @@ const FAQPage = () => {
           </button>
 
           <h1 className="text-4xl font-bold text-center mb-4">자주 묻는 질문</h1>
-          <p className="text-center text-muted-foreground mb-12">
+          <p className="text-center text-muted-foreground mb-8">
             동백 장애인활동지원센터에 대한 자주 묻는 질문과 답변입니다.
           </p>
 
-          {Object.entries(groupedFaqs).map(([category, items]) => (
+          {/* 카테고리 탭 */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedCategory === category
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-accent'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {Object.entries(filteredFaqs).map(([category, items]) => (
             <div key={category} className="mb-12">
               <h2 className="text-2xl font-bold mb-6 text-primary border-b-2 border-primary pb-2">
                 {category}
