@@ -12,16 +12,30 @@ export default async (req, res) => {
       // Edge runtime: work with Web Request/Response
       const url = new URL(req.url);
       const secret = url.searchParams.get('sanity-preview-secret') || url.searchParams.get('token') || '';
-      const pathname = url.searchParams.get('sanity-preview-pathname') || '/';
-      const referer = req.headers.get('referer') || req.headers.get('origin') || pathname || '/';
+      let pathname = url.searchParams.get('sanity-preview-pathname') || null;
+      let referer = req.headers.get('referer') || req.headers.get('origin') || null;
+
+      // If pathname is provided, use it. Otherwise try referer.
+      // But if referer is /studio, redirect to root instead.
+      let redirectUrl = pathname;
+      if (!redirectUrl && referer) {
+        try {
+          const refererUrl = new URL(referer);
+          redirectUrl = refererUrl.pathname === '/studio' ? '/' : refererUrl.pathname;
+        } catch (e) {
+          redirectUrl = referer.startsWith('/') ? referer : '/';
+          if (redirectUrl === '/studio') redirectUrl = '/';
+        }
+      }
+      redirectUrl = redirectUrl || '/';
 
       const cookie = `sanity_preview=${encodeURIComponent(secret)}; Path=/; SameSite=Lax; Secure; Max-Age=600`;
-      console.log('[preview-edge] url=%s secret=%s referer=%s', url.href, !!secret, referer);
+      console.log('[preview-edge] pathname=%s referer=%s -> redirectUrl=%s', pathname, referer, redirectUrl);
 
       return new Response(null, {
         status: 307,
         headers: {
-          Location: referer,
+          Location: redirectUrl,
           'Set-Cookie': cookie,
         },
       });
@@ -32,14 +46,28 @@ export default async (req, res) => {
     const host = req.headers && (req.headers.host || req.headers['x-forwarded-host']) || 'dong100.org';
     const parsed = new URL(rawUrl, `https://${host}`);
     const secret = parsed.searchParams.get('sanity-preview-secret') || parsed.searchParams.get('token') || '';
-    const pathname = parsed.searchParams.get('sanity-preview-pathname') || '/';
-    const referer = req.headers.referer || req.headers.origin || pathname || '/';
+    let pathname = parsed.searchParams.get('sanity-preview-pathname') || null;
+    let referer = req.headers.referer || req.headers.origin || null;
+
+    // If pathname is provided, use it. Otherwise try referer.
+    // But if referer is /studio, redirect to root instead.
+    let redirectUrl = pathname;
+    if (!redirectUrl && referer) {
+      try {
+        const refererUrl = new URL(referer);
+        redirectUrl = refererUrl.pathname === '/studio' ? '/' : refererUrl.pathname;
+      } catch (e) {
+        redirectUrl = referer.startsWith('/') ? referer : '/';
+        if (redirectUrl === '/studio') redirectUrl = '/';
+      }
+    }
+    redirectUrl = redirectUrl || '/';
 
     const cookie = `sanity_preview=${encodeURIComponent(secret)}; Path=/; SameSite=Lax; Secure; Max-Age=600`;
-    console.log('[preview-node] host=%s rawUrl=%s secret=%s referer=%s', host, rawUrl, !!secret, referer);
+    console.log('[preview-node] pathname=%s referer=%s -> redirectUrl=%s', pathname, referer, redirectUrl);
 
     res.setHeader('Set-Cookie', cookie);
-    res.writeHead(307, { Location: referer });
+    res.writeHead(307, { Location: redirectUrl });
     res.end();
   } catch (err) {
     console.error('Preview route error', err && err.stack ? err.stack : err);
