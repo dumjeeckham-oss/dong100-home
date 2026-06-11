@@ -19,8 +19,11 @@ export default defineConfig({
     colorInput(),
     presentationTool({
       previewUrl: {
-        // Use the production site domain for Presentation preview URL
-        origin: 'https://dong100.org',
+        // Read preview origin from environment (Vercel envs) with a safe fallback
+        origin:
+          import.meta.env.VITE_SANITY_STUDIO_PREVIEW_URL ||
+          import.meta.env.NEXT_PUBLIC_VERCEL_URL ||
+          'https://dong100.org',
         previewMode: {
           enable: '/api/draft',
         },
