@@ -13,7 +13,17 @@ export const siteSettings = defineType({
     defineField({
       name: 'description',
       title: '홈페이지 설명',
-      type: 'text',
+      type: 'string',
+    }),
+    defineField({
+      name: 'bannerText',
+      title: '메인 배너 문구',
+      type: 'string',
+    }),
+    defineField({
+      name: 'contactNumber',
+      title: '문의 전화번호',
+      type: 'string',
     }),
     defineField({
       name: 'heroTitle',

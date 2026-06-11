@@ -89,6 +89,8 @@ export interface NoticeItem {
 export interface SiteSettings {
   title?: string;
   description?: string;
+  bannerText?: string;
+  contactNumber?: string;
   heroTitle?: string;
   heroSubtitle?: string;
   heroDescription?: string;
@@ -96,6 +98,14 @@ export interface SiteSettings {
   kakaoBannerDescription?: string;
   coopBannerTitle?: string;
   coopBannerDescription?: string;
+}
+
+export interface FaqItem {
+  _id: string;
+  question: string;
+  answer?: any[];
+  category?: string;
+  order?: number;
 }
 
 export type SanityArchive = ArchiveItem;
@@ -107,6 +117,8 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
     *[_type == "siteSettings"][0] {
       title,
       description,
+      bannerText,
+      contactNumber,
       heroTitle,
       heroSubtitle,
       heroDescription,
@@ -117,6 +129,19 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
     }
   `);
   return data ?? null;
+};
+
+export const fetchFaqItems = async (): Promise<FaqItem[]> => {
+  const data = await sanityClient.fetch<FaqItem[]>(`
+    *[_type == "faq"] | order(order asc, _createdAt desc) {
+      _id,
+      question,
+      answer,
+      category,
+      order
+    }
+  `);
+  return data ?? [];
 };
 
 // ✅ 핵심 수정:

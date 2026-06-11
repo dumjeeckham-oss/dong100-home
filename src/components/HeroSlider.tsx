@@ -12,11 +12,12 @@ interface HeroSliderProps {
 const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
   const [current, setCurrent] = useState(0);
 
+  const phone = siteSettings?.contactNumber || '032-675-7517';
   const defaultSlides = [
     {
-      title: siteSettings?.heroTitle || '장애인의 자립생활을\n함께 만들어갑니다',
-      subtitle: siteSettings?.heroSubtitle || '부천의료복지사회적협동조합 동백 장애인활동지원센터',
-      desc: siteSettings?.heroDescription || '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
+      title: siteSettings?.title || siteSettings?.heroTitle || '장애인의 자립생활을\n함께 만들어갑니다',
+      subtitle: siteSettings?.bannerText || siteSettings?.heroSubtitle || '부천의료복지사회적협동조합 동백 장애인활동지원센터',
+      desc: siteSettings?.description || siteSettings?.heroDescription || '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
       image: hero1,
     },
     {
@@ -99,11 +100,11 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
               서비스 신청하기
             </button>
             <a 
-              href="tel:070-4127-1611" 
+              href={`tel:${phone.replace(/[^0-9+]/g, '')}`} 
               className="bg-white text-slate-800 px-6 py-4 min-h-[48px] rounded-lg font-bold text-base hover:bg-gray-50 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] hover:-translate-y-1 flex items-center gap-2"
             >
               <Phone size={18} className="text-primary" /> 
-              <span className="hidden sm:inline">전화문의 (032-675-7517)</span>
+              <span className="hidden sm:inline">전화문의 ({phone})</span>
               <span className="sm:hidden">전화문의</span>
             </a>
           </div>

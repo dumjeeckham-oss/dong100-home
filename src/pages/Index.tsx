@@ -11,8 +11,10 @@ import ApplicationStepsSection from '@/components/ApplicationStepsSection';
 import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
 import BoardSection from '@/components/BoardSection';
+import DashboardSection from '@/components/DashboardSection';
 import ActivityNewsSection from '@/components/ActivityNewsSection';
 import UserInfoSection from '@/components/UserInfoSection';
+import FaqSection from '@/components/FaqSection';
 import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
@@ -61,6 +63,7 @@ const Index = () => {
         <main id="main-content" role="main">
           <HeroSlider siteSettings={siteSettings} />
           <QuickMenu />
+          <DashboardSection />
           <BannersContainer siteSettings={siteSettings} />
           
           <div id="service-apply">
@@ -100,6 +103,7 @@ const Index = () => {
           )}
           
           <BoardSection />
+          <FaqSection />
           <section className="py-12 md:py-16 bg-background" aria-label="RSS 게시판">
             <div className="container">
               <div className="grid lg:grid-cols-2 gap-8 items-start">
