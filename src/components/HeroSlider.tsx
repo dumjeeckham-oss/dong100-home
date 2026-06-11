@@ -3,40 +3,45 @@ import { ChevronLeft, ChevronRight, Phone } from 'lucide-react';
 import hero1 from '@/assets/hero-1.jpg';
 import hero2 from '@/assets/hero-2.jpg';
 import hero3 from '@/assets/hero-3.jpg';
+import type { SiteSettings } from '@/lib/sanity';
 
-const slides = [
-  {
-    title: '장애인의 자립생활을\n함께 만들어갑니다',
-    subtitle: '부천의료복지사회적협동조합 동백 장애인활동지원센터',
-    desc: '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
-    image: hero1,
-  },
-  {
-    title: '활동지원서비스\n신청 안내',
-    subtitle: '만 6세 ~ 64세 등록 장애인 대상',
-    desc: '활동지원 급여(기본급여 15구간) + 특별지원급여(3종)를\n받으실 수 있습니다.',
-    image: hero2,
-  },
-  {
-    title: '활동지원사를\n모집합니다',
-    subtitle: '장애인과 함께하는 보람찬 일자리',
-    desc: '활동지원사 교육 이수 후 전문 직업인으로\n함께 일할 수 있습니다.',
-    image: hero3,
-  },
-];
+interface HeroSliderProps {
+  siteSettings: SiteSettings | null;
+}
 
-const HeroSlider = () => {
+const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
   const [current, setCurrent] = useState(0);
+
+  const defaultSlides = [
+    {
+      title: siteSettings?.heroTitle || '장애인의 자립생활을\n함께 만들어갑니다',
+      subtitle: siteSettings?.heroSubtitle || '부천의료복지사회적협동조합 동백 장애인활동지원센터',
+      desc: siteSettings?.heroDescription || '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
+      image: hero1,
+    },
+    {
+      title: '활동지원서비스\n신청 안내',
+      subtitle: '만 6세 ~ 64세 등록 장애인 대상',
+      desc: '활동지원 급여(기본급여 15구간) + 특별지원급여(3종)를\n받으실 수 있습니다.',
+      image: hero2,
+    },
+    {
+      title: '활동지원사를\n모집합니다',
+      subtitle: '장애인과 함께하는 보람찬 일자리',
+      desc: '활동지원사 교육 이수 후 전문 직업인으로\n함께 일할 수 있습니다.',
+      image: hero3,
+    },
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % slides.length);
+      setCurrent(prev => (prev + 1) % defaultSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [defaultSlides.length]);
 
-  const prev = () => setCurrent(c => (c - 1 + slides.length) % slides.length);
-  const next = () => setCurrent(c => (c + 1) % slides.length);
+  const prev = () => setCurrent(c => (c - 1 + defaultSlides.length) % defaultSlides.length);
+  const next = () => setCurrent(c => (c + 1) % defaultSlides.length);
 
   return (
     <section
@@ -45,7 +50,7 @@ const HeroSlider = () => {
       role="region"
     >
       {/* Background images */}
-      {slides.map((slide, i) => (
+      {defaultSlides.map((slide, i) => (
         <div
           key={i}
           className={`absolute inset-0 transition-opacity duration-700 ${i === current ? 'opacity-100' : 'opacity-0'}`}
@@ -64,7 +69,7 @@ const HeroSlider = () => {
 
       <div className="container py-14 sm:py-20 md:py-28 lg:py-36 relative z-10">
         <div className="max-w-2xl">
-          {slides.map((slide, i) => (
+          {defaultSlides.map((slide, i) => (
             <div
               key={i}
               className={`transition-all duration-700 ${i === current ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
@@ -111,7 +116,7 @@ const HeroSlider = () => {
           <ChevronLeft size={20} />
         </button>
         <div className="flex gap-1.5">
-          {slides.map((_, i) => (
+          {defaultSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}

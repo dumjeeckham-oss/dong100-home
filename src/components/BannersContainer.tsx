@@ -1,6 +1,11 @@
 import { MessageCircle, UserPlus, ArrowRight } from 'lucide-react';
+import type { SiteSettings } from '@/lib/sanity';
 
-const BannersContainer = () => {
+interface BannersContainerProps {
+  siteSettings: SiteSettings | null;
+}
+
+const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
   return (
     <section className="py-8 bg-muted border-t border-border">
       <div className="container">
@@ -10,10 +15,12 @@ const BannersContainer = () => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <MessageCircle size={24} className="fill-current" />
-                <h3 className="text-xl font-bold">카카오톡 소통채널</h3>
+                <h3 className="text-xl font-bold">
+                  {siteSettings?.kakaoBannerTitle || '카카오톡 소통채널'}
+                </h3>
               </div>
               <p className="text-[#371D1E]/80 mb-6 font-medium">
-                센터의 최신 소식을 받고 언제든 1:1 상담을 남겨주세요.
+                {siteSettings?.kakaoBannerDescription || '센터의 최신 소식을 받고 언제든 1:1 상담을 남겨주세요.'}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -41,10 +48,12 @@ const BannersContainer = () => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <UserPlus size={24} />
-                <h3 className="text-xl font-bold">부천의료복지사회적협동조합</h3>
+                <h3 className="text-xl font-bold">
+                  {siteSettings?.coopBannerTitle || '부천의료복지사회적협동조합'}
+                </h3>
               </div>
               <p className="text-primary-foreground/90 mb-6 font-medium">
-                조합원이 되어 건강한 지역사회를 만드는 데 동참해 주세요.
+                {siteSettings?.coopBannerDescription || '조합원이 되어 건강한 지역사회를 만드는 데 동참해 주세요.'}
               </p>
             </div>
             <a 

@@ -13,22 +13,30 @@ import BusinessSection from '@/components/BusinessSection';
 import BoardSection from '@/components/BoardSection';
 import ActivityNewsSection from '@/components/ActivityNewsSection';
 import UserInfoSection from '@/components/UserInfoSection';
-
 import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
 import FloatingCallButton from '@/components/FloatingCallButton';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { VisualEditing } from '@sanity/visual-editing/react-router';
+import { fetchSiteSettings, type SiteSettings } from '@/lib/sanity';
 
 const Index = () => {
   const [showDetails, setShowDetails] = useState(false);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
+    const loadSettings = async () => {
+      const settings = await fetchSiteSettings();
+      setSiteSettings(settings);
+    };
+    loadSettings();
+
     const handleShowDetails = () => setShowDetails(true);
     window.addEventListener('show-details', handleShowDetails);
 
-    // Scroll to hash target if present (e.g. arriving from /notice with /#user-info)
+    // Scroll to hash target if present
     const detailIds = new Set(['about', 'service', 'cost', 'business']);
     const hash = window.location.hash?.slice(1);
     if (hash) {
@@ -50,9 +58,9 @@ const Index = () => {
         <AccessibilityToolbar />
         <Header />
         <main id="main-content" role="main">
-          <HeroSlider />
+          <HeroSlider siteSettings={siteSettings} />
           <QuickMenu />
-          <BannersContainer />
+          <BannersContainer siteSettings={siteSettings} />
           
           <div id="service-apply">
             <ApplicationStepsSection />
@@ -105,6 +113,7 @@ const Index = () => {
         <FloatingCallButton />
         <MobileTabBar />
       </div>
+      <VisualEditing />
     </AccessibilityProvider>
   );
 };

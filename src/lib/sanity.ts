@@ -11,6 +11,10 @@ export const sanityClient = createClient({
   dataset,
   apiVersion: '2024-01-01',
   useCdn: true,
+  stega: {
+    enabled: true,
+    studioUrl: '/studio',
+  },
 });
 
 const builder = imageUrlBuilder(sanityClient);
@@ -82,10 +86,39 @@ export interface NoticeItem {
   images?: Array<{ image: any; alt?: string }>;
 }
 
+export interface SiteSettings {
+  title?: string;
+  description?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  kakaoBannerTitle?: string;
+  kakaoBannerDescription?: string;
+  coopBannerTitle?: string;
+  coopBannerDescription?: string;
+}
+
 export type SanityArchive = ArchiveItem;
 export type SanityNotice = NoticeItem;
 
 // ===== GROQ 쿼리 =====
+export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
+  const data = await sanityClient.fetch<SiteSettings>(`
+    *[_type == "siteSettings"][0] {
+      title,
+      description,
+      heroTitle,
+      heroSubtitle,
+      heroDescription,
+      kakaoBannerTitle,
+      kakaoBannerDescription,
+      coopBannerTitle,
+      coopBannerDescription
+    }
+  `);
+  return data ?? null;
+};
+
 // ✅ 핵심 수정:
 //   - "fileRef": file.asset._ref  → _ref를 직접 projection으로 꺼냄
 //   - "fileUrl": file.asset->url  → CDN url도 직접 꺼냄
