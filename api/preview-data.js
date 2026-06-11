@@ -19,23 +19,37 @@ export default async (req, res) => {
     }
 
     // Parse the query and variables from request body
-    const { query, variables = {} } = req.body || {};
+    // In serverless, req.body might be a string or already parsed
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        console.error('[preview-data] Failed to parse body:', e);
+        return res.status(400).json({ error: 'Invalid JSON in request body' });
+      }
+    }
+
+    const { query, variables = {} } = body || {};
     if (!query) {
+      console.error('[preview-data] Missing query:', { body, query });
       return res.status(400).json({ error: 'Missing query parameter' });
     }
 
-    // Fetch from Sanity API with draft token
+    // Fetch from Sanity API with draft token (use GET with query params)
     const url = new URL(
       `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}`
     );
+    url.searchParams.set('query', query);
+    if (variables && Object.keys(variables).length > 0) {
+      url.searchParams.set('variables', JSON.stringify(variables));
+    }
 
     const response = await fetch(url.toString(), {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${SANITY_API_TOKEN}`,
       },
-      body: JSON.stringify({ query, variables }),
     });
 
     if (!response.ok) {
