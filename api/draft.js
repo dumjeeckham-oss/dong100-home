@@ -3,25 +3,35 @@
 
 module.exports = (req, res) => {
   try {
-    const referer = req.headers.referer || '/';
-    const url = new URL(req.url, `https://${req.headers.host}`);
-    const token = url.searchParams.get('token') || url.searchParams.get('preview') || '';
+    // Prefer explicit Sanity preview params
+    const rawUrl = req.url || '';
+    const host = req.headers && (req.headers.host || req.headers['x-forwarded-host'])
+    const base = host ? `https://${host}` : 'https://dong100.org';
 
-    // Set a cookie that your frontend can read to enable preview mode.
-    // Adjust cookie name and value handling to match your preview implementation.
-    const cookieParts = [`sanity_preview=${encodeURIComponent(token)}`];
+    // Parse query robustly
+    const { URL } = require('url');
+    const parsed = new URL(rawUrl, base);
+    const secret = parsed.searchParams.get('sanity-preview-secret') || parsed.searchParams.get('token') || parsed.searchParams.get('preview') || '';
+    const pathname = parsed.searchParams.get('sanity-preview-pathname') || parsed.searchParams.get('pathname') || '/';
+
+    const referer = req.headers.referer || req.headers.origin || pathname || '/';
+
+    // Build cookie visible to client (no HttpOnly) so client code can read and pass it to the Sanity client
+    const cookieParts = [`sanity_preview=${encodeURIComponent(secret)}`];
     cookieParts.push('Path=/');
-    cookieParts.push('HttpOnly');
     cookieParts.push('SameSite=Lax');
     cookieParts.push('Secure');
-    // Optional: set short expiration so previews don't persist forever
+    // Short expiration
     cookieParts.push('Max-Age=600'); // 10 minutes
+
+    // Log debug info (Vercel function logs)
+    console.log('[preview] host=%s rawUrl=%s secret=%s referer=%s', host, rawUrl, !!secret, referer);
 
     res.setHeader('Set-Cookie', cookieParts.join('; '));
     res.writeHead(307, { Location: referer });
     res.end();
   } catch (err) {
-    console.error('Preview route error', err);
+    console.error('Preview route error', err && err.stack ? err.stack : err);
     res.statusCode = 500;
     res.end('Preview setup failed');
   }
