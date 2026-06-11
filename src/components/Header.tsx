@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
@@ -86,12 +87,20 @@ const Header = () => {
     }
   };
 
+  const handleLinkClick = (href: string) => {
+    setMobileOpen(false);
+    setOpenDropdown(null);
+    if (href === '/' && window.location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className="bg-background shadow-md border-b border-border sticky top-0 z-[100]" role="banner" data-sb-field-path="header">
       <div className="container flex items-center justify-between py-3">
-        <a href="/" onClick={handleLogoClick} className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈, 맨 위로" data-sb-field-path="header.logo">
+        <Link to="/" onClick={() => handleLinkClick('/')} className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈, 맨 위로" data-sb-field-path="header.logo">
           <img src={logo} alt="동백 장애인활동지원센터 로고" className="h-12 md:h-14 w-auto" />
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-1" aria-label="메인 메뉴">
