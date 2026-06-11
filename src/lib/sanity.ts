@@ -6,13 +6,6 @@ import { createImageUrlBuilder } from '@sanity/image-url';
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
 
-// Detect preview mode by reading the sanity_preview cookie
-function isPreviewMode(): boolean {
-  if (typeof document === 'undefined') return false; // SSR context
-  const cookies = document.cookie.split(';');
-  return cookies.some(c => c.trim().startsWith('sanity_preview='));
-}
-
 export const sanityClient = createClient({
   projectId,
   dataset,
@@ -23,31 +16,6 @@ export const sanityClient = createClient({
     studioUrl: '/studio',
   },
 });
-
-// Fetch from server-side preview endpoint when in preview mode
-async function fetchPreviewData<T>(query: string, params?: Record<string, any>): Promise<T> {
-  const response = await fetch('/api/preview-data', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query, variables: params }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Preview fetch failed: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data.result;
-}
-
-// Wrapper function: fetch from preview endpoint if in preview mode, otherwise use regular client
-async function fetchData<T>(query: string, params?: Record<string, any>): Promise<T> {
-  if (isPreviewMode()) {
-    console.log('[preview] Fetching draft content from /api/preview-data');
-    return fetchPreviewData<T>(query, params);
-  }
-  return sanityClient.fetch<T>(query, params);
-}
 
 const builder = createImageUrlBuilder(sanityClient);
 export const urlFor = (source: any) => builder.image(source);
@@ -145,7 +113,7 @@ export type SanityNotice = NoticeItem;
 
 // ===== GROQ 쿼리 =====
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
-  const data = await fetchData<SiteSettings>(`
+  const data = await sanityClient.fetch<SiteSettings>(`
     *[_type == "siteSettings"][0] {
       title,
       description,
@@ -164,7 +132,7 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
 };
 
 export const fetchFaqItems = async (): Promise<FaqItem[]> => {
-  const data = await fetchData<FaqItem[]>(`
+  const data = await sanityClient.fetch<FaqItem[]>(`
     *[_type == "faq"] | order(order asc, _createdAt desc) {
       _id,
       question,
