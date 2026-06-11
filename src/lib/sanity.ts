@@ -1,7 +1,7 @@
 // src/lib/sanity.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
@@ -17,7 +17,7 @@ export const sanityClient = createClient({
   },
 });
 
-const builder = imageUrlBuilder(sanityClient);
+const builder = createImageUrlBuilder(sanityClient);
 export const urlFor = (source: any) => builder.image(source);
 
 // ✅ 파일 URL 추출 - split 버그 수정
