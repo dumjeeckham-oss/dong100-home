@@ -19,7 +19,8 @@ import MobileTabBar from '@/components/MobileTabBar';
 import FloatingCallButton from '@/components/FloatingCallButton';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { VisualEditing } from '@sanity/visual-editing/react-router';
+// VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
+// import { VisualEditing } from '@sanity/visual-editing/react-router';
 import { fetchSiteSettings, type SiteSettings } from '@/lib/sanity';
 
 const Index = () => {
@@ -113,7 +114,8 @@ const Index = () => {
         <FloatingCallButton />
         <MobileTabBar />
       </div>
-      <VisualEditing />
+      {/* VisualEditing 컴포넌트는 런타임 오류로 인해 주석 처리됨 */}
+      {/** <VisualEditing /> */}
     </AccessibilityProvider>
   );
 };

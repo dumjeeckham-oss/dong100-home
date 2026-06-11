@@ -105,19 +105,30 @@ export async function fetchRssFeed(boTable: string): Promise<RssItem[]> {
   }
 
   // 방법 2: rss2json API fallback
-  const jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-  const res = await fetch(jsonUrl);
-  if (!res.ok) throw new Error('RSS fetch failed');
-  const json = await res.json();
-  if (json.status !== 'ok') throw new Error('RSS parse failed');
+  try {
+    const jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    const res = await fetch(jsonUrl);
+    if (!res.ok) {
+      console.warn('[RSS] rss2json 응답 실패', res.status);
+      return [];
+    }
+    const json = await res.json();
+    if (json.status !== 'ok') {
+      console.warn('[RSS] rss2json 파싱 실패', json);
+      return [];
+    }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (json.items ?? []).map((item: any) => ({
-    title: cleanText(item.title ?? ''),
-    link: resolveRssLink(item.link ?? '', item.guid ?? '', boTable),
-    pubDate: item.pubDate ?? '',
-    description: cleanText(item.description ?? '').slice(0, 200),
-  }));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (json.items ?? []).map((item: any) => ({
+      title: cleanText(item.title ?? ''),
+      link: resolveRssLink(item.link ?? '', item.guid ?? '', boTable),
+      pubDate: item.pubDate ?? '',
+      description: cleanText(item.description ?? '').slice(0, 200),
+    }));
+  } catch (e) {
+    console.warn('[RSS] rss2json 처리 중 오류 발생:', e);
+    return [];
+  }
 }
 
 // ✅ 기존 코드 호환용 별칭
