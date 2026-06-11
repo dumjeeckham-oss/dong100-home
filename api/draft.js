@@ -1,38 +1,52 @@
 // Vercel Serverless function to enable preview mode for Sanity Presentation
 // Sets a preview cookie (`sanity_preview`) and redirects back to the referer.
 
-module.exports = (req, res) => {
+export default async (req, res) => {
   try {
-    // Prefer explicit Sanity preview params
+    // Detect Edge vs Node serverless environment:
+    // - Edge: req.headers.get is a function
+    // - Node: req.headers is a plain object
+    const isEdge = !!(req && req.headers && typeof req.headers.get === 'function');
+
+    if (isEdge) {
+      // Edge runtime: work with Web Request/Response
+      const url = new URL(req.url);
+      const secret = url.searchParams.get('sanity-preview-secret') || url.searchParams.get('token') || '';
+      const pathname = url.searchParams.get('sanity-preview-pathname') || '/';
+      const referer = req.headers.get('referer') || req.headers.get('origin') || pathname || '/';
+
+      const cookie = `sanity_preview=${encodeURIComponent(secret)}; Path=/; SameSite=Lax; Secure; Max-Age=600`;
+      console.log('[preview-edge] url=%s secret=%s referer=%s', url.href, !!secret, referer);
+
+      return new Response(null, {
+        status: 307,
+        headers: {
+          Location: referer,
+          'Set-Cookie': cookie,
+        },
+      });
+    }
+
+    // Node serverless runtime
     const rawUrl = req.url || '';
-    const host = req.headers && (req.headers.host || req.headers['x-forwarded-host'])
-    const base = host ? `https://${host}` : 'https://dong100.org';
-
-    // Parse query robustly
-    const { URL } = require('url');
-    const parsed = new URL(rawUrl, base);
-    const secret = parsed.searchParams.get('sanity-preview-secret') || parsed.searchParams.get('token') || parsed.searchParams.get('preview') || '';
-    const pathname = parsed.searchParams.get('sanity-preview-pathname') || parsed.searchParams.get('pathname') || '/';
-
+    const host = req.headers && (req.headers.host || req.headers['x-forwarded-host']) || 'dong100.org';
+    const parsed = new URL(rawUrl, `https://${host}`);
+    const secret = parsed.searchParams.get('sanity-preview-secret') || parsed.searchParams.get('token') || '';
+    const pathname = parsed.searchParams.get('sanity-preview-pathname') || '/';
     const referer = req.headers.referer || req.headers.origin || pathname || '/';
 
-    // Build cookie visible to client (no HttpOnly) so client code can read and pass it to the Sanity client
-    const cookieParts = [`sanity_preview=${encodeURIComponent(secret)}`];
-    cookieParts.push('Path=/');
-    cookieParts.push('SameSite=Lax');
-    cookieParts.push('Secure');
-    // Short expiration
-    cookieParts.push('Max-Age=600'); // 10 minutes
+    const cookie = `sanity_preview=${encodeURIComponent(secret)}; Path=/; SameSite=Lax; Secure; Max-Age=600`;
+    console.log('[preview-node] host=%s rawUrl=%s secret=%s referer=%s', host, rawUrl, !!secret, referer);
 
-    // Log debug info (Vercel function logs)
-    console.log('[preview] host=%s rawUrl=%s secret=%s referer=%s', host, rawUrl, !!secret, referer);
-
-    res.setHeader('Set-Cookie', cookieParts.join('; '));
+    res.setHeader('Set-Cookie', cookie);
     res.writeHead(307, { Location: referer });
     res.end();
   } catch (err) {
     console.error('Preview route error', err && err.stack ? err.stack : err);
-    res.statusCode = 500;
-    res.end('Preview setup failed');
+    if (res && typeof res.end === 'function') {
+      res.statusCode = 500;
+      res.end('Preview setup failed');
+    }
+    return new Response('Preview setup failed', { status: 500 });
   }
 };
