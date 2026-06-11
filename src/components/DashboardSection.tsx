@@ -29,7 +29,7 @@ const boards = [
 ];
 
 const DashboardSection = () => (
-  <section className="py-16 bg-white" aria-label="게시판 모음">
+  <section className="py-16 bg-white" aria-label="게시판 모음" data-sb-field-path="dashboard">
     <div className="container">
       <div className="mb-10 text-center">
         <p className="text-sm font-medium uppercase tracking-[0.24em] text-primary">게시판 모음</p>

@@ -28,7 +28,7 @@ const FaqSection = () => {
   );
 
   return (
-    <section id="faq" className="scroll-mt-24 py-16 bg-slate-50" aria-label="자주 묻는 질문">
+    <section id="faq" className="scroll-mt-24 py-16 bg-slate-50" aria-label="자주 묻는 질문" data-sb-field-path="faq">
       <div className="container">
         <div className="mb-8 text-center">
           <p className="text-sm font-medium uppercase tracking-[0.24em] text-primary">FAQ</p>

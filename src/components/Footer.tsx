@@ -3,7 +3,7 @@ import logoWhite from '@/assets/logo-white.png';
 
 const Footer = () => {
   return (
-    <footer className="bg-foreground text-background py-10" role="contentinfo" aria-label="하단 정보">
+    <footer className="bg-foreground text-background py-10" role="contentinfo" aria-label="하단 정보" data-sb-field-path="footer">
       <div className="container">
         <div className="grid md:grid-cols-3 gap-8">
           <div>

@@ -33,7 +33,7 @@ const serviceDetails = [
 
 const BusinessSection = () => {
   return (
-    <section id="business" className="py-12 md:py-16 bg-background" aria-label="사업안내">
+    <section id="business" className="py-12 md:py-16 bg-background" aria-label="사업안내" data-sb-field-path="business">
       <div className="container max-w-4xl">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">사업안내</h2>
         <div className="bg-card rounded-2xl p-6 md:p-10 shadow-sm space-y-8">

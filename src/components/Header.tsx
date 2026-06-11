@@ -86,9 +86,9 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-background shadow-md border-b border-border sticky top-0 z-[100]" role="banner">
+    <header className="bg-background shadow-md border-b border-border sticky top-0 z-[100]" role="banner" data-sb-field-path="header">
       <div className="container flex items-center justify-between py-3">
-        <a href="/" onClick={handleLogoClick} className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈, 맨 위로">
+        <a href="/" onClick={handleLogoClick} className="flex items-center gap-3" aria-label="동백 장애인활동지원센터 홈, 맨 위로" data-sb-field-path="header.logo">
           <img src={logo} alt="동백 장애인활동지원센터 로고" className="h-12 md:h-14 w-auto" />
         </a>
 

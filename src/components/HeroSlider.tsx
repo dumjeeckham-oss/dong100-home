@@ -49,6 +49,7 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
       className="relative overflow-hidden"
       aria-label="메인 슬라이드"
       role="region"
+      data-sb-field-path="hero"
     >
       {/* Background images */}
       {defaultSlides.map((slide, i) => (

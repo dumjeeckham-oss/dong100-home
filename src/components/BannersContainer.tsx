@@ -7,7 +7,7 @@ interface BannersContainerProps {
 
 const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
   return (
-    <section className="py-8 bg-muted border-t border-border">
+    <section className="py-8 bg-muted border-t border-border" data-sb-field-path="banners">
       <div className="container">
         <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
           {/* 소통채널 배너 */}

@@ -2,7 +2,7 @@ import SpeakableText from './SpeakableText';
 
 const ServiceSection = () => {
   return (
-    <section id="service" className="py-12 md:py-16 bg-background" aria-label="서비스 안내">
+    <section id="service" className="py-12 md:py-16 bg-background" aria-label="서비스 안내" data-sb-field-path="service">
       <div className="container max-w-4xl">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">서비스 안내 (이용안내)</h2>
         <div className="bg-card rounded-2xl p-6 md:p-10 shadow-sm space-y-6">

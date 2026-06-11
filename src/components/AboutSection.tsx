@@ -66,7 +66,7 @@ const AboutSection = () => {
   const current = storySlides[slide];
 
   return (
-    <section id="about" className="py-12 md:py-16 bg-muted" aria-label="센터 소개">
+    <section id="about" className="py-12 md:py-16 bg-muted" aria-label="센터 소개" data-sb-field-path="about">
       <div className="container max-w-5xl">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">🌺 동백 이야기</h2>
 
