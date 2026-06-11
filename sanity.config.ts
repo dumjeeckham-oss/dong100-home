@@ -19,7 +19,8 @@ export default defineConfig({
     colorInput(),
     presentationTool({
       previewUrl: {
-        origin: typeof location !== 'undefined' ? location.origin : 'http://localhost:5173',
+        // Use the production site domain for Presentation preview URL
+        origin: 'https://dong100.org',
         previewMode: {
           enable: '/api/draft',
         },
