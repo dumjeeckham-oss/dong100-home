@@ -14,6 +14,7 @@ import ArchivePage from "./views/ArchivePage.tsx";
 import ArchiveDetailPage from "./views/ArchiveDetailPage.tsx";
 import UserArchivePage from "./views/UserArchivePage.tsx";
 import UserArchiveDetailPage from "./views/UserArchiveDetailPage.tsx";
+import FAQPage from "./views/FAQPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/archive/:id" element={<ArchiveDetailPage />} />
           <Route path="/user-archive" element={<UserArchivePage />} />
           <Route path="/user-archive/:id" element={<UserArchiveDetailPage />} />
+          <Route path="/faq" element={<FAQPage />} />
           <Route path="/studio/*" element={<StudioPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

@@ -29,6 +29,7 @@ const navItems: NavItem[] = [
       { label: '공지사항', emoji: '📢', href: '/notice' },
       { label: '서식 자료실', emoji: '📁', href: '/archive' },
       { label: '이용자 자료실', emoji: '🗂️', href: '/user-archive' },
+      { label: 'FAQ', emoji: '❓', href: '/faq' },
       { label: '이용자 정보', emoji: '👥', href: '#user-info' },
       { label: '활동 소식', emoji: '📰', href: '#activity-news' },
       { label: '활동지원사 모집', emoji: '🤝', href: 'https://docs.google.com/forms/d/e/1FAIpQLSfN7sbIDGSZRxTYq6z-z6doJVNyBfITRntE2yeDaVpIGTstXg/viewform?pli=1', external: true },
