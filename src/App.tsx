@@ -1,17 +1,19 @@
+'use client'
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index.tsx";
-import NotFound from "./pages/NotFound.tsx";
-import StudioPage from "./pages/StudioPage.tsx";
-import NoticePage from "./pages/NoticePage.tsx";
-import NoticeDetailPage from "./pages/NoticeDetailPage.tsx";
-import ArchivePage from "./pages/ArchivePage.tsx";
-import ArchiveDetailPage from "./pages/ArchiveDetailPage.tsx";
-import UserArchivePage from "./pages/UserArchivePage.tsx";
-import UserArchiveDetailPage from "./pages/UserArchiveDetailPage.tsx";
+import Index from "./views/Index.tsx";
+import NotFound from "./views/NotFound.tsx";
+import StudioPage from "./views/StudioPage.tsx";
+import NoticePage from "./views/NoticePage.tsx";
+import NoticeDetailPage from "./views/NoticeDetailPage.tsx";
+import ArchivePage from "./views/ArchivePage.tsx";
+import ArchiveDetailPage from "./views/ArchiveDetailPage.tsx";
+import UserArchivePage from "./views/UserArchivePage.tsx";
+import UserArchiveDetailPage from "./views/UserArchiveDetailPage.tsx";
 
 const queryClient = new QueryClient();
 

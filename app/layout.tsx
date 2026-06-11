@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { VisualEditing } from '@sanity/visual-editing/next'
+import { VisualEditing } from '@sanity/visual-editing/next-pages-router'
 
 interface Props {
   children: React.ReactNode
@@ -12,8 +12,12 @@ export default function RootLayout({ children }: Props) {
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || process.env.VITE_SANITY_DATASET || 'production'
 
   return (
-    <VisualEditing projectId={projectId} dataset={dataset}>
-      {children}
-    </VisualEditing>
+    <html lang="ko">
+      <body>
+        <VisualEditing projectId={projectId} dataset={dataset}>
+          {children}
+        </VisualEditing>
+      </body>
+    </html>
   )
 }
