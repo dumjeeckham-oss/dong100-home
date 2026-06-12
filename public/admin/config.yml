@@ -1,0 +1,48 @@
+backend:
+  name: github
+  repo: dumjeeckham-oss/dong100-home
+  branch: main
+  base_url: https://dong100.org
+  auth_endpoint: api/github-proxy
+  
+  commit_author:
+    name: CMS User
+    email: admin@dong100.org
+
+media_folder: "public/images"
+public_folder: "/images"
+
+collections:
+  - name: "notices"
+    label: "공지사항"
+    folder: "content/notices"
+    create: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    fields:
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "날짜", name: "date", widget: "datetime" }
+      - { label: "중요", name: "important", widget: "boolean", default: false }
+      - { label: "내용", name: "body", widget: "markdown" }
+
+  - name: "archives"
+    label: "활동보고"
+    folder: "content/archives"
+    create: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    fields:
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "날짜", name: "date", widget: "datetime" }
+      - { label: "카테고리", name: "category", widget: "select", options: ["활동보고", "사진첩", "기타"] }
+      - { label: "이미지", name: "image", widget: "image" }
+      - { label: "내용", name: "body", widget: "markdown" }
+
+  - name: "settings"
+    label: "설정"
+    files:
+      - name: "site"
+        label: "사이트 설정"
+        file: "content/settings/site.md"
+        fields:
+          - { label: "사이트 제목", name: "title", widget: "string" }
+          - { label: "설명", name: "description", widget: "string" }
+          - { label: "연락처", name: "contact", widget: "string" }
