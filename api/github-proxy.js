@@ -1,5 +1,10 @@
-// 이 코드는 GitHub과 Decap CMS 사이에서 인증을 중개합니다.
 const { createProxy } = require('decap-cms-proxy-server');
+
+// 환경 변수가 제대로 들어오는지 확인하는 로그 추가
+console.log("Checking Environment Variables...");
+console.log("ID exists:", !!process.env.GITHUB_CLIENT_ID);
+console.log("Secret exists:", !!process.env.GITHUB_CLIENT_SECRET);
+console.log("Token exists:", !!process.env.GITHUB_TOKEN);
 
 module.exports = createProxy({
   githubToken: process.env.GITHUB_TOKEN,
