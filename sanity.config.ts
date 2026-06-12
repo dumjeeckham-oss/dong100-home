@@ -17,6 +17,14 @@ export default defineConfig({
     structureTool(),
     visionTool(),
     colorInput(),
+    presentationTool({
+      previewUrl: {
+        origin: 'https://dong100.org',
+        previewMode: {
+          enable: '/api/draft',
+        },
+      },
+    }),
   ],
 
   schema: {
