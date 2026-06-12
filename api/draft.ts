@@ -19,8 +19,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'GET') {
     const previewMode = req.cookies.sanity_preview_mode;
     
-    // 쿠키 설정
-    res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
+    // 쿠키 설정 (HttpOnly 제거 - JavaScript에서 읽을 수 있도록)
+    res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; SameSite=Lax; Max-Age=604800`);
     
     // 메인 페이지로 리다이렉트
     return res.redirect(307, 'https://dong100.org/');
@@ -52,8 +52,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ message: 'Invalid secret' });
     }
 
-    // Preview 모드 쿠키 설정 (7일 동안 유효)
-    res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
+    // Preview 모드 쿠키 설정 (7일 동안 유효, HttpOnly 제거)
+    res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; SameSite=Lax; Max-Age=604800`);
 
     // 메인 페이지로 리다이렉트
     res.redirect(307, '/');
