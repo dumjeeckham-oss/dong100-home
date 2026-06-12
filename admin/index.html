@@ -8,9 +8,29 @@
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script>
-      // 여기서 수동으로 git-gateway를 지정합니다
-      CMS.init();
-      CMS.registerBackend('git-gateway', NetlifyCmsBackendGitGateway.default);
+      // 브라우저 캐시를 우회하기 위해 강제로 설정 객체를 주입합니다.
+      window.CMS_CONFIG = {
+        backend: {
+          name: "git-gateway",
+          repo: "dumjeeckham-oss/dong100-home",
+          branch: "main",
+          auth_endpoint: "api/github-proxy"
+        },
+        collections: [
+          {
+            name: "post",
+            label: "Post",
+            folder: "content/posts",
+            create: true,
+            fields: [
+              { label: "Title", name: "title", widget: "string" },
+              { label: "Publish Date", name: "date", widget: "datetime" },
+              { label: "Body", name: "body", widget: "markdown" }
+            ]
+          }
+        ]
+      };
+      CMS.init({ config: window.CMS_CONFIG });
     </script>
   </body>
 </html>
