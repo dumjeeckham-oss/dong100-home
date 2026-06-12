@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@sanity/client';
 import { createImageUrlBuilder } from '@sanity/image-url';
+import { loadLocalNotices, loadLocalArchives, loadLocalSiteSettings } from '@/lib/loadLocalData';
 
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
@@ -119,6 +120,84 @@ export interface FaqItem {
 
 export type SanityArchive = ArchiveItem;
 export type SanityNotice = NoticeItem;
+
+// ===== 데이터 이중 소스 처리 (Sanity + Decap CMS) =====
+
+// 공지사항 데이터 병합 (Sanity + Decap CMS)
+export const fetchNoticesDualSource = async () => {
+  try {
+    // Sanity 데이터 가져오기
+    const sanityNotices = await fetchNotices();
+    
+    // Decap CMS 데이터 가져오기
+    const localNotices = await loadLocalNotices();
+    
+    // Decap CMS 데이터를 Sanity 형식으로 변환
+    const convertedLocalNotices = localNotices.map(notice => ({
+      _id: `local-${notice.slug}`,
+      title: notice.title,
+      publishedAt: notice.date,
+      important: notice.important,
+      content: [{ _type: 'block', children: [{ _type: 'span', text: notice.body }] }],
+    }));
+    
+    // 데이터 병합 (Decap CMS 데이터를 우선)
+    return [...convertedLocalNotices, ...sanityNotices];
+  } catch (error) {
+    console.error('Error fetching dual source notices:', error);
+    // Fallback to Sanity only
+    return fetchNotices();
+  }
+};
+
+// 활동보고 데이터 병합 (Sanity + Decap CMS)
+export const fetchArchivesDualSource = async () => {
+  try {
+    // Sanity 데이터 가져오기
+    const sanityArchives = await fetchArchives();
+    
+    // Decap CMS 데이터 가져오기
+    const localArchives = await loadLocalArchives();
+    
+    // Decap CMS 데이터를 Sanity 형식으로 변환
+    const convertedLocalArchives = localArchives.map(archive => ({
+      _id: `local-${archive.slug}`,
+      title: archive.title,
+      publishedAt: archive.date,
+      category: archive.category,
+      images: archive.image ? [{ image: { _type: 'image', asset: { _ref: archive.image } }, alt: archive.title }] : [],
+      content: [{ _type: 'block', children: [{ _type: 'span', text: archive.body }] }],
+    }));
+    
+    // 데이터 병합 (Decap CMS 데이터를 우선)
+    return [...convertedLocalArchives, ...sanityArchives];
+  } catch (error) {
+    console.error('Error fetching dual source archives:', error);
+    // Fallback to Sanity only
+    return fetchArchives();
+  }
+};
+
+// 사이트 설정 데이터 병합 (Sanity + Decap CMS)
+export const fetchSiteSettingsDualSource = async () => {
+  try {
+    // Sanity 데이터 가져오기
+    const sanitySettings = await fetchSiteSettings();
+    
+    // Decap CMS 데이터 가져오기
+    const localSettings = await loadLocalSiteSettings();
+    
+    // 데이터 병합 (Decap CMS 데이터를 우선)
+    return {
+      ...sanitySettings,
+      ...localSettings,
+    };
+  } catch (error) {
+    console.error('Error fetching dual source site settings:', error);
+    // Fallback to Sanity only
+    return fetchSiteSettings();
+  }
+};
 
 // ===== GROQ 쿼리 =====
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {

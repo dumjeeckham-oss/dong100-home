@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 // VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
 // import { VisualEditing } from '@sanity/visual-editing/react-router';
-import { fetchSiteSettings, type SiteSettings } from '@/lib/sanity';
+import { fetchSiteSettingsDualSource, type SiteSettings } from '@/lib/sanity';
 
 const Index = () => {
   const [showDetails, setShowDetails] = useState(false);
@@ -31,7 +31,7 @@ const Index = () => {
 
   useEffect(() => {
     const loadSettings = async () => {
-      const settings = await fetchSiteSettings();
+      const settings = await fetchSiteSettingsDualSource();
       setSiteSettings(settings);
     };
     loadSettings();
