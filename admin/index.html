@@ -6,9 +6,11 @@
     <title>Content Manager</title>
   </head>
   <body>
-<script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    CMS.registerBackend('git-gateway', NetlifyCmsBackendGitGateway.default);
-  </script>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // 여기서 수동으로 git-gateway를 지정합니다
+      CMS.init();
+      CMS.registerBackend('git-gateway', NetlifyCmsBackendGitGateway.default);
+    </script>
   </body>
 </html>
