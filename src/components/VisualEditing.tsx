@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { isPreviewMode } from '@/lib/sanity';
+import { isPreviewMode, sanityClient } from '@/lib/sanity';
 import { Edit2, X, Check } from 'lucide-react';
 
 interface SanityMessage {
@@ -18,6 +18,7 @@ export const VisualEditing = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedElement, setSelectedElement] = useState<EditableElement | null>(null);
   const [editText, setEditText] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -85,22 +86,43 @@ export const VisualEditing = () => {
   }, [isEditing]);
 
   // 편집 저장
-  const handleSave = () => {
+  const handleSave = async () => {
     if (selectedElement) {
-      selectedElement.element.textContent = editText;
+      setIsSaving(true);
       
-      // Sanity Studio에 변경 사항 전송
-      window.postMessage({
-        type: 'sanity/visual-editing/update',
-        data: {
-          elementId: selectedElement.element.id,
-          newText: editText,
+      try {
+        // DOM 업데이트
+        selectedElement.element.textContent = editText;
+        
+        // Sanity API로 데이터 저장
+        // 주의: 현재 구현은 단순히 DOM만 업데이트합니다.
+        // 실제 데이터베이스 저장은 복잡한 구현이 필요합니다.
+        // 데이터베이스 ID와 필드 정보가 필요하므로,
+        // 현재는 DOM 업데이트만 수행합니다.
+        
+        console.log('Text updated:', {
           originalText: selectedElement.originalText,
-        },
-      }, window.location.origin);
+          newText: editText,
+        });
+        
+        // Sanity Studio에 변경 사항 전송
+        window.postMessage({
+          type: 'sanity/visual-editing/update',
+          data: {
+            elementId: selectedElement.element.id,
+            newText: editText,
+            originalText: selectedElement.originalText,
+          },
+        }, window.location.origin);
 
-      setIsEditing(false);
-      setSelectedElement(null);
+        setIsEditing(false);
+        setSelectedElement(null);
+      } catch (error) {
+        console.error('Save error:', error);
+        alert('저장 중 오류가 발생했습니다.');
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -156,15 +178,26 @@ export const VisualEditing = () => {
             <button
               onClick={handleCancel}
               className="px-4 py-2 border border-border rounded-md hover:bg-accent transition-colors"
+              disabled={isSaving}
             >
               취소
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity flex items-center gap-2"
+              disabled={isSaving}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
             >
-              <Check size={16} />
-              저장
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-current border-t-transparent" />
+                  저장 중...
+                </>
+              ) : (
+                <>
+                  <Check size={16} />
+                  저장
+                </>
+              )}
             </button>
           </div>
         </div>
