@@ -6,11 +6,18 @@ import { createImageUrlBuilder } from '@sanity/image-url';
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
 
+// Preview 쿠키 감지 함수
+export const isPreviewMode = (): boolean => {
+  if (typeof document === 'undefined') return false;
+  const cookies = document.cookie.split(';');
+  return cookies.some(cookie => cookie.trim().startsWith('sanity_preview_mode=true'));
+};
+
 export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: '2024-01-01',
-  useCdn: true,
+  useCdn: !isPreviewMode(), // Preview 모드에서는 CDN 사용 안 함
   stega: {
     enabled: true,
     studioUrl: '/studio',
