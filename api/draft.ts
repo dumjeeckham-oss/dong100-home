@@ -15,9 +15,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  // GET 요청도 허용 (쿠키 확인용)
+  // GET 요청도 허용 (쿠키 설정 및 확인용)
   if (req.method === 'GET') {
     const previewMode = req.cookies.sanity_preview_mode;
+    
+    // 쿠키가 없으면 설정
+    if (!previewMode) {
+      res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
+    }
+    
     if (previewMode === 'true') {
       return res.status(200).json({ previewMode: true });
     }
