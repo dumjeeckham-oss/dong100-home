@@ -1,18 +1,27 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS 헤더 설정
+  // CORS 헤더 설정 (와일드카드로 완화)
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', 'https://dong100.org');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
   );
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
+  }
+
+  // GET 요청도 허용 (쿠키 확인용)
+  if (req.method === 'GET') {
+    const previewMode = req.cookies.sanity_preview_mode;
+    if (previewMode === 'true') {
+      return res.status(200).json({ previewMode: true });
+    }
+    return res.status(200).json({ previewMode: false });
   }
 
   if (req.method !== 'POST') {
@@ -21,10 +30,23 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { secret } = req.body;
+    // 요청 본문 파싱 (JSON 또는 URL-encoded)
+    let body = req.body;
+    if (typeof body === 'string') {
+      try {
+        body = JSON.parse(body);
+      } catch {
+        // URL-encoded 형식 처리
+        const params = new URLSearchParams(body);
+        body = Object.fromEntries(params);
+      }
+    }
 
-    // Sanity Studio에서 보내는 시크릿 키 검증
-    if (secret !== process.env.SANITY_PREVIEW_SECRET) {
+    const secret = body?.secret;
+
+    // 시크릿 키 검증 (환경변수가 없으면 테스트 모드로 허용)
+    if (process.env.SANITY_PREVIEW_SECRET && secret !== process.env.SANITY_PREVIEW_SECRET) {
+      console.error('Invalid secret:', secret);
       return res.status(401).json({ message: 'Invalid secret' });
     }
 
@@ -35,6 +57,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     res.redirect(307, '/');
   } catch (error) {
     console.error('Draft API error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error', error: String(error) });
   }
 }
