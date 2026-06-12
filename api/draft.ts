@@ -15,19 +15,15 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  // GET 요청도 허용 (쿠키 설정 및 확인용)
+  // GET 요청도 허용 (쿠키 설정 및 리다이렉트)
   if (req.method === 'GET') {
     const previewMode = req.cookies.sanity_preview_mode;
     
-    // 쿠키가 없으면 설정
-    if (!previewMode) {
-      res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
-    }
+    // 쿠키 설정
+    res.setHeader('Set-Cookie', `sanity_preview_mode=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=604800`);
     
-    if (previewMode === 'true') {
-      return res.status(200).json({ previewMode: true });
-    }
-    return res.status(200).json({ previewMode: false });
+    // 메인 페이지로 리다이렉트
+    return res.redirect(307, 'https://dong100.org/');
   }
 
   if (req.method !== 'POST') {
