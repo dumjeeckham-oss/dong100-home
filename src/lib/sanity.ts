@@ -95,6 +95,7 @@ export interface NoticeItem {
 }
 
 export interface SiteSettings {
+  _id?: string;
   title?: string;
   description?: string;
   bannerText?: string;
@@ -123,6 +124,7 @@ export type SanityNotice = NoticeItem;
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
   const data = await sanityClient.fetch<SiteSettings>(`
     *[_type == "siteSettings"][0] {
+      _id,
       title,
       description,
       bannerText,

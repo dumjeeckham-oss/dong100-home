@@ -77,13 +77,28 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
               className={`transition-all duration-700 ${i === current ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
               aria-hidden={i !== current}
             >
-              <p className="text-white/80 text-sm md:text-base font-medium mb-3 tracking-wide">
+              <p 
+                className="text-white/80 text-sm md:text-base font-medium mb-3 tracking-wide"
+                data-id={siteSettings?._id}
+                data-field="heroSubtitle"
+                data-type="siteSettings"
+              >
                 {slide.subtitle}
               </p>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight whitespace-pre-line mb-6 text-white">
+              <h1 
+                className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight whitespace-pre-line mb-6 text-white"
+                data-id={siteSettings?._id}
+                data-field="heroTitle"
+                data-type="siteSettings"
+              >
                 {slide.title}
               </h1>
-              <p className="text-white/90 text-base md:text-lg max-w-xl whitespace-pre-line leading-relaxed">
+              <p 
+                className="text-white/90 text-base md:text-lg max-w-xl whitespace-pre-line leading-relaxed"
+                data-id={siteSettings?._id}
+                data-field="heroDescription"
+                data-type="siteSettings"
+              >
                 {slide.desc}
               </p>
             </div>
