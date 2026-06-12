@@ -17,6 +17,19 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   // GET 요청도 허용 (쿠키 설정 및 리다이렉트)
   if (req.method === 'GET') {
+    const secret = req.query.secret as string;
+    
+    // 시크릿 키 검증 (필수)
+    if (!process.env.SANITY_PREVIEW_SECRET) {
+      console.error('SANITY_PREVIEW_SECRET environment variable not set');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    
+    if (secret !== process.env.SANITY_PREVIEW_SECRET) {
+      console.error('Invalid secret in GET request');
+      return res.status(401).json({ message: 'Invalid secret' });
+    }
+    
     const previewMode = req.cookies.sanity_preview_mode;
     
     // 쿠키 설정 (HttpOnly 제거 - JavaScript에서 읽을 수 있도록)
@@ -46,8 +59,13 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     const secret = body?.secret;
 
-    // 시크릿 키 검증 (환경변수가 없으면 테스트 모드로 허용)
-    if (process.env.SANITY_PREVIEW_SECRET && secret !== process.env.SANITY_PREVIEW_SECRET) {
+    // 시크릿 키 검증 (필수)
+    if (!process.env.SANITY_PREVIEW_SECRET) {
+      console.error('SANITY_PREVIEW_SECRET environment variable not set');
+      return res.status(500).json({ message: 'Server configuration error' });
+    }
+    
+    if (secret !== process.env.SANITY_PREVIEW_SECRET) {
       console.error('Invalid secret:', secret);
       return res.status(401).json({ message: 'Invalid secret' });
     }
