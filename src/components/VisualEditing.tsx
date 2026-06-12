@@ -11,6 +11,9 @@ interface EditableElement {
   element: HTMLElement;
   text: string;
   originalText: string;
+  documentId?: string;
+  fieldName?: string;
+  documentType?: string;
 }
 
 export const VisualEditing = () => {
@@ -35,10 +38,17 @@ export const VisualEditing = () => {
       if (target.childNodes.length === 1 && target.childNodes[0].nodeType === Node.TEXT_NODE) {
         const text = target.textContent || '';
         if (text.trim()) {
+          const documentId = target.getAttribute('data-id') || undefined;
+          const fieldName = target.getAttribute('data-field') || undefined;
+          const documentType = target.getAttribute('data-type') || undefined;
+          
           setSelectedElement({
             element: target,
             text: text,
             originalText: text,
+            documentId,
+            fieldName,
+            documentType,
           });
           setEditText(text);
           setIsEditing(true);
@@ -95,15 +105,26 @@ export const VisualEditing = () => {
         selectedElement.element.textContent = editText;
         
         // Sanity API로 데이터 저장
-        // 주의: 현재 구현은 단순히 DOM만 업데이트합니다.
-        // 실제 데이터베이스 저장은 복잡한 구현이 필요합니다.
-        // 데이터베이스 ID와 필드 정보가 필요하므로,
-        // 현재는 DOM 업데이트만 수행합니다.
-        
-        console.log('Text updated:', {
-          originalText: selectedElement.originalText,
-          newText: editText,
-        });
+        if (selectedElement.documentId && selectedElement.fieldName) {
+          try {
+            await sanityClient
+              .patch(selectedElement.documentId)
+              .set({ [selectedElement.fieldName]: editText })
+              .commit();
+            
+            console.log('Data saved to Sanity:', {
+              documentId: selectedElement.documentId,
+              fieldName: selectedElement.fieldName,
+              newText: editText,
+            });
+          } catch (sanityError) {
+            console.error('Sanity API error:', sanityError);
+            alert('Sanity 데이터베이스 저장 실패: ' + (sanityError as Error).message);
+            throw sanityError;
+          }
+        } else {
+          console.warn('Missing documentId or fieldName, skipping database save');
+        }
         
         // Sanity Studio에 변경 사항 전송
         window.postMessage({

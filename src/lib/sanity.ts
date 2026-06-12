@@ -18,6 +18,7 @@ export const sanityClient = createClient({
   dataset,
   apiVersion: '2024-01-01',
   useCdn: !isPreviewMode(), // Preview 모드에서는 CDN 사용 안 함
+  token: import.meta.env.VITE_SANITY_WRITE_TOKEN, // 쓰기 작업을 위한 토큰
   stega: {
     enabled: true,
     studioUrl: '/studio',
