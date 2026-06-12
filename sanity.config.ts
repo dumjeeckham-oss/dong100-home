@@ -2,7 +2,6 @@ import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { colorInput } from '@sanity/color-input'
-import { presentationTool } from 'sanity/presentation'
 import { schemaTypes } from './sanity/schemas'
 
 export default defineConfig({
@@ -17,14 +16,6 @@ export default defineConfig({
     structureTool(),
     visionTool(),
     colorInput(),
-    presentationTool({
-      previewUrl: {
-        origin: 'https://dong100.org',
-        previewMode: {
-          enable: '/api/draft',
-        },
-      },
-    }),
   ],
 
   schema: {
