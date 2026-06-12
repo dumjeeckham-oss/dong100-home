@@ -1,9 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS 헤더 설정 (와일드카드로 완화)
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS 헤더 설정 (Sanity Studio만 허용)
+  const referer = req.headers.referer || req.headers.referrer;
+  const origin = req.headers.origin;
+  
+  // Sanity Studio 도메인 확인
+  const isSanityStudio = referer?.includes('/studio') || origin?.includes('/studio');
+  
+  if (isSanityStudio) {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', origin || referer || '*');
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', 'https://dong100.org');
+  }
+  
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -15,21 +26,14 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
+  // Sanity Studio에서 온 요청인지 확인
+  if (!isSanityStudio) {
+    console.error('Request not from Sanity Studio');
+    return res.status(403).json({ message: 'Access denied: Only Sanity Studio can access this endpoint' });
+  }
+
   // GET 요청도 허용 (쿠키 설정 및 리다이렉트)
   if (req.method === 'GET') {
-    const secret = req.query.secret as string;
-    
-    // 시크릿 키 검증 (필수)
-    if (!process.env.SANITY_PREVIEW_SECRET) {
-      console.error('SANITY_PREVIEW_SECRET environment variable not set');
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-    
-    if (secret !== process.env.SANITY_PREVIEW_SECRET) {
-      console.error('Invalid secret in GET request');
-      return res.status(401).json({ message: 'Invalid secret' });
-    }
-    
     const previewMode = req.cookies.sanity_preview_mode;
     
     // 쿠키 설정 (HttpOnly 제거 - JavaScript에서 읽을 수 있도록)
@@ -55,19 +59,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         const params = new URLSearchParams(body);
         body = Object.fromEntries(params);
       }
-    }
-
-    const secret = body?.secret;
-
-    // 시크릿 키 검증 (필수)
-    if (!process.env.SANITY_PREVIEW_SECRET) {
-      console.error('SANITY_PREVIEW_SECRET environment variable not set');
-      return res.status(500).json({ message: 'Server configuration error' });
-    }
-    
-    if (secret !== process.env.SANITY_PREVIEW_SECRET) {
-      console.error('Invalid secret:', secret);
-      return res.status(401).json({ message: 'Invalid secret' });
     }
 
     // Preview 모드 쿠키 설정 (7일 동안 유효, HttpOnly 제거)
