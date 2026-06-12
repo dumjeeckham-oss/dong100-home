@@ -1,20 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  // CORS 헤더 설정 (Sanity Studio만 허용)
-  const referer = req.headers.referer || req.headers.referrer;
-  const origin = req.headers.origin;
-  
-  // Sanity Studio 도메인 확인
-  const isSanityStudio = referer?.includes('/studio') || origin?.includes('/studio');
-  
-  if (isSanityStudio) {
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', origin || referer || '*');
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', 'https://dong100.org');
-  }
-  
+  // CORS 헤더 설정
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -26,13 +15,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     return;
   }
 
-  // Sanity Studio에서 온 요청인지 확인
-  if (!isSanityStudio) {
-    console.error('Request not from Sanity Studio');
-    return res.status(403).json({ message: 'Access denied: Only Sanity Studio can access this endpoint' });
-  }
-
-  // GET 요청도 허용 (쿠키 설정 및 리다이렉트)
+  // GET 요청 허용 (쿠키 설정 및 리다이렉트)
   if (req.method === 'GET') {
     const previewMode = req.cookies.sanity_preview_mode;
     
