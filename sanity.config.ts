@@ -13,7 +13,21 @@ export default defineConfig({
   basePath: '/studio',
 
   plugins: [
-    structureTool(),
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title('Content')
+          .items([
+            S.listItem()
+              .title('Preview Mode')
+              .icon(() => '👁️')
+              .action(() => {
+                window.open('https://dong100.org/api/draft', '_blank');
+              }),
+            S.divider(),
+            ...S.documentTypeListItems(),
+          ]),
+    }),
     visionTool(),
     colorInput(),
   ],
