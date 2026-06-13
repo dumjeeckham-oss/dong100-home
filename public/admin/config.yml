@@ -1,6 +1,7 @@
 backend:
-  name: git-gateway
+  name: github
   branch: main
+  repo: dumjeeckham-oss/dong100-home
 
 media_folder: "public/images"
 public_folder: "/images"
