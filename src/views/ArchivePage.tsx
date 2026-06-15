@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Download, FileText } from "lucide-react";
-import { sanityClient, fileUrl, formatBytes, fetchArchives, type SanityArchive } from "@/lib/sanity";
+import { sanityClient, fileUrl, formatBytes, fetchArchivesDualSource, type SanityArchive } from "@/lib/sanity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -9,8 +9,8 @@ import Footer from "@/components/Footer";
 
 const ArchivePage = () => {
   const { data: items = [], isLoading, error } = useQuery({
-    queryKey: ["sanity-archives"],
-    queryFn: fetchArchives,
+    queryKey: ["dual-source-archives"],
+    queryFn: fetchArchivesDualSource,
     staleTime: 1000 * 60,
   });
 

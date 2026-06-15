@@ -3,6 +3,7 @@
 import { createClient } from '@sanity/client';
 import { createImageUrlBuilder } from '@sanity/image-url';
 import { loadLocalNotices, loadLocalArchives, loadLocalSiteSettings } from '@/lib/loadLocalData';
+import { fetchContentfulSiteSettings, type ContentfulSiteSettings } from '@/lib/contentful';
 
 export const projectId = 'xczp11sl';
 export const dataset = 'production';
@@ -178,19 +179,19 @@ export const fetchArchivesDualSource = async () => {
   }
 };
 
-// 사이트 설정 데이터 병합 (Sanity + Decap CMS)
+// 사이트 설정 데이터 병합 (Contentful + Sanity)
 export const fetchSiteSettingsDualSource = async () => {
   try {
+    // Contentful 데이터 가져오기
+    const contentfulSettings = await fetchContentfulSiteSettings();
+    
     // Sanity 데이터 가져오기
     const sanitySettings = await fetchSiteSettings();
     
-    // Decap CMS 데이터 가져오기
-    const localSettings = await loadLocalSiteSettings();
-    
-    // 데이터 병합 (Decap CMS 데이터를 우선)
+    // 데이터 병합 (Contentful 데이터를 우선)
     return {
       ...sanitySettings,
-      ...localSettings,
+      ...contentfulSettings,
     };
   } catch (error) {
     console.error('Error fetching dual source site settings:', error);

@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Calendar, ChevronRight, ArrowLeft, AlertCircle } from "lucide-react";
-import { fetchNotices } from "@/lib/sanity";
+import { fetchNoticesDualSource } from "@/lib/sanity";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const NoticePage = () => {
   const { data: notices = [], isLoading, error } = useQuery({
-    queryKey: ["sanity-notices"],
-    queryFn: fetchNotices,
+    queryKey: ["dual-source-notices"],
+    queryFn: fetchNoticesDualSource,
     staleTime: 1000 * 60,
   });
 
