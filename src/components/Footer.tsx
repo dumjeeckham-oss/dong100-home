@@ -33,8 +33,8 @@ const Footer = () => {
           <div className="space-y-3">
             <h3 className="font-bold text-lg mb-3">바로가기</h3>
             <ul className="space-y-2 text-background/80">
-              <li><a href="#about" className="hover:text-background transition-colors">센터소개</a></li>
-              <li><a href="#service" className="hover:text-background transition-colors">서비스 안내</a></li>
+              <li><a href="/#about" className="hover:text-background transition-colors">센터소개</a></li>
+              <li><a href="/#service" className="hover:text-background transition-colors">서비스 안내</a></li>
               <li>
                 <a
                   href="https://docs.google.com/forms/d/e/1FAIpQLSfN7sbIDGSZRxTYq6z-z6doJVNyBfITRntE2yeDaVpIGTstXg/viewform?pli=1"
@@ -45,7 +45,7 @@ const Footer = () => {
                   활동지원사 모집
                 </a>
               </li>
-              <li><a href="#directions" className="hover:text-background transition-colors">오시는 길</a></li>
+              <li><a href="/#directions" className="hover:text-background transition-colors">오시는 길</a></li>
             </ul>
           </div>
         </div>
