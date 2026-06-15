@@ -27,6 +27,18 @@ const FaqSection = () => {
     [items, selectedCategory],
   );
 
+  const groupedItems = useMemo(() => {
+    const groups: Record<string, FaqItem[]> = {};
+    filteredItems.forEach((item) => {
+      const category = item.category || '기타';
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      groups[category].push(item);
+    });
+    return groups;
+  }, [filteredItems]);
+
   return (
     <section id="faq" className="scroll-mt-24 py-16 bg-slate-50" aria-label="자주 묻는 질문" data-sb-field-path="faq">
       <div className="container">
@@ -64,18 +76,27 @@ const FaqSection = () => {
               선택한 카테고리에 해당하는 FAQ가 없습니다.
             </div>
           ) : (
-            <Accordion type="multiple" className="space-y-3">
-              {filteredItems.map((item) => (
-                <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
-                  <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
-                    <PortableText value={item.answer ?? []} components={portableComponents} />
-                  </AccordionContent>
-                </AccordionItem>
+            <div className="space-y-8">
+              {Object.entries(groupedItems).map(([category, categoryItems]) => (
+                <div key={category}>
+                  <h3 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
+                    {category}
+                  </h3>
+                  <Accordion type="multiple" className="space-y-3">
+                    {categoryItems.map((item) => (
+                      <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
+                        <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
+                          <PortableText value={item.answer ?? []} components={portableComponents} />
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
               ))}
-            </Accordion>
+            </div>
           )}
         </div>
       </div>
