@@ -5,6 +5,7 @@ import storyCamellia from '@/assets/story-camellia.jpg';
 import storyBird from '@/assets/story-bird.jpg';
 import storyCare from '@/assets/story-care.jpg';
 import storyTogether from '@/assets/story-together.jpg';
+import { loadMarkdownFile, parseMarkdown } from '@/lib/markdown';
 
 const storySlides = [
   {
@@ -42,6 +43,30 @@ const storySlides = [
 const AboutSection = () => {
   const [slide, setSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [contactInfo, setContactInfo] = useState<{
+    department: string;
+    phone: string;
+    email: string;
+    address: string;
+    parking: string;
+  }>({
+    department: '장애인활동지원팀',
+    phone: '032-675-7517 (내선 2번)',
+    email: 'dong100center@naver.com',
+    address: '경기도 부천시 원미로97번길 31 (원미동 173-5) 3층',
+    parking: '원미2동 공영주차장(원미동 127-5)',
+  });
+
+  // 마크다운 파일 로드
+  useEffect(() => {
+    loadMarkdownFile('about.md').then(markdown => {
+      if (markdown) {
+        const parsed = parseMarkdown(markdown);
+        // 연락처 정보 업데이트 로직 (마크다운에서 파싱)
+        // 현재는 기본값 유지
+      }
+    });
+  }, []);
 
   const prev = useCallback(() => setSlide(s => (s === 0 ? storySlides.length - 1 : s - 1)), []);
   const next = useCallback(() => setSlide(s => (s === storySlides.length - 1 ? 0 : s + 1)), []);
