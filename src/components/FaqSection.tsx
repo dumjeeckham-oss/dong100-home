@@ -20,6 +20,13 @@ const FaqSection = () => {
 
   const categories = ['All', '서비스 제공', '이용 안내', '기타'];
 
+  // 디버깅: 실제 데이터 카테고리 이름 확인
+  const actualCategories = useMemo(() => {
+    const cats = Array.from(new Set(items.map((item) => item.category || '기타')));
+    console.log('실제 데이터 카테고리:', cats);
+    return cats;
+  }, [items]);
+
   // 카테고리 매핑: 버튼 이름 → 실제 데이터 카테고리 이름
   const categoryMapping: Record<string, string[]> = {
     'All': ['All'],
