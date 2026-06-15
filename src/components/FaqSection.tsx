@@ -5,6 +5,8 @@ import { PortableText } from '@portabletext/react';
 import { fetchFaqItems, type FaqItem } from '@/lib/sanity';
 import { portableComponents } from '@/components/portableComponents';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 
 const FaqSection = () => {
   const { data: items = [], isLoading, isError } = useQuery({
@@ -14,18 +16,20 @@ const FaqSection = () => {
   });
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = useMemo(() => {
-    const unique = Array.from(new Set(items.map((item) => item.category || '기타')));
-    return ['All', ...unique];
-  }, [items]);
+  const categories = ['All', '서비스제공', '이용안내', '기타'];
 
   const filteredItems = useMemo(
     () =>
-      items.filter((item) =>
-        selectedCategory === 'All' ? true : item.category === selectedCategory,
-      ),
-    [items, selectedCategory],
+      items.filter((item) => {
+        const categoryMatch = selectedCategory === 'All' ? true : item.category === selectedCategory;
+        const searchMatch = searchQuery === '' || 
+          item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (item.answer && JSON.stringify(item.answer).toLowerCase().includes(searchQuery.toLowerCase()));
+        return categoryMatch && searchMatch;
+      }),
+    [items, selectedCategory, searchQuery],
   );
 
   const groupedItems = useMemo(() => {
@@ -48,9 +52,11 @@ const FaqSection = () => {
   };
 
   const getDisplayItems = (category: string, items: FaqItem[]) => {
-    if (expandedCategories[category]) {
+    // 카테고리가 선택되어 있거나 확장되어 있으면 모든 항목 표시
+    if (selectedCategory !== 'All' || expandedCategories[category]) {
       return items;
     }
+    // 전체 보기 상태에서는 5개만 표시
     return items.slice(0, 5);
   };
 
@@ -63,6 +69,19 @@ const FaqSection = () => {
           <p className="mx-auto mt-3 max-w-2xl text-base text-muted-foreground">
             궁금한 내용을 빠르게 찾을 수 있도록 질문을 정리했습니다.
           </p>
+        </div>
+
+        <div className="mb-6 max-w-md mx-auto">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="FAQ 검색..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
 
         <div className="mb-8 flex flex-wrap justify-center gap-2">
