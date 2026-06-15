@@ -13,6 +13,7 @@ const FaqSection = () => {
     staleTime: 1000 * 60 * 15,
   });
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(items.map((item) => item.category || '기타')));
@@ -38,6 +39,20 @@ const FaqSection = () => {
     });
     return groups;
   }, [filteredItems]);
+
+  const toggleCategoryExpansion = (category: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  const getDisplayItems = (category: string, items: FaqItem[]) => {
+    if (expandedCategories[category]) {
+      return items;
+    }
+    return items.slice(0, 5);
+  };
 
   return (
     <section id="faq" className="scroll-mt-24 py-16 bg-slate-50" aria-label="자주 묻는 질문" data-sb-field-path="faq">
@@ -77,25 +92,43 @@ const FaqSection = () => {
             </div>
           ) : (
             <div className="space-y-8">
-              {Object.entries(groupedItems).map(([category, categoryItems]) => (
-                <div key={category}>
-                  <h3 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
-                    {category}
-                  </h3>
-                  <Accordion type="multiple" className="space-y-3">
-                    {categoryItems.map((item) => (
-                      <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
-                        <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
-                          {item.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
-                          <PortableText value={item.answer ?? []} components={portableComponents} />
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </div>
-              ))}
+              {Object.entries(groupedItems).map(([category, categoryItems]) => {
+                const displayItems = getDisplayItems(category, categoryItems);
+                const showMoreButton = categoryItems.length > 5;
+                const isExpanded = expandedCategories[category];
+
+                return (
+                  <div key={category}>
+                    <h3 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
+                      {category}
+                    </h3>
+                    <Accordion type="multiple" className="space-y-3">
+                      {displayItems.map((item) => (
+                        <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
+                          <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
+                            {item.question}
+                          </AccordionTrigger>
+                          <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
+                            <PortableText value={item.answer ?? []} components={portableComponents} />
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                    {showMoreButton && (
+                      <div className="mt-4 text-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleCategoryExpansion(category)}
+                          className="rounded-full px-6"
+                        >
+                          {isExpanded ? '접기' : `더보기 (${categoryItems.length - 5}개)`}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
