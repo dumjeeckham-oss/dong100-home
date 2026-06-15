@@ -18,35 +18,29 @@ const FaqSection = () => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['All', '서비스제공', '이용안내', '기타'];
-
-  // 카테고리 매핑: 버튼 이름 → 실제 데이터 카테고리 이름
-  const categoryMapping: Record<string, string> = {
-    'All': 'All',
-    '서비스제공': '서비스 제공',
-    '이용안내': '이용 안내',
-    '기타': '기타',
-  };
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set(items.map((item) => item.category || '기타')));
+    return ['All', ...unique];
+  }, [items]);
 
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
-        const mappedCategory = categoryMapping[selectedCategory];
-        const categoryMatch = selectedCategory === 'All' ? true : item.category === mappedCategory;
+        const categoryMatch = selectedCategory === 'All' ? true : item.category === selectedCategory;
         
-        // 검색 로직 개선: 질문 및 답변에서 검색
+        // 검색 로직 개선: 질문 및 답변에서 검색 (한글 검색 지원)
         const searchMatch = searchQuery === '' || 
-          item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.question.includes(searchQuery) ||
           (item.answer && 
             (typeof item.answer === 'string' 
-              ? item.answer.toLowerCase().includes(searchQuery.toLowerCase())
-              : JSON.stringify(item.answer).toLowerCase().includes(searchQuery.toLowerCase())
+              ? item.answer.includes(searchQuery)
+              : JSON.stringify(item.answer).includes(searchQuery)
             )
           );
         
         return categoryMatch && searchMatch;
       }),
-    [items, selectedCategory, searchQuery, categoryMapping],
+    [items, selectedCategory, searchQuery],
   );
 
   const groupedItems = useMemo(() => {
