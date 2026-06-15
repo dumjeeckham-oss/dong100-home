@@ -10,7 +10,6 @@ import ServiceSection from '@/components/ServiceSection';
 import ApplicationStepsSection from '@/components/ApplicationStepsSection';
 import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
-import BoardSection from '@/components/BoardSection';
 import DashboardSection from '@/components/DashboardSection';
 import ActivityNewsSection from '@/components/ActivityNewsSection';
 import UserInfoSection from '@/components/UserInfoSection';
@@ -102,7 +101,6 @@ const Index = () => {
             </div>
           )}
           
-          <BoardSection />
           <FaqSection />
           <section className="py-12 md:py-16 bg-background" aria-label="RSS 게시판">
             <div className="container">
