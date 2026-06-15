@@ -20,16 +20,33 @@ const FaqSection = () => {
 
   const categories = ['All', '서비스제공', '이용안내', '기타'];
 
+  // 카테고리 매핑: 버튼 이름 → 실제 데이터 카테고리 이름
+  const categoryMapping: Record<string, string> = {
+    'All': 'All',
+    '서비스제공': '서비스 제공',
+    '이용안내': '이용 안내',
+    '기타': '기타',
+  };
+
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
-        const categoryMatch = selectedCategory === 'All' ? true : item.category === selectedCategory;
+        const mappedCategory = categoryMapping[selectedCategory];
+        const categoryMatch = selectedCategory === 'All' ? true : item.category === mappedCategory;
+        
+        // 검색 로직 개선: 질문 및 답변에서 검색
         const searchMatch = searchQuery === '' || 
           item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (item.answer && JSON.stringify(item.answer).toLowerCase().includes(searchQuery.toLowerCase()));
+          (item.answer && 
+            (typeof item.answer === 'string' 
+              ? item.answer.toLowerCase().includes(searchQuery.toLowerCase())
+              : JSON.stringify(item.answer).toLowerCase().includes(searchQuery.toLowerCase())
+            )
+          );
+        
         return categoryMatch && searchMatch;
       }),
-    [items, selectedCategory, searchQuery],
+    [items, selectedCategory, searchQuery, categoryMapping],
   );
 
   const groupedItems = useMemo(() => {
