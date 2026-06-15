@@ -18,15 +18,21 @@ const FaqSection = () => {
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = useMemo(() => {
-    const unique = Array.from(new Set(items.map((item) => item.category || '기타')));
-    return ['All', ...unique];
-  }, [items]);
+  const categories = ['All', '서비스 제공', '이용 안내', '기타'];
+
+  // 카테고리 매핑: 버튼 이름 → 실제 데이터 카테고리 이름
+  const categoryMapping: Record<string, string[]> = {
+    'All': ['All'],
+    '서비스 제공': ['서비스 제공', '서비스제공'],
+    '이용 안내': ['이용 안내', '이용안내'],
+    '기타': ['기타'],
+  };
 
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
-        const categoryMatch = selectedCategory === 'All' ? true : item.category === selectedCategory;
+        const mappedCategories = categoryMapping[selectedCategory] || [selectedCategory];
+        const categoryMatch = selectedCategory === 'All' ? true : mappedCategories.includes(item.category || '');
         
         // 검색 로직 개선: 질문 및 답변에서 검색 (한글 검색 지원)
         const searchMatch = searchQuery === '' || 
@@ -40,7 +46,7 @@ const FaqSection = () => {
         
         return categoryMatch && searchMatch;
       }),
-    [items, selectedCategory, searchQuery],
+    [items, selectedCategory, searchQuery, categoryMapping],
   );
 
   const groupedItems = useMemo(() => {
