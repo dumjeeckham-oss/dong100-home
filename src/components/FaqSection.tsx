@@ -14,34 +14,13 @@ const FaqSection = () => {
     queryFn: () => fetchFaqItems(),
     staleTime: 1000 * 60 * 15,
   });
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
-
-  const categories = ['All', '서비스 제공', '이용 안내', '기타'];
-
-  // 디버깅: 실제 데이터 카테고리 이름 확인
-  const actualCategories = useMemo(() => {
-    const cats = Array.from(new Set(items.map((item) => item.category || '기타')));
-    console.log('실제 데이터 카테고리:', cats);
-    return cats;
-  }, [items]);
-
-  // 카테고리 매핑: 버튼 이름 → 실제 데이터 카테고리 이름
-  const categoryMapping: Record<string, string[]> = {
-    'All': ['All'],
-    '서비스 제공': ['서비스 제공', '서비스제공'],
-    '이용 안내': ['이용 안내', '이용안내'],
-    '기타': ['기타'],
-  };
 
   const filteredItems = useMemo(
     () =>
       items.filter((item) => {
-        const mappedCategories = categoryMapping[selectedCategory] || [selectedCategory];
-        const categoryMatch = selectedCategory === 'All' ? true : mappedCategories.includes(item.category || '');
-        
-        // 검색 로직 개선: 질문 및 답변에서 검색 (한글 검색 지원)
+        // 검색 로직: 질문 및 답변에서 검색 (한글 검색 지원)
         const searchMatch = searchQuery === '' || 
           item.question.includes(searchQuery) ||
           (item.answer && 
@@ -51,9 +30,9 @@ const FaqSection = () => {
             )
           );
         
-        return categoryMatch && searchMatch;
+        return searchMatch;
       }),
-    [items, selectedCategory, searchQuery, categoryMapping],
+    [items, searchQuery],
   );
 
   const groupedItems = useMemo(() => {
@@ -76,11 +55,11 @@ const FaqSection = () => {
   };
 
   const getDisplayItems = (category: string, items: FaqItem[]) => {
-    // 카테고리가 선택되어 있거나 확장되어 있으면 모든 항목 표시
-    if (selectedCategory !== 'All' || expandedCategories[category]) {
+    // 확장되어 있으면 모든 항목 표시
+    if (expandedCategories[category]) {
       return items;
     }
-    // 전체 보기 상태에서는 5개만 표시
+    // 기본 상태에서는 5개만 표시
     return items.slice(0, 5);
   };
 
@@ -108,20 +87,6 @@ const FaqSection = () => {
           </div>
         </div>
 
-        <div className="mb-8 flex flex-wrap justify-center gap-2">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? 'secondary' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-              className="rounded-full px-4 py-2"
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-
         <div className="rounded-3xl bg-white p-6 shadow-sm">
           {isLoading ? (
             <div className="py-16 text-center text-muted-foreground">FAQ를 불러오는 중입니다...</div>
@@ -131,7 +96,7 @@ const FaqSection = () => {
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="py-16 text-center text-muted-foreground">
-              선택한 카테고리에 해당하는 FAQ가 없습니다.
+              검색 결과가 없습니다.
             </div>
           ) : (
             <div className="space-y-8">
