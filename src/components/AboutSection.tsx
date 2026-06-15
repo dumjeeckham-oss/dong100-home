@@ -62,8 +62,10 @@ const AboutSection = () => {
     loadMarkdownFile('about.md').then(markdown => {
       if (markdown) {
         const parsed = parseMarkdown(markdown);
-        // 연락처 정보 업데이트 로직 (마크다운에서 파싱)
-        // 현재는 기본값 유지
+        // 연락처 정보 업데이트 (마크다운에서 파싱)
+        if (parsed.contactInfo) {
+          setContactInfo(parsed.contactInfo);
+        }
       }
     });
   }, []);

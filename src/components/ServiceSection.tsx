@@ -32,8 +32,10 @@ const ServiceSection = () => {
     loadMarkdownFile('service.md').then(markdown => {
       if (markdown) {
         const parsed = parseMarkdown(markdown);
-        // 서비스 정보 업데이트 로직 (마크다운에서 파싱)
-        // 현재는 기본값 유지
+        // 서비스 정보 업데이트 (마크다운에서 파싱)
+        if (parsed.serviceInfo) {
+          setServiceInfo(parsed.serviceInfo);
+        }
       }
     });
   }, []);
