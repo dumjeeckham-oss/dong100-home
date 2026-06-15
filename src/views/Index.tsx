@@ -10,7 +10,7 @@ import ServiceSection from '@/components/ServiceSection';
 import ApplicationStepsSection from '@/components/ApplicationStepsSection';
 import CostSection from '@/components/CostSection';
 import BusinessSection from '@/components/BusinessSection';
-import DashboardSection from '@/components/DashboardSection';
+import BoardSection from '@/components/BoardSection';
 import ActivityNewsSection from '@/components/ActivityNewsSection';
 import UserInfoSection from '@/components/UserInfoSection';
 import FaqSection from '@/components/FaqSection';
@@ -62,7 +62,6 @@ const Index = () => {
         <main id="main-content" role="main">
           <HeroSlider siteSettings={siteSettings} />
           <QuickMenu />
-          <DashboardSection />
           <BannersContainer siteSettings={siteSettings} />
           
           <div id="service-apply">
@@ -101,6 +100,7 @@ const Index = () => {
             </div>
           )}
           
+          <BoardSection />
           <FaqSection />
           <section className="py-12 md:py-16 bg-background" aria-label="RSS 게시판">
             <div className="container">
