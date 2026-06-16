@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SpeakableText from './SpeakableText';
+import ReactMarkdown from 'react-markdown';
 import storyCamellia from '@/assets/story-camellia.jpg';
 import storyBird from '@/assets/story-bird.jpg';
 import storyCare from '@/assets/story-care.jpg';
 import storyTogether from '@/assets/story-together.jpg';
-import { loadMarkdownFile, parseMarkdown } from '@/lib/markdown';
+import { loadMarkdownFile } from '@/lib/markdown';
 
 const storySlides = [
   {
@@ -43,29 +44,13 @@ const storySlides = [
 const AboutSection = () => {
   const [slide, setSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [contactInfo, setContactInfo] = useState<{
-    department: string;
-    phone: string;
-    email: string;
-    address: string;
-    parking: string;
-  }>({
-    department: '장애인활동지원팀',
-    phone: '032-675-7517 (내선 2번)',
-    email: 'dong100center@naver.com',
-    address: '경기도 부천시 원미로97번길 31 (원미동 173-5) 3층',
-    parking: '원미2동 공영주차장(원미동 127-5)',
-  });
+  const [markdownContent, setMarkdownContent] = useState('');
 
   // 마크다운 파일 로드
   useEffect(() => {
-    loadMarkdownFile('about.md').then(markdown => {
-      if (markdown) {
-        const parsed = parseMarkdown(markdown);
-        // 연락처 정보 업데이트 (마크다운에서 파싱)
-        if (parsed.contactInfo) {
-          setContactInfo(parsed.contactInfo);
-        }
+    loadMarkdownFile('about.md').then(data => {
+      if (data.content) {
+        setMarkdownContent(data.content);
       }
     });
   }, []);
@@ -162,13 +147,9 @@ const AboutSection = () => {
         {/* Contact info */}
         <div className="mt-6 bg-card rounded-2xl p-5 shadow-sm">
           <SpeakableText as="h4" className="font-bold text-lg mb-3">📞 연락처 및 주소</SpeakableText>
-          <ul className="space-y-2 text-base">
-            <li><strong>담당부서:</strong> 장애인활동지원팀</li>
-            <li><strong>전화번호:</strong> 032-675-7517 (내선 2번)</li>
-            <li><strong>이메일:</strong> dong100center@naver.com</li>
-            <li><strong>주소:</strong> 경기도 부천시 원미로97번길 31 (원미동 173-5) 3층</li>
-            <li><strong>주차안내:</strong> 원미2동 공영주차장(원미동 127-5)</li>
-          </ul>
+          <div className="prose prose-sm max-w-none">
+            <ReactMarkdown>{markdownContent}</ReactMarkdown>
+          </div>
         </div>
       </div>
     </section>

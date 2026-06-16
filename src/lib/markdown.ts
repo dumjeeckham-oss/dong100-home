@@ -1,15 +1,21 @@
 // 마크다운 파일 로드 유틸리티
+import matter from 'gray-matter';
 
-export async function loadMarkdownFile(filename: string): Promise<string> {
+export async function loadMarkdownFile(filename: string): Promise<{
+  frontmatter: Record<string, any>;
+  content: string;
+}> {
   try {
     const response = await fetch(`/content/${filename}`);
     if (!response.ok) {
       throw new Error(`Failed to load ${filename}`);
     }
-    return await response.text();
+    const text = await response.text();
+    const { data, content } = matter(text);
+    return { frontmatter: data, content };
   } catch (error) {
     console.error(`Error loading ${filename}:`, error);
-    return '';
+    return { frontmatter: {}, content: '' };
   }
 }
 
