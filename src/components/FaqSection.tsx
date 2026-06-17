@@ -14,8 +14,8 @@ const FaqSection = () => {
     queryFn: () => fetchFaqItems(),
     staleTime: 1000 * 60 * 15,
   });
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [showAll, setShowAll] = useState(false);
 
   const filteredItems = useMemo(
     () =>
@@ -35,9 +35,16 @@ const FaqSection = () => {
     [items, searchQuery],
   );
 
+  const displayItems = useMemo(() => {
+    if (showAll || searchQuery !== '') {
+      return filteredItems;
+    }
+    return filteredItems.slice(0, 5);
+  }, [filteredItems, showAll, searchQuery]);
+
   const groupedItems = useMemo(() => {
     const groups: Record<string, FaqItem[]> = {};
-    filteredItems.forEach((item) => {
+    displayItems.forEach((item) => {
       const category = item.category || '기타';
       if (!groups[category]) {
         groups[category] = [];
@@ -45,23 +52,8 @@ const FaqSection = () => {
       groups[category].push(item);
     });
     return groups;
-  }, [filteredItems]);
+  }, [displayItems]);
 
-  const toggleCategoryExpansion = (category: string) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category],
-    }));
-  };
-
-  const getDisplayItems = (category: string, items: FaqItem[]) => {
-    // 확장되어 있으면 모든 항목 표시
-    if (expandedCategories[category]) {
-      return items;
-    }
-    // 기본 상태에서는 5개만 표시
-    return items.slice(0, 5);
-  };
 
   return (
     <section id="faq" className="scroll-mt-24 py-16 bg-slate-50" aria-label="자주 묻는 질문" data-sb-field-path="faq">
@@ -100,43 +92,37 @@ const FaqSection = () => {
             </div>
           ) : (
             <div className="space-y-8">
-              {Object.entries(groupedItems).map(([category, categoryItems]) => {
-                const displayItems = getDisplayItems(category, categoryItems);
-                const showMoreButton = categoryItems.length > 5;
-                const isExpanded = expandedCategories[category];
-
-                return (
-                  <div key={category}>
-                    <h3 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
-                      {category}
-                    </h3>
-                    <Accordion type="multiple" className="space-y-3">
-                      {displayItems.map((item) => (
-                        <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
-                          <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
-                            {item.question}
-                          </AccordionTrigger>
-                          <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
-                            <PortableText value={item.answer ?? []} components={portableComponents} />
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                    {showMoreButton && (
-                      <div className="mt-4 text-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleCategoryExpansion(category)}
-                          className="rounded-full px-6"
-                        >
-                          {isExpanded ? '접기' : `더보기 (${categoryItems.length - 5}개)`}
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              {Object.entries(groupedItems).map(([category, categoryItems]) => (
+                <div key={category}>
+                  <h3 className="text-xl font-bold text-foreground mb-4 pb-2 border-b border-border">
+                    {category}
+                  </h3>
+                  <Accordion type="multiple" className="space-y-3">
+                    {categoryItems.map((item) => (
+                      <AccordionItem key={item._id} value={`faq-${item._id}`} className="rounded-2xl border border-border bg-background">
+                        <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold text-foreground">
+                          {item.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5 pt-0 text-sm leading-relaxed text-muted-foreground">
+                          <PortableText value={item.answer ?? []} components={portableComponents} />
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ))}
+              {filteredItems.length > 5 && searchQuery === '' && (
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowAll(!showAll)}
+                    className="rounded-full px-6"
+                  >
+                    {showAll ? '접기' : `더보기 (${filteredItems.length - 5}개)`}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
