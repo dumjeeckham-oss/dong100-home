@@ -193,25 +193,27 @@ export const fetchArchivesDualSource = async () => {
   }
 };
 
-// 사이트 설정 데이터 병합 (마크다운 > Contentful > Sanity)
+// 사이트 설정 데이터 병합
+// Preview 모드 → Sanity 우선 (Visual Editing 라이브 편집)
+// 일반 모드 → 마크다운 > Contentful > Sanity (안정적 콘텐츠)
 export const fetchSiteSettingsDualSource = async () => {
   try {
-    // 마크다운 데이터 가져오기 (최우선)
+    // Preview 모드: Sanity 데이터를 직접 보여줌 (Visual Editing 대상)
+    if (isPreviewMode()) {
+      const sanitySettings = await fetchSiteSettings();
+      return sanitySettings || {};
+    }
+
+    // 일반 모드: 마크다운 파일이 최종 콘텐츠
     const localSettings = await loadLocalSiteSettings();
-    
-    // Sanity 데이터 가져오기
     const sanitySettings = await fetchSiteSettings();
-    
-    // Contentful 데이터 가져오기
     const contentfulSettings = await fetchContentfulSiteSettings();
-    
-    // 데이터 병합 (마크다운 우선 → Contentful → Sanity)
-    // ⚠️ _id는 Visual Editing에 필수이므로 Sanity에서 유지
+
     return {
       ...sanitySettings,
       ...contentfulSettings,
-      ...localSettings, // 마크다운이 최종 우선
-      _id: sanitySettings?._id || '', // Visual Editing을 위해 Sanity _id 보존
+      ...localSettings, // 마크다운 최우선
+      _id: sanitySettings?._id || '', // 참조용
     };
   } catch (error) {
     console.error('Error fetching dual source site settings:', error);
