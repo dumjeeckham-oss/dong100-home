@@ -124,6 +124,7 @@ export const VisualEditing = () => {
           }
         } else {
           console.warn('Missing documentId or fieldName, skipping database save');
+          alert('⚠️ Visual Editing 저장 실패\n\nSanity에 siteSettings 문서가 없습니다.\nhttps://dong100.org/studio 에서 "사이트 설정" 문서를 먼저 생성해주세요.\n\n(문서 생성 후 다시 /api/draft 로 접속)');
         }
         
         // Sanity Studio에 변경 사항 전송
