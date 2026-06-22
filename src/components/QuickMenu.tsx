@@ -1,7 +1,7 @@
 const quickItems = [
   {
     label: '서비스 신청방법',
-    href: '#service',
+    href: '#service-apply',
     desc: '활동지원 신청 절차 안내',
     emoji: '📋',
     color: 'bg-blue-100 text-blue-600',
