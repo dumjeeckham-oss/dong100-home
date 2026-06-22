@@ -6,9 +6,16 @@ import storyCamellia from '@/assets/story-camellia.jpg';
 import storyBird from '@/assets/story-bird.jpg';
 import storyCare from '@/assets/story-care.jpg';
 import storyTogether from '@/assets/story-together.jpg';
-import { loadMarkdownFile } from '@/lib/markdown';
+import { loadMarkdownFile, parseAboutMarkdown } from '@/lib/markdown';
 
-const storySlides = [
+interface StorySlide {
+  image: string;
+  title: string;
+  content: string;
+  accent: string;
+}
+
+const storySlidesFallback: StorySlide[] = [
   {
     image: storyCamellia,
     title: '🌺 겨울에 피는 동백꽃',
@@ -41,22 +48,48 @@ const storySlides = [
   },
 ];
 
+const defaultSlidesAssets = [
+  { image: storyCamellia, accent: 'from-red-500/80 to-rose-600/80' },
+  { image: storyBird, accent: 'from-amber-500/80 to-orange-600/80' },
+  { image: storyTogether, accent: 'from-emerald-500/80 to-green-600/80' },
+  { image: storyCare, accent: 'from-blue-500/80 to-indigo-600/80' },
+  { image: storyTogether, accent: 'from-purple-500/80 to-violet-600/80' },
+];
+
 const AboutSection = () => {
   const [slide, setSlide] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [markdownContent, setMarkdownContent] = useState('');
+  const [slides, setSlides] = useState<StorySlide[]>(storySlidesFallback);
 
   // 마크다운 파일 로드
   useEffect(() => {
     loadMarkdownFile('about.md').then(data => {
       if (data.content) {
-        setMarkdownContent(data.content);
+        const { slides: parsedSlides, contactInfoMarkdown } = parseAboutMarkdown(data.content);
+        
+        if (parsedSlides && parsedSlides.length > 0) {
+          const mergedSlides = parsedSlides.map((ps, index) => {
+            const defaults = defaultSlidesAssets[index] || defaultSlidesAssets[defaultSlidesAssets.length - 1];
+            return {
+              title: ps.title,
+              content: ps.content,
+              image: defaults.image,
+              accent: defaults.accent
+            };
+          });
+          setSlides(mergedSlides);
+        } else {
+          setSlides(storySlidesFallback);
+        }
+        
+        setMarkdownContent(contactInfoMarkdown || data.content);
       }
     });
   }, []);
 
-  const prev = useCallback(() => setSlide(s => (s === 0 ? storySlides.length - 1 : s - 1)), []);
-  const next = useCallback(() => setSlide(s => (s === storySlides.length - 1 ? 0 : s + 1)), []);
+  const prev = useCallback(() => setSlide(s => (s === 0 ? slides.length - 1 : s - 1)), [slides.length]);
+  const next = useCallback(() => setSlide(s => (s === slides.length - 1 ? 0 : s + 1)), [slides.length]);
 
   // Auto-advance
   useEffect(() => {
@@ -75,7 +108,7 @@ const AboutSection = () => {
     setTouchStart(null);
   };
 
-  const current = storySlides[slide];
+  const current = slides[slide] || slides[0];
 
   return (
     <section id="about" className="py-12 md:py-16 bg-muted" aria-label="센터 소개" data-sb-field-path="about">
@@ -90,7 +123,7 @@ const AboutSection = () => {
         >
           {/* Background image */}
           <div className="relative aspect-[3/2] md:aspect-[2/1]">
-            {storySlides.map((s, i) => (
+            {slides.map((s, i) => (
               <img
                 key={i}
                 src={s.image}
@@ -102,17 +135,21 @@ const AboutSection = () => {
               />
             ))}
             {/* Gradient overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-t ${current.accent} via-black/40 to-transparent`} />
+            {current && (
+              <div className={`absolute inset-0 bg-gradient-to-t ${current.accent} via-black/40 to-transparent`} />
+            )}
 
             {/* Text content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
-              <SpeakableText as="h3" className="text-xl md:text-3xl font-bold text-white mb-3 drop-shadow-lg">
-                {current.title}
-              </SpeakableText>
-              <SpeakableText className="text-sm md:text-lg leading-relaxed text-white/95 max-w-2xl whitespace-pre-line drop-shadow">
-                {current.content}
-              </SpeakableText>
-            </div>
+            {current && (
+              <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
+                <SpeakableText as="h3" className="text-xl md:text-3xl font-bold text-white mb-3 drop-shadow-lg">
+                  {current.title}
+                </SpeakableText>
+                <SpeakableText className="text-sm md:text-lg leading-relaxed text-white/95 max-w-2xl whitespace-pre-line drop-shadow">
+                  {current.content}
+                </SpeakableText>
+              </div>
+            )}
 
             {/* Nav arrows */}
             <button
@@ -132,7 +169,7 @@ const AboutSection = () => {
 
             {/* Dots */}
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
-              {storySlides.map((_, i) => (
+              {slides.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setSlide(i)}
@@ -157,3 +194,4 @@ const AboutSection = () => {
 };
 
 export default AboutSection;
+

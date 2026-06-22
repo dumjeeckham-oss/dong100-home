@@ -140,3 +140,66 @@ export function parseMarkdown(markdown: string): {
     serviceInfo,
   };
 }
+
+export interface ParsedAboutSlide {
+  title: string;
+  content: string;
+}
+
+export function parseAboutMarkdown(markdown: string): {
+  slides: ParsedAboutSlide[];
+  contactInfoMarkdown: string;
+} {
+  const parts = markdown.split('---');
+  const slides: ParsedAboutSlide[] = [];
+  let contactInfoMarkdown = '';
+
+  parts.forEach((part, index) => {
+    if (part.includes('## 연락처 및 주소')) {
+      const idx = part.indexOf('## 연락처 및 주소');
+      contactInfoMarkdown = part.substring(idx).trim();
+    } else if (part.includes('### 제목') && part.includes('### 내용')) {
+      const lines = part.split('\n');
+      let title = '';
+      const contentLines: string[] = [];
+      let isReadingContent = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.startsWith('### 제목')) {
+          const rest = lines[i].replace('### 제목', '').trim();
+          if (rest) {
+            title = rest;
+          } else {
+            for (let j = i + 1; j < lines.length; j++) {
+              if (lines[j].trim()) {
+                title = lines[j].trim();
+                i = j;
+                break;
+              }
+            }
+          }
+          isReadingContent = false;
+        } else if (line.startsWith('### 내용')) {
+          isReadingContent = true;
+          const rest = lines[i].replace('### 내용', '').trim();
+          if (rest) {
+            contentLines.push(rest);
+          }
+        } else if (line.startsWith('##') || line.startsWith('---')) {
+          isReadingContent = false;
+        } else if (isReadingContent) {
+          contentLines.push(lines[i]);
+        }
+      }
+      
+      slides.push({
+        title: title || `슬라이드 ${index + 1}`,
+        content: contentLines.join('\n').trim()
+      });
+    }
+  });
+
+  return { slides, contactInfoMarkdown };
+}
+
