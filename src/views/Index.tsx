@@ -30,13 +30,17 @@ const Index = () => {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
+    console.log('[dong100] 🟢 컴포넌트 마운트됨, showDetails 초기값:', false);
     const loadSettings = async () => {
       const settings = await fetchSiteSettingsDualSource();
       setSiteSettings(settings);
     };
     loadSettings();
 
-    const handleShowDetails = () => setShowDetails(true);
+    const handleShowDetails = () => {
+      console.log('[dong100] 📢 show-details 이벤트 수신 → 펼치기');
+      setShowDetails(true);
+    };
     window.addEventListener('show-details', handleShowDetails);
 
     // 해시 타겟으로 스크롤 (detailIds는 showDetails 활성화 후 지연 스크롤)
@@ -80,9 +84,12 @@ const Index = () => {
           <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
 
-          {/* 디버그: showDetails 상태 표시 (문제 해결 후 삭제) */}
-          <div style={{textAlign:'center',padding:'4px',background:'#fef3c7',fontSize:'12px'}}>
-            🔍 showDetails: {String(showDetails)}
+          {/* 🚨 디버그 패널 - 이게 안 보이면 구버전 캐싱된 것 */}
+          <div style={{
+            textAlign:'center', padding:'12px', background:'red', color:'white',
+            fontSize:'18px', fontWeight:'bold', position:'sticky', top:0, zIndex:9999
+          }}>
+            🔴 v20260622-3 showDetails={String(showDetails)}
           </div>
 
           {/* 접힘 상태: 펼쳐보기 버튼 */}

@@ -17,17 +17,20 @@ export const isPreviewMode = (): boolean => {
 
 // getClient(): preview 모드일 때 useCdn:false로 새 클라이언트 반환
 // 모듈 초기화 시점이 아닌 호출 시점에 preview 상태를 평가함
-const getClient = () => createClient({
-  projectId,
-  dataset,
-  apiVersion: '2024-01-01',
-  useCdn: !isPreviewMode(),
-  token: import.meta.env.VITE_SANITY_WRITE_TOKEN,
-  stega: {
-    enabled: isPreviewMode(),  // Preview 모드에서만 활성화 (일반 모드에서는 이미지 깨짐 방지)
-    studioUrl: '/studio',
-  },
-});
+const getClient = () => {
+  const preview = isPreviewMode();
+  return createClient({
+    projectId,
+    dataset,
+    apiVersion: '2024-01-01',
+    useCdn: !preview,
+    token: import.meta.env.VITE_SANITY_WRITE_TOKEN,
+    // stega 완전히 제거 (이미지/PotableText 깨짐 방지)
+    ...(preview ? {
+      stega: { enabled: true, studioUrl: '/studio' },
+    } : {}),
+  });
+};
 
 // sanityClient: Proxy로 래핑하여 매 호출 시 preview 상태에 맞는 클라이언트 사용
 export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
@@ -41,8 +44,10 @@ export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
   },
 }) as ReturnType<typeof createClient>;
 
-const builder = createImageUrlBuilder(sanityClient);
-export const urlFor = (source: any) => builder.image(source);
+// urlFor: Proxy 대신 실제 클라이언트로 빌더 생성 (이미지 URL 안정성)
+const getImageClient = () => createClient({ projectId, dataset, apiVersion: '2024-01-01', useCdn: true });
+const imageBuilder = createImageUrlBuilder(getImageClient());
+export const urlFor = (source: any) => imageBuilder.image(source);
 
 // ✅ 파일 URL 추출 - split 버그 수정
 export function getFileUrl(ref: string | null | undefined): string | null {
