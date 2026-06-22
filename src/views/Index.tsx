@@ -18,7 +18,7 @@ import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
 import FloatingCallButton from '@/components/FloatingCallButton';
-import EmergencyPopup from '@/components/EmergencyPopup';
+import EmergencyPopup from '@/components/emergencypopup';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 // VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
