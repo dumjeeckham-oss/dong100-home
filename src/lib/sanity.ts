@@ -15,6 +15,22 @@ export const isPreviewMode = (): boolean => {
   return cookies.some(cookie => cookie.trim().startsWith('sanity_preview_mode=true'));
 };
 
+// stale preview 쿠키 자동 정리
+// Visual Editing 종료 후 쿠키가 남아있으면 사이트가 망가질 수 있음
+// 현재 URL이 /api/draft 가 아닌데 쿠키만 있으면 삭제
+export const cleanupStalePreviewCookie = () => {
+  if (typeof document === 'undefined') return;
+  const isPreviewUrl = window.location.pathname.startsWith('/api/draft');
+  const hasCookie = document.cookie.includes('sanity_preview_mode=true');
+  if (hasCookie && !isPreviewUrl) {
+    // 쿠키 삭제 (만료일을 과거로 설정)
+    document.cookie = 'sanity_preview_mode=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+    console.log('[dong100] 🧹 stale preview 쿠키 정리 완료');
+    return true;
+  }
+  return false;
+};
+
 // getClient(): preview 모드일 때 useCdn:false로 새 클라이언트 반환
 // 모듈 초기화 시점이 아닌 호출 시점에 preview 상태를 평가함
 const getClient = () => {

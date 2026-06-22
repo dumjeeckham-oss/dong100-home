@@ -23,14 +23,15 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 // VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
 // import { VisualEditing } from '@sanity/visual-editing/react-router';
-import { fetchSiteSettingsDualSource, type SiteSettings } from '@/lib/sanity';
+import { fetchSiteSettingsDualSource, type SiteSettings, cleanupStalePreviewCookie } from '@/lib/sanity';
 
 const Index = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
-    console.log('[dong100] 🟢 컴포넌트 마운트됨, showDetails 초기값:', false);
+    // 🧹 stale preview 쿠키 자동 정리 (Visual Editing 종료 후 남은 쿠키 방지)
+    cleanupStalePreviewCookie();
     const loadSettings = async () => {
       const settings = await fetchSiteSettingsDualSource();
       setSiteSettings(settings);
