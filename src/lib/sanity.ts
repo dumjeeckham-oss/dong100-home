@@ -206,10 +206,12 @@ export const fetchSiteSettingsDualSource = async () => {
     const contentfulSettings = await fetchContentfulSiteSettings();
     
     // 데이터 병합 (마크다운 우선 → Contentful → Sanity)
+    // ⚠️ _id는 Visual Editing에 필수이므로 Sanity에서 유지
     return {
       ...sanitySettings,
       ...contentfulSettings,
       ...localSettings, // 마크다운이 최종 우선
+      _id: sanitySettings?._id || '', // Visual Editing을 위해 Sanity _id 보존
     };
   } catch (error) {
     console.error('Error fetching dual source site settings:', error);
