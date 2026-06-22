@@ -40,7 +40,7 @@ const Index = () => {
     window.addEventListener('show-details', handleShowDetails);
 
     // 해시 타겟으로 스크롤 (detailIds는 showDetails 활성화 후 지연 스크롤)
-    const detailIds = new Set(['about', 'service', 'cost', 'business']);
+    const detailIds = new Set(['about', 'service', 'cost', 'business', 'service-apply']);
     const scrollToHash = () => {
       const hash = window.location.hash?.slice(1);
       if (!hash) return;
@@ -79,10 +79,6 @@ const Index = () => {
           <HeroSlider siteSettings={siteSettings} />
           <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
-          
-          <div id="service-apply">
-            <ApplicationStepsSection siteSettings={siteSettings} />
-          </div>
 
           {!showDetails ? (
             <div className="py-8 bg-background flex justify-center border-b border-border">
@@ -99,6 +95,9 @@ const Index = () => {
             </div>
           ) : (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+              <div id="service-apply">
+                <ApplicationStepsSection siteSettings={siteSettings} />
+              </div>
               <ServiceSection />
               <CostSection />
               <BusinessSection />
@@ -109,7 +108,7 @@ const Index = () => {
                   size="lg" 
                   onClick={() => {
                     setShowDetails(false);
-                    document.getElementById('service-apply')?.scrollIntoView({ behavior: 'smooth' });
+                    window.scrollTo({ top: document.getElementById('quickmenu')?.offsetTop ?? 0, behavior: 'smooth' });
                   }}
                   className="rounded-full px-8 py-6 text-lg font-bold shadow-sm transition-all gap-2"
                 >

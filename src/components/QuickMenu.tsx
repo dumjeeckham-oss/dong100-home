@@ -63,7 +63,7 @@ const QuickMenu = ({ siteSettings }: { siteSettings?: { _id?: string; quickMenuT
   };
 
   return (
-    <section className="py-12 md:py-16 bg-background" aria-label="퀵 메뉴">
+    <section id="quickmenu" className="py-12 md:py-16 bg-background" aria-label="퀵 메뉴">
       <div className="container">
         <h2
           className="text-2xl md:text-3xl font-bold text-center mb-8"
