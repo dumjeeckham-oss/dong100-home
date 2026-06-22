@@ -44,7 +44,10 @@ export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
   },
 }) as ReturnType<typeof createClient>;
 
-const builder = createImageUrlBuilder(sanityClient);
+// urlFor: Proxy가 createImageUrlBuilder 내부 Object.keys() 등에서 실패하므로
+// 실제 클라이언트로 빌더 생성 (이미지 URL 생성에만 사용)
+const imgClient = createClient({ projectId, dataset, apiVersion: '2024-01-01', useCdn: true });
+const builder = createImageUrlBuilder(imgClient);
 export const urlFor = (source: any) => builder.image(source);
 
 // ✅ 파일 URL 추출 - split 버그 수정
