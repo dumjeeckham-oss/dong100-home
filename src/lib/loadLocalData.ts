@@ -1,5 +1,9 @@
-// 로컬 마크다운 파일 데이터 로딩 (public/content/ 경로에서 fetch)
+// 로컬 마크다운 파일 데이터 로딩
+// 1순위: 빌드타임 번들 (import.meta.glob) → 2순위: 런타임 fetch
 import matter from 'gray-matter';
+
+// 빌드타임에 public/content/**/*.md 파일들을 번들에 포함
+const markdownModules = import.meta.glob('/public/content/**/*.md', { query: '?raw', import: 'default' });
 
 export interface LocalNotice {
   title: string;
@@ -32,27 +36,40 @@ export interface LocalSiteSettings {
   coopBannerDescription?: string;
 }
 
-// 공용 fetch wrapper (캐시 방지)
-async function fetchMarkdown(path: string): Promise<{ data: Record<string, any>; body: string } | null> {
-  try {
-    const url = `${path}?t=${Date.now()}`;
-    const response = await fetch(url);
-    if (!response.ok) {
-      if (response.status !== 404) console.error(`Failed to fetch ${path}: ${response.status}`);
-      return null;
+// 공용 loader: 번들 우선, fetch 폴백
+async function loadMarkdownContent(relativePath: string): Promise<{ data: Record<string, any>; body: string } | null> {
+  // 1순위: 빌드타임 번들
+  const bundleKey = `/public/content/${relativePath}`;
+  if (markdownModules[bundleKey]) {
+    try {
+      const text = await markdownModules[bundleKey]();
+      const { data, content } = matter(text as string);
+      return { data, body: content };
+    } catch (e) {
+      console.error(`Bundle parse error for ${relativePath}:`, e);
     }
-    const text = await response.text();
-    const { data, content } = matter(text);
-    return { data, body: content };
-  } catch (error) {
-    console.error(`Error fetching ${path}:`, error);
-    return null;
   }
+
+  // 2순위: 런타임 fetch (수정 후 즉시 반영용)
+  try {
+    const url = `/content/${relativePath}?t=${Date.now()}`;
+    const response = await fetch(url);
+    if (response.ok) {
+      const text = await response.text();
+      const { data, content } = matter(text);
+      return { data, body: content };
+    }
+  } catch (e) {
+    // fetch 실패는 정적 호스팅에서 예상된 동작
+  }
+
+  console.error(`Cannot load ${relativePath}: not in bundle and fetch failed`);
+  return null;
 }
 
 // 사이트 설정 데이터 로드
 export const loadLocalSiteSettings = async (): Promise<LocalSiteSettings> => {
-  const result = await fetchMarkdown('/content/settings/site.md');
+  const result = await loadMarkdownContent('settings/site.md');
   if (!result) return {};
   return {
     title: result.data.title,
@@ -69,7 +86,7 @@ export const loadLocalSiteSettings = async (): Promise<LocalSiteSettings> => {
   };
 };
 
-// 공지사항 데이터 로드 (미리 알려진 파일 목록에서 fetch)
+// 공지사항 데이터 로드 (미리 알려진 파일 목록)
 // 새 공지사항 추가 시 아래 slugs 배열에 slug만 추가하면 됩니다.
 export const loadLocalNotices = async (): Promise<LocalNotice[]> => {
   // content/notices/ 디렉토리의 알려진 파일들
@@ -77,7 +94,7 @@ export const loadLocalNotices = async (): Promise<LocalNotice[]> => {
   const notices: LocalNotice[] = [];
 
   for (const slug of slugs) {
-    const result = await fetchMarkdown(`/content/notices/${slug}.md`);
+    const result = await loadMarkdownContent(`notices/${slug}.md`);
     if (result) {
       notices.push({
         title: result.data.title || '',
@@ -98,7 +115,7 @@ export const loadLocalArchives = async (): Promise<LocalArchive[]> => {
   const archives: LocalArchive[] = [];
 
   for (const slug of slugs) {
-    const result = await fetchMarkdown(`/content/archives/${slug}.md`);
+    const result = await loadMarkdownContent(`archives/${slug}.md`);
     if (result) {
       archives.push({
         title: result.data.title || '',

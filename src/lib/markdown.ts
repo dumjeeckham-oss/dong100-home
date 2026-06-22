@@ -1,22 +1,39 @@
 // 마크다운 파일 로드 유틸리티
 import matter from 'gray-matter';
 
+// 빌드타임에 public/content/**/*.md 파일들을 번들에 포함
+const markdownModules = import.meta.glob('/public/content/**/*.md', { query: '?raw', import: 'default' });
+
 export async function loadMarkdownFile(filename: string): Promise<{
   frontmatter: Record<string, any>;
   content: string;
 }> {
+  // 1순위: 빌드타임 번들에서 로드 (항상 사용 가능, 네트워크 불필요)
+  const key = `/public/content/${filename}`;
+  if (markdownModules[key]) {
+    try {
+      const text = await markdownModules[key]();
+      const { data, content } = matter(text as string);
+      return { frontmatter: data, content };
+    } catch (e) {
+      console.error(`Bundle parse error for ${filename}:`, e);
+    }
+  }
+
+  // 2순위: 런타임 fetch (수정된 파일 즉시 반영용)
   try {
     const response = await fetch(`/content/${filename}?t=${Date.now()}`);
-    if (!response.ok) {
-      throw new Error(`Failed to load ${filename}`);
+    if (response.ok) {
+      const text = await response.text();
+      const { data, content } = matter(text);
+      return { frontmatter: data, content };
     }
-    const text = await response.text();
-    const { data, content } = matter(text);
-    return { frontmatter: data, content };
-  } catch (error) {
-    console.error(`Error loading ${filename}:`, error);
-    return { frontmatter: {}, content: '' };
+  } catch (e) {
+    // fetch 실패는 예상된 동작 (프로덕션 정적 호스팅)
   }
+
+  console.error(`Cannot load ${filename}: not in bundle and fetch failed`);
+  return { frontmatter: {}, content: '' };
 }
 
 // 마크다운 파싱 (간단한 구현)
