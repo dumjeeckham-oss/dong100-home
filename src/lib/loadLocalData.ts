@@ -1,5 +1,5 @@
-// Decap CMS (Netlify CMS) 데이터 로딩 로직
-// 로컬 마크다운 파일에서 데이터를 읽어옵니다.
+// 로컬 마크다운 파일 데이터 로딩 (public/content/ 경로에서 fetch)
+import matter from 'gray-matter';
 
 export interface LocalNotice {
   title: string;
@@ -21,124 +21,95 @@ export interface LocalArchive {
 export interface LocalSiteSettings {
   title?: string;
   description?: string;
-  contact?: string;
+  bannerText?: string;
+  contactNumber?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  kakaoBannerTitle?: string;
+  kakaoBannerDescription?: string;
+  coopBannerTitle?: string;
+  coopBannerDescription?: string;
 }
 
-// 마크다운 파일의 frontmatter 파싱
-const parseFrontmatter = (content: string) => {
-  const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/;
-  const match = content.match(frontmatterRegex);
-  
-  if (!match) {
-    return { data: {}, body: content };
-  }
-
-  const frontmatter = match[1];
-  const body = match[2];
-
-  const data: Record<string, any> = {};
-  frontmatter.split('\n').forEach(line => {
-    const colonIndex = line.indexOf(':');
-    if (colonIndex > 0) {
-      const key = line.slice(0, colonIndex).trim();
-      const value = line.slice(colonIndex + 1).trim();
-      
-      // 불리언 값 처리
-      if (value === 'true') data[key] = true;
-      else if (value === 'false') data[key] = false;
-      // 숫자 값 처리
-      else if (!isNaN(Number(value))) data[key] = Number(value);
-      else {
-        // 따옴표 제거
-        data[key] = value.replace(/^["']|["']$/g, '');
-      }
+// 공용 fetch wrapper (캐시 방지)
+async function fetchMarkdown(path: string): Promise<{ data: Record<string, any>; body: string } | null> {
+  try {
+    const url = `${path}?t=${Date.now()}`;
+    const response = await fetch(url);
+    if (!response.ok) {
+      if (response.status !== 404) console.error(`Failed to fetch ${path}: ${response.status}`);
+      return null;
     }
-  });
+    const text = await response.text();
+    const { data, content } = matter(text);
+    return { data, body: content };
+  } catch (error) {
+    console.error(`Error fetching ${path}:`, error);
+    return null;
+  }
+}
 
-  return { data, body };
+// 사이트 설정 데이터 로드
+export const loadLocalSiteSettings = async (): Promise<LocalSiteSettings> => {
+  const result = await fetchMarkdown('/content/settings/site.md');
+  if (!result) return {};
+  return {
+    title: result.data.title,
+    description: result.data.description,
+    bannerText: result.data.bannerText,
+    contactNumber: result.data.contactNumber,
+    heroTitle: result.data.heroTitle,
+    heroSubtitle: result.data.heroSubtitle,
+    heroDescription: result.data.heroDescription,
+    kakaoBannerTitle: result.data.kakaoBannerTitle,
+    kakaoBannerDescription: result.data.kakaoBannerDescription,
+    coopBannerTitle: result.data.coopBannerTitle,
+    coopBannerDescription: result.data.coopBannerDescription,
+  };
 };
 
-// 공지사항 데이터 로드
+// 공지사항 데이터 로드 (미리 알려진 파일 목록에서 fetch)
+// 새 공지사항 추가 시 아래 slugs 배열에 slug만 추가하면 됩니다.
 export const loadLocalNotices = async (): Promise<LocalNotice[]> => {
-  try {
-    // Vite에서 정적 파일을 직접 import하는 방식
-    const noticeModules = import.meta.glob('/content/notices/*.md', { as: 'raw' });
-    
-    const notices: LocalNotice[] = [];
-    
-    for (const path in noticeModules) {
-      const content = await noticeModules[path]() as string;
-      const { data, body } = parseFrontmatter(content);
-      
-      const slug = path.split('/').pop()?.replace('.md', '') || '';
-      
+  // content/notices/ 디렉토리의 알려진 파일들
+  const slugs: string[] = []; // 예: ['2025-notice-1', '2025-notice-2']
+  const notices: LocalNotice[] = [];
+
+  for (const slug of slugs) {
+    const result = await fetchMarkdown(`/content/notices/${slug}.md`);
+    if (result) {
       notices.push({
-        title: data.title || '',
-        date: data.date || new Date().toISOString(),
-        important: data.important || false,
-        body: body || '',
+        title: result.data.title || '',
+        date: result.data.date || new Date().toISOString(),
+        important: result.data.important || false,
+        body: result.body || '',
         slug,
       });
     }
-    
-    // 날짜순 정렬
-    return notices.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (error) {
-    console.error('Error loading local notices:', error);
-    return [];
   }
+
+  return notices.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
 
 // 활동보고 데이터 로드
 export const loadLocalArchives = async (): Promise<LocalArchive[]> => {
-  try {
-    const archiveModules = import.meta.glob('/content/archives/*.md', { as: 'raw' });
-    
-    const archives: LocalArchive[] = [];
-    
-    for (const path in archiveModules) {
-      const content = await archiveModules[path]() as string;
-      const { data, body } = parseFrontmatter(content);
-      
-      const slug = path.split('/').pop()?.replace('.md', '') || '';
-      
+  const slugs: string[] = []; // 예: ['2025-archive-1', '2025-archive-2']
+  const archives: LocalArchive[] = [];
+
+  for (const slug of slugs) {
+    const result = await fetchMarkdown(`/content/archives/${slug}.md`);
+    if (result) {
       archives.push({
-        title: data.title || '',
-        date: data.date || new Date().toISOString(),
-        category: data.category || '기타',
-        image: data.image,
-        body: body || '',
+        title: result.data.title || '',
+        date: result.data.date || new Date().toISOString(),
+        category: result.data.category || '기타',
+        image: result.data.image,
+        body: result.body || '',
         slug,
       });
     }
-    
-    // 날짜순 정렬
-    return archives.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (error) {
-    console.error('Error loading local archives:', error);
-    return [];
   }
-};
 
-// 사이트 설정 데이터 로드
-export const loadLocalSiteSettings = async (): Promise<LocalSiteSettings> => {
-  try {
-    const settingsModule = import.meta.glob('/content/settings/*.md', { as: 'raw' });
-    
-    for (const path in settingsModule) {
-      const content = await settingsModule[path]() as string;
-      const { data } = parseFrontmatter(content);
-      
-      return {
-        title: data.title,
-        description: data.description,
-        contact: data.contact,
-      };
-    }
-    
-    return {};
-  } catch (error) {
-    console.error('Error loading local site settings:', error);
-    return {};
-  }
+  return archives.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };

@@ -179,19 +179,23 @@ export const fetchArchivesDualSource = async () => {
   }
 };
 
-// 사이트 설정 데이터 병합 (Contentful + Sanity)
+// 사이트 설정 데이터 병합 (마크다운 > Contentful > Sanity)
 export const fetchSiteSettingsDualSource = async () => {
   try {
-    // Contentful 데이터 가져오기
-    const contentfulSettings = await fetchContentfulSiteSettings();
+    // 마크다운 데이터 가져오기 (최우선)
+    const localSettings = await loadLocalSiteSettings();
     
     // Sanity 데이터 가져오기
     const sanitySettings = await fetchSiteSettings();
     
-    // 데이터 병합 (Contentful 데이터를 우선)
+    // Contentful 데이터 가져오기
+    const contentfulSettings = await fetchContentfulSiteSettings();
+    
+    // 데이터 병합 (마크다운 우선 → Contentful → Sanity)
     return {
       ...sanitySettings,
       ...contentfulSettings,
+      ...localSettings, // 마크다운이 최종 우선
     };
   } catch (error) {
     console.error('Error fetching dual source site settings:', error);
