@@ -123,6 +123,20 @@ export interface SiteSettings {
   kakaoBannerDescription?: string;
   coopBannerTitle?: string;
   coopBannerDescription?: string;
+  // section headings (Visual Editing 가능)
+  quickMenuTitle?: string;
+  serviceApplyTitle?: string;
+  serviceApplyButton?: string;
+  serviceInfoTitle?: string;
+  costInfoTitle?: string;
+  businessInfoTitle?: string;
+  aboutTitle?: string;
+  directionsTitle?: string;
+  footerText?: string;
+  // popup
+  popupEnabled?: boolean;
+  popupTitle?: string;
+  popupContent?: string;
 }
 
 export interface FaqItem {
@@ -237,7 +251,19 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       kakaoBannerTitle,
       kakaoBannerDescription,
       coopBannerTitle,
-      coopBannerDescription
+      coopBannerDescription,
+      quickMenuTitle,
+      serviceApplyTitle,
+      serviceApplyButton,
+      serviceInfoTitle,
+      costInfoTitle,
+      businessInfoTitle,
+      aboutTitle,
+      directionsTitle,
+      footerText,
+      popupEnabled,
+      popupTitle,
+      popupContent
     }
   `);
   return data ?? null;

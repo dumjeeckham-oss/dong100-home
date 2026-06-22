@@ -18,6 +18,7 @@ import DirectionsSection from '@/components/DirectionsSection';
 import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
 import FloatingCallButton from '@/components/FloatingCallButton';
+import EmergencyPopup from '@/components/EmergencyPopup';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 // VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
@@ -76,11 +77,11 @@ const Index = () => {
         <Header />
         <main id="main-content" role="main">
           <HeroSlider siteSettings={siteSettings} />
-          <QuickMenu />
+          <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
           
           <div id="service-apply">
-            <ApplicationStepsSection />
+            <ApplicationStepsSection siteSettings={siteSettings} />
           </div>
 
           {!showDetails ? (
@@ -89,8 +90,11 @@ const Index = () => {
                 size="lg" 
                 onClick={() => setShowDetails(true)}
                 className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
+                data-id={siteSettings?._id}
+                data-field="serviceApplyButton"
+                data-type="siteSettings"
               >
-                자세한 신청방법 및 알아보기 <ChevronDown />
+                {siteSettings?.serviceApplyButton || '상세 안내 펼쳐보기'} <ChevronDown />
               </Button>
             </div>
           ) : (
@@ -130,6 +134,7 @@ const Index = () => {
         <Footer />
         <FloatingCallButton />
         <MobileTabBar />
+        <EmergencyPopup siteSettings={siteSettings} />
       </div>
       {/* VisualEditing 컴포넌트는 런타임 오류로 인해 주석 처리됨 */}
       {/** <VisualEditing /> */}

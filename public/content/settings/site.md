@@ -10,4 +10,16 @@ kakaoBannerTitle: 동백 소통채널
 kakaoBannerDescription: 센터의 최신 소식을 받고 언제든 1:1 상담을 남겨주세요.
 coopBannerTitle: 부천의료복지사회적협동조합
 coopBannerDescription: 조합원이 되어 건강한 지역사회를 만드는 데 동참해 주세요.
+quickMenuTitle: 자주 찾는 서비스
+serviceApplyTitle: 서비스 신청방법
+serviceApplyButton: 상세 안내 펼쳐보기
+serviceInfoTitle: 서비스 안내 (이용안내)
+costInfoTitle: 비용 및 서비스 안내
+businessInfoTitle: 사업안내
+aboutTitle: 🌺 동백 이야기
+directionsTitle: 오시는 길
+footerText: © 부천의료복지사회적협동조합 동백 장애인활동지원센터
+popupEnabled: false
+popupTitle: 긴급 안내
+popupContent: 긴급한 공지사항을 여기에 입력하세요.
 ---

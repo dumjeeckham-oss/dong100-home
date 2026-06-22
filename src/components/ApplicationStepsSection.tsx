@@ -25,7 +25,7 @@ const parseSteps = (markdown: string): Step[] => {
   return steps;
 };
 
-const ApplicationStepsSection = () => {
+const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: string; serviceApplyTitle?: string } }) => {
   const [steps, setSteps] = useState<Step[]>([]);
   const [applyContent, setApplyContent] = useState('');
 
@@ -41,7 +41,14 @@ const ApplicationStepsSection = () => {
   return (
     <section id="service-apply" className="py-12 md:py-16 bg-background" aria-label="신청 절차">
       <div className="container max-w-5xl">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">서비스 신청방법</h2>
+        <h2
+          className="text-2xl md:text-3xl font-bold text-center mb-8"
+          data-id={siteSettings?._id}
+          data-field="serviceApplyTitle"
+          data-type="siteSettings"
+        >
+          {siteSettings?.serviceApplyTitle || '서비스 신청방법'}
+        </h2>
 
         {/* 5단계 카드 */}
         {steps.length > 0 && (

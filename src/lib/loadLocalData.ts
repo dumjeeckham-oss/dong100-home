@@ -39,6 +39,18 @@ export interface LocalSiteSettings {
   kakaoBannerDescription?: string;
   coopBannerTitle?: string;
   coopBannerDescription?: string;
+  quickMenuTitle?: string;
+  serviceApplyTitle?: string;
+  serviceApplyButton?: string;
+  serviceInfoTitle?: string;
+  costInfoTitle?: string;
+  businessInfoTitle?: string;
+  aboutTitle?: string;
+  directionsTitle?: string;
+  footerText?: string;
+  popupEnabled?: boolean;
+  popupTitle?: string;
+  popupContent?: string;
 }
 
 /** frontmatter가 있으면 gray-matter로 파싱, 없으면 원본 그대로 반환 */
@@ -94,6 +106,18 @@ export const loadLocalSiteSettings = async (): Promise<LocalSiteSettings> => {
     kakaoBannerDescription: result.data.kakaoBannerDescription,
     coopBannerTitle: result.data.coopBannerTitle,
     coopBannerDescription: result.data.coopBannerDescription,
+    quickMenuTitle: result.data.quickMenuTitle,
+    serviceApplyTitle: result.data.serviceApplyTitle,
+    serviceApplyButton: result.data.serviceApplyButton,
+    serviceInfoTitle: result.data.serviceInfoTitle,
+    costInfoTitle: result.data.costInfoTitle,
+    businessInfoTitle: result.data.businessInfoTitle,
+    aboutTitle: result.data.aboutTitle,
+    directionsTitle: result.data.directionsTitle,
+    footerText: result.data.footerText,
+    popupEnabled: result.data.popupEnabled,
+    popupTitle: result.data.popupTitle,
+    popupContent: result.data.popupContent,
   };
 };
 

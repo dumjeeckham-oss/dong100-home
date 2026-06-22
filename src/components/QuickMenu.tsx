@@ -44,7 +44,7 @@ const quickItems = [
   },
 ];
 
-const QuickMenu = () => {
+const QuickMenu = ({ siteSettings }: { siteSettings?: { _id?: string; quickMenuTitle?: string } }) => {
   const detailIds = new Set(['service', 'cost', 'business']);
 
   const handleClick = (e: React.MouseEvent, item: typeof quickItems[0]) => {
@@ -65,8 +65,13 @@ const QuickMenu = () => {
   return (
     <section className="py-12 md:py-16 bg-background" aria-label="퀵 메뉴">
       <div className="container">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
-          자주 찾는 서비스
+        <h2
+          className="text-2xl md:text-3xl font-bold text-center mb-8"
+          data-id={siteSettings?._id}
+          data-field="quickMenuTitle"
+          data-type="siteSettings"
+        >
+          {siteSettings?.quickMenuTitle || '자주 찾는 서비스'}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {quickItems.map(item => (
