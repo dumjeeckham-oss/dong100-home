@@ -84,14 +84,6 @@ const Index = () => {
           <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
 
-          {/* 🚨 디버그 패널 - 이게 안 보이면 구버전 캐싱된 것 */}
-          <div style={{
-            textAlign:'center', padding:'12px', background:'red', color:'white',
-            fontSize:'18px', fontWeight:'bold', position:'sticky', top:0, zIndex:9999
-          }}>
-            🔴 v20260622-3 showDetails={String(showDetails)}
-          </div>
-
           {/* 접힘 상태: 펼쳐보기 버튼 */}
           <div className={!showDetails ? 'py-8 bg-background flex justify-center border-b border-border' : 'hidden'}>
             <Button 
