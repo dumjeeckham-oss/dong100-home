@@ -85,51 +85,45 @@ const Index = () => {
             🔍 showDetails: {String(showDetails)}
           </div>
 
-          {/* 접힘 상태: 펼쳐보기 버튼만 표시 */}
-          {!showDetails && (
-            <div className="py-8 bg-background flex justify-center border-b border-border">
-              <Button 
-                size="lg" 
-                onClick={() => {
-                  setShowDetails(true);
-                }}
-                className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
-                data-id={siteSettings?._id}
-                data-field="serviceApplyButton"
-                data-type="siteSettings"
-              >
-                {siteSettings?.serviceApplyButton || '상세 안내 펼쳐보기'} <ChevronDown />
-              </Button>
-            </div>
-          )}
+          {/* 접힘 상태: 펼쳐보기 버튼 */}
+          <div className={!showDetails ? 'py-8 bg-background flex justify-center border-b border-border' : 'hidden'}>
+            <Button 
+              size="lg" 
+              onClick={() => setShowDetails(true)}
+              className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
+              data-id={siteSettings?._id}
+              data-field="serviceApplyButton"
+              data-type="siteSettings"
+            >
+              {siteSettings?.serviceApplyButton || '상세 안내 펼쳐보기'} <ChevronDown />
+            </Button>
+          </div>
 
-          {/* 펼침 상태: 모든 상세 섹션 표시 */}
-          {showDetails && (
-            <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-              <div id="service-apply">
-                <ApplicationStepsSection siteSettings={siteSettings} />
-              </div>
-              <ServiceSection />
-              <CostSection />
-              <BusinessSection />
-              <AboutSection />
-              <div className="py-8 bg-muted flex flex-col items-center justify-center gap-4 border-t border-border">
-                <div className="sticky bottom-6 z-40">
-                  <Button 
-                    variant="outline"
-                    size="lg" 
-                    onClick={() => {
-                      setShowDetails(false);
-                      window.scrollTo({ top: document.getElementById('quickmenu')?.offsetTop ?? 0, behavior: 'smooth' });
-                    }}
-                    className="rounded-full px-8 py-6 text-lg font-bold shadow-lg border-2 border-primary/30 bg-card hover:bg-primary hover:text-primary-foreground transition-all gap-2"
-                  >
-                    상세 안내 접기 <ChevronUp />
-                  </Button>
-                </div>
+          {/* 펼침 상태: 모든 상세 섹션 */}
+          <div className={showDetails ? 'animate-in fade-in slide-in-from-top-4 duration-500' : 'hidden'}>
+            <div id="service-apply">
+              <ApplicationStepsSection siteSettings={siteSettings} />
+            </div>
+            <ServiceSection />
+            <CostSection />
+            <BusinessSection />
+            <AboutSection />
+            <div className="py-8 bg-muted flex flex-col items-center justify-center gap-4 border-t border-border">
+              <div className="sticky bottom-6 z-40">
+                <Button 
+                  variant="outline"
+                  size="lg" 
+                  onClick={() => {
+                    setShowDetails(false);
+                    window.scrollTo({ top: document.getElementById('quickmenu')?.offsetTop ?? 0, behavior: 'smooth' });
+                  }}
+                  className="rounded-full px-8 py-6 text-lg font-bold shadow-lg border-2 border-primary/30 bg-card hover:bg-primary hover:text-primary-foreground transition-all gap-2"
+                >
+                  상세 안내 접기 <ChevronUp />
+                </Button>
               </div>
             </div>
-          )}
+          </div>
           
           <BoardSection />
           <FaqSection />
