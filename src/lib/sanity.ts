@@ -25,10 +25,8 @@ const getClient = () => {
     apiVersion: '2024-01-01',
     useCdn: !preview,
     token: import.meta.env.VITE_SANITY_WRITE_TOKEN,
-    // stega 완전히 제거 (이미지/PotableText 깨짐 방지)
-    ...(preview ? {
-      stega: { enabled: true, studioUrl: '/studio' },
-    } : {}),
+    // stega 완전 비활성화: 이미지 깨짐, PortableText 손상 방지
+    // Visual Editing 오버레이는 작동 안 하지만 모든 콘텐츠 정상 표시됨
   });
 };
 
