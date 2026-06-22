@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { loadMarkdownFile } from '@/lib/markdown';
+import { Button } from '@/components/ui/button';
 
 interface Step {
   step: string;
@@ -28,6 +29,7 @@ const parseSteps = (markdown: string): Step[] => {
 const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: string; serviceApplyTitle?: string } }) => {
   const [steps, setSteps] = useState<Step[]>([]);
   const [applyContent, setApplyContent] = useState('');
+  const [showApply, setShowApply] = useState(false);
 
   useEffect(() => {
     loadMarkdownFile('steps.md').then(data => {
@@ -39,7 +41,7 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
   }, []);
 
   return (
-    <section id="service-apply" className="py-12 md:py-16 bg-background" aria-label="신청 절차">
+    <section id="service-apply" className="scroll-mt-24 py-12 md:py-16 bg-background" aria-label="서비스 신청방법">
       <div className="container max-w-5xl">
         <h2
           className="text-2xl md:text-3xl font-bold text-center mb-8"
@@ -50,9 +52,9 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
           {siteSettings?.serviceApplyTitle || '서비스 신청방법'}
         </h2>
 
-        {/* 5단계 카드 */}
+        {/* 5단계 카드 — 항상 보임 */}
         {steps.length > 0 && (
-          <div className="flex flex-row items-stretch justify-start sm:justify-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth mb-12">
+          <div className="flex flex-row items-stretch justify-start sm:justify-center gap-2 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth mb-8">
             {steps.map((s, i) => (
               <div key={i} className="flex items-center gap-2 shrink-0">
                 <div className="flex flex-col items-center text-center p-5 bg-card border border-border shadow-sm rounded-2xl w-[150px] sm:w-auto sm:min-w-[140px] sm:flex-1 snap-center hover:border-primary/50 transition-colors">
@@ -70,9 +72,22 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
           </div>
         )}
 
+        {/* 펼쳐보기 버튼 */}
+        {applyContent && !showApply && (
+          <div className="flex justify-center py-4">
+            <Button
+              size="lg"
+              onClick={() => setShowApply(true)}
+              className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
+            >
+              상세 신청 안내 <ChevronDown />
+            </Button>
+          </div>
+        )}
+
         {/* apply.md 상세 내용 */}
-        {applyContent && (
-          <div className="bg-card rounded-2xl p-6 md:p-10 shadow-sm">
+        {applyContent && showApply && (
+          <div className="bg-card rounded-2xl p-6 md:p-10 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
             <div className="prose prose-sm max-w-none
               prose-h2:text-xl prose-h2:font-bold prose-h2:text-primary prose-h2:mt-8 prose-h2:mb-3
               prose-h3:text-lg prose-h3:font-semibold prose-h3:text-foreground prose-h3:mb-2
@@ -81,6 +96,18 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
               prose-strong:text-foreground
             ">
               <ReactMarkdown>{applyContent}</ReactMarkdown>
+            </div>
+
+            {/* 접기 버튼 */}
+            <div className="flex justify-center pt-8 border-t border-border mt-8">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => setShowApply(false)}
+                className="rounded-full px-8 py-6 text-lg font-bold shadow-lg border-2 border-primary/30 bg-card hover:bg-primary hover:text-primary-foreground transition-all gap-2"
+              >
+                상세 안내 접기 <ChevronUp />
+              </Button>
             </div>
           </div>
         )}

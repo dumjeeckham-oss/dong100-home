@@ -86,7 +86,10 @@ const Index = () => {
           <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
 
-          {/* 접힘 상태: 펼쳐보기 버튼 */}
+          {/* 서비스 신청방법 — 단계 카드는 항상 보임, 상세 내용만 접힘 */}
+          <ApplicationStepsSection siteSettings={siteSettings} />
+
+          {/* 나머지 상세 섹션 펼쳐보기 버튼 */}
           <div className={!showDetails ? 'py-8 bg-background flex justify-center border-b border-border' : 'hidden'}>
             <Button 
               size="lg" 
@@ -100,11 +103,8 @@ const Index = () => {
             </Button>
           </div>
 
-          {/* 펼침 상태: 모든 상세 섹션 */}
+          {/* 펼침 상태: 나머지 상세 섹션 */}
           <div className={showDetails ? 'animate-in fade-in slide-in-from-top-4 duration-500' : 'hidden'}>
-            <div id="service-apply">
-              <ApplicationStepsSection siteSettings={siteSettings} />
-            </div>
             <ServiceSection />
             <CostSection />
             <BusinessSection />
