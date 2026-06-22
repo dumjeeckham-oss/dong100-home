@@ -21,7 +21,5 @@ directionsTitle: 오시는 길
 footerText: © 부천의료복지사회적협동조합 동백 장애인활동지원센터
 popupEnabled: false
 popupTitle: 더 열심히 하겠습니다
-popupContent: ##2021년~2023년 
-##장애인활동지원기관 
-##기관평가 "우수"
+popupContent: ##2021년~2023년 ##장애인활동지원기관 ##기관평가 "우수"
 ---
