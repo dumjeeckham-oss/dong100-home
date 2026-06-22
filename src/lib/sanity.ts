@@ -24,7 +24,7 @@ const getClient = () => createClient({
   useCdn: !isPreviewMode(),
   token: import.meta.env.VITE_SANITY_WRITE_TOKEN,
   stega: {
-    enabled: true,
+    enabled: isPreviewMode(),  // Preview 모드에서만 활성화 (일반 모드에서는 이미지 깨짐 방지)
     studioUrl: '/studio',
   },
 });
