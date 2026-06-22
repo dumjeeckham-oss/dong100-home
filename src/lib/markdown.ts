@@ -6,7 +6,7 @@ export async function loadMarkdownFile(filename: string): Promise<{
   content: string;
 }> {
   try {
-    const response = await fetch(`/content/${filename}`);
+    const response = await fetch(`/content/${filename}?t=${Date.now()}`);
     if (!response.ok) {
       throw new Error(`Failed to load ${filename}`);
     }
