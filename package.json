@@ -56,7 +56,6 @@
     "contentful": "^11.12.5",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.6.0",
-    "gray-matter": "^4.0.3",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",

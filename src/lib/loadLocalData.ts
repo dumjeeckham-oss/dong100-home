@@ -1,6 +1,31 @@
 // 로컬 마크다운 파일 데이터 로딩
 // 1순위: 빌드타임 번들 (명시적 ?raw import) → 2순위: 런타임 fetch
-import matter from 'gray-matter';
+
+/** 간단한 frontmatter 파서 (gray-matter 제거, eval 이슈 방지) */
+function parseFrontmatter(raw: string): { data: Record<string, any>; content: string } {
+  const trimmed = raw.trimStart();
+  if (trimmed.startsWith('---')) {
+    const endIdx = trimmed.indexOf('---', 3);
+    if (endIdx !== -1) {
+      const fm = trimmed.substring(3, endIdx).trim();
+      const content = trimmed.substring(endIdx + 3).trim();
+      const data: Record<string, any> = {};
+      for (const line of fm.split('\n')) {
+        const ci = line.indexOf(':');
+        if (ci > 0) {
+          const key = line.substring(0, ci).trim();
+          let value: any = line.substring(ci + 1).trim();
+          if (value.startsWith('[') && value.endsWith(']')) {
+            value = value.slice(1, -1).split(',').map((s: string) => s.trim().replace(/^['"]|['"]$/g, ''));
+          }
+          data[key] = value;
+        }
+      }
+      return { data, content };
+    }
+  }
+  return { data: {}, content: raw };
+}
 
 // 명시적 ?raw import: 모든 .md 파일을 빌드타임에 문자열로 번들링
 import siteMd from '/public/content/settings/site.md?raw';
@@ -57,7 +82,7 @@ export interface LocalSiteSettings {
 function parseMarkdownSafe(raw: string): { data: Record<string, any>; body: string } {
   if (raw.trimStart().startsWith('---')) {
     try {
-      const result = matter(raw);
+      const result = parseFrontmatter(raw);
       return { data: result.data, body: result.content };
     } catch (e) {
       console.error('matter parse error:', e);

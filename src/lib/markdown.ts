@@ -1,5 +1,4 @@
 // 마크다운 파일 로드 유틸리티
-import matter from 'gray-matter';
 
 // 명시적 ?raw import: 모든 .md 파일을 빌드타임에 문자열로 번들링
 import aboutMd from '/public/content/about.md?raw';
@@ -21,14 +20,25 @@ const builtinMarkdown: Record<string, string> = {
   'guide.md': guideMd,
 };
 
-/** frontmatter가 있으면 gray-matter로 파싱, 없으면 원본 그대로 반환 */
+/** frontmatter(---로 감싼 YAML)가 있으면 파싱, 아니면 원본 반환 */
 function parseMarkdownSafe(raw: string): { data: Record<string, any>; content: string } {
-  if (raw.trimStart().startsWith('---')) {
-    try {
-      const result = matter(raw);
-      return { data: result.data, content: result.content };
-    } catch (e) {
-      console.error('matter parse error:', e);
+  const trimmed = raw.trimStart();
+  if (trimmed.startsWith('---')) {
+    const endIdx = trimmed.indexOf('---', 3);
+    if (endIdx !== -1) {
+      const frontmatter = trimmed.substring(3, endIdx).trim();
+      const content = trimmed.substring(endIdx + 3).trim();
+      // 간단한 key: value 파싱
+      const data: Record<string, any> = {};
+      for (const line of frontmatter.split('\n')) {
+        const colonIdx = line.indexOf(':');
+        if (colonIdx > 0) {
+          const key = line.substring(0, colonIdx).trim();
+          const value = line.substring(colonIdx + 1).trim();
+          data[key] = value;
+        }
+      }
+      return { data, content };
     }
   }
   return { data: {}, content: raw };
@@ -244,4 +254,3 @@ export function parseAboutMarkdown(markdown: string): {
 
   return { slides, contactInfoMarkdown };
 }
-
