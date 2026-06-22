@@ -15,17 +15,31 @@ export const isPreviewMode = (): boolean => {
   return cookies.some(cookie => cookie.trim().startsWith('sanity_preview_mode=true'));
 };
 
-export const sanityClient = createClient({
+// getClient(): preview 모드일 때 useCdn:false로 새 클라이언트 반환
+// 모듈 초기화 시점이 아닌 호출 시점에 preview 상태를 평가함
+const getClient = () => createClient({
   projectId,
   dataset,
   apiVersion: '2024-01-01',
-  useCdn: !isPreviewMode(), // Preview 모드에서는 CDN 사용 안 함
-  token: import.meta.env.VITE_SANITY_WRITE_TOKEN, // 쓰기 작업을 위한 토큰
+  useCdn: !isPreviewMode(),
+  token: import.meta.env.VITE_SANITY_WRITE_TOKEN,
   stega: {
     enabled: true,
     studioUrl: '/studio',
   },
 });
+
+// sanityClient: Proxy로 래핑하여 매 호출 시 preview 상태에 맞는 클라이언트 사용
+export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
+  get(_, prop: string) {
+    const client = getClient();
+    const value = (client as Record<string, unknown>)[prop];
+    if (typeof value === 'function') {
+      return (value as Function).bind(client);
+    }
+    return value;
+  },
+}) as ReturnType<typeof createClient>;
 
 const builder = createImageUrlBuilder(sanityClient);
 export const urlFor = (source: any) => builder.image(source);

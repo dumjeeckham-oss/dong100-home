@@ -138,6 +138,11 @@ export const VisualEditing = () => {
 
         setIsEditing(false);
         setSelectedElement(null);
+
+        // 저장 성공 → 1.5초 후 페이지 갱신 (Sanity CDN 무효화 대기 + 새 데이터 fetch)
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error('Save error:', error);
         alert('저장 중 오류가 발생했습니다.');
