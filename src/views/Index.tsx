@@ -102,18 +102,21 @@ const Index = () => {
               <CostSection />
               <BusinessSection />
               <AboutSection />
-              <div className="py-8 bg-muted flex justify-center border-t border-border">
-                <Button 
-                  variant="outline"
-                  size="lg" 
-                  onClick={() => {
-                    setShowDetails(false);
-                    window.scrollTo({ top: document.getElementById('quickmenu')?.offsetTop ?? 0, behavior: 'smooth' });
-                  }}
-                  className="rounded-full px-8 py-6 text-lg font-bold shadow-sm transition-all gap-2"
-                >
-                  상세 안내 접기 <ChevronUp />
-                </Button>
+              <div className="py-8 bg-muted flex flex-col items-center justify-center gap-4 border-t border-border">
+                {/* 떠있는 접기 버튼 - 스크롤 시 항상 보임 */}
+                <div className="sticky bottom-6 z-40">
+                  <Button 
+                    variant="outline"
+                    size="lg" 
+                    onClick={() => {
+                      setShowDetails(false);
+                      window.scrollTo({ top: document.getElementById('quickmenu')?.offsetTop ?? 0, behavior: 'smooth' });
+                    }}
+                    className="rounded-full px-8 py-6 text-lg font-bold shadow-lg border-2 border-primary/30 bg-card hover:bg-primary hover:text-primary-foreground transition-all gap-2"
+                  >
+                    상세 안내 접기 <ChevronUp />
+                  </Button>
+                </div>
               </div>
             </div>
           )}
