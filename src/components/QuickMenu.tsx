@@ -1,14 +1,16 @@
+import { Link } from 'react-router-dom';
+
 const quickItems = [
   {
     label: '서비스 신청방법',
-    href: '#service',
+    href: '/service/apply',
     desc: '활동지원 신청 절차 안내',
     emoji: '📋',
     color: 'bg-blue-100 text-blue-600',
   },
   {
     label: '비용 안내',
-    href: '#cost',
+    href: '/service/cost',
     desc: '이용료 및 급여 구간 안내',
     emoji: '💰',
     color: 'bg-green-100 text-green-600',
@@ -23,7 +25,7 @@ const quickItems = [
   },
   {
     label: '사업안내',
-    href: '#business',
+    href: '/service/guide',
     desc: '활동지원서비스 상세 내용',
     emoji: '🏢',
     color: 'bg-purple-100 text-purple-600',
@@ -53,20 +55,35 @@ const QuickMenu = () => {
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {quickItems.map(item => (
-            <a
-              key={item.label}
-              href={item.href}
-              target={item.external ? '_blank' : undefined}
-              rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group"
-              aria-label={`${item.label} - ${item.desc}`}
-            >
-              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.color} flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
-                {item.emoji}
-              </div>
-              <span className="font-semibold text-[15px] sm:text-base text-foreground">{item.label}</span>
-              <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{item.desc}</span>
-            </a>
+            item.external ? (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group"
+                aria-label={`${item.label} - ${item.desc}`}
+              >
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.color} flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
+                  {item.emoji}
+                </div>
+                <span className="font-semibold text-[15px] sm:text-base text-foreground">{item.label}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{item.desc}</span>
+              </a>
+            ) : (
+              <Link
+                key={item.label}
+                to={item.href}
+                className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group"
+                aria-label={`${item.label} - ${item.desc}`}
+              >
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.color} flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
+                  {item.emoji}
+                </div>
+                <span className="font-semibold text-[15px] sm:text-base text-foreground">{item.label}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground hidden sm:block">{item.desc}</span>
+              </Link>
+            )
           ))}
         </div>
       </div>
