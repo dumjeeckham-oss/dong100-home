@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>동백 홈페이지 관리 메뉴얼</title>
+<style>
+  @page { size: A4; margin: 15mm 12mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    font-size: 11pt; line-height: 1.7; color: #222;
+    max-width: 210mm; margin: 0 auto; padding: 10mm;
+  }
+  h1 { font-size: 22pt; text-align: center; margin-bottom: 4mm; color: #1a365d; }
+  h2 { font-size: 15pt; color: #2b6cb0; border-bottom: 2px solid #2b6cb0; padding-bottom: 2mm; margin-top: 12mm; margin-bottom: 5mm; page-break-after: avoid; }
+  h3 { font-size: 12pt; color: #2d3748; margin-top: 6mm; margin-bottom: 3mm; page-break-after: avoid; }
+  h4 { font-size: 11pt; color: #4a5568; margin-top: 4mm; margin-bottom: 2mm; }
+  p { margin-bottom: 3mm; }
+  ul, ol { margin-left: 6mm; margin-bottom: 3mm; }
+  li { margin-bottom: 1.5mm; }
+  table { width: 100%; border-collapse: collapse; margin: 4mm 0; font-size: 10pt; page-break-inside: avoid; }
+  th, td { border: 1px solid #cbd5e0; padding: 2.5mm 3mm; text-align: left; }
+  th { background: #ebf4ff; font-weight: 700; }
+  code { background: #edf2f7; padding: 0.5mm 1.5mm; border-radius: 2px; font-size: 9.5pt; }
+  pre { background: #f7fafc; border: 1px solid #e2e8f0; padding: 4mm; border-radius: 3px; font-size: 9pt; line-height: 1.5; overflow-x: auto; margin: 3mm 0; page-break-inside: avoid; }
+  blockquote { border-left: 3px solid #3182ce; padding: 2mm 4mm; margin: 3mm 0; background: #ebf8ff; font-size: 10pt; }
+  .header-info { text-align: center; color: #718096; font-size: 10pt; margin-bottom: 6mm; }
+  .page-break { page-break-before: always; }
+  .no-break { page-break-inside: avoid; }
+  .step-box { background: #f0fff4; border: 1px solid #c6f6d5; border-radius: 4px; padding: 4mm 6mm; margin: 4mm 0; }
+  .warn-box { background: #fffaf0; border: 1px solid #feebc8; border-radius: 4px; padding: 3mm 5mm; margin: 3mm 0; font-size: 10pt; }
+  .tip { background: #ebf8ff; border-left: 3px solid #3182ce; padding: 2mm 4mm; margin: 3mm 0; font-size: 10pt; }
+  .ref-card { border: 2px solid #2b6cb0; border-radius: 6px; padding: 5mm 7mm; margin: 5mm 0; page-break-inside: avoid; }
+  .ref-card h3 { margin-top: 0; color: #2b6cb0; }
+  strong { color: #1a202c; }
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📖 동백 홈페이지 관리 메뉴얼</h1>
+<div class="header-info">
+  <strong>대상:</strong> 동백 장애인활동지원센터 관리자 &nbsp;|&nbsp;
+  <strong>버전:</strong> 2026-06-22 &nbsp;|&nbsp;
+  <strong>홈페이지:</strong> https://dong100.org
+</div>
+
+<!-- ====== 개요 ====== -->
+<div class="no-break">
+<h2>개요</h2>
+<p>동백 홈페이지(dong100.org)는 <strong>두 가지 방법</strong>으로 내용을 수정할 수 있습니다.</p>
+
+<table>
+<tr><th>방법</th><th>어디서?</th><th>무엇을 수정?</th><th style="width:12%">난이도</th></tr>
+<tr><td><strong>Sanity Studio</strong></td><td>웹브라우저 (/studio)</td><td>게시판 글, FAQ, 배너 문구</td><td>★★☆</td></tr>
+<tr><td><strong>GitHub 마크다운</strong></td><td>GitHub 웹사이트</td><td>센터 소개, 서비스 설명, 비용 안내, 신청 절차</td><td>★☆☆</td></tr>
+</table>
+</div>
+
+<!-- ====== PART 1 ====== -->
+<div class="page-break"></div>
+<h2>Part 1 — Sanity Studio 편집 방법</h2>
+
+<h3>1-1. 접속 및 로그인</h3>
+<ol>
+  <li>웹브라우저에서 <code>https://dong100.org/studio</code> 접속</li>
+  <li>발급받은 <strong>아이디와 비밀번호</strong> 입력</li>
+  <li>로그인 성공 → 대시보드 표시</li>
+</ol>
+
+<div class="warn-box"><strong>⚠️ 주의:</strong> 아이디/비밀번호를 분실하면 관리자에게 문의하세요.</div>
+
+<h3>1-2. 사이트 설정 편집 (배너 문구, 섹션 제목 등)</h3>
+<ol>
+  <li>왼쪽 메뉴에서 <strong>"사이트 설정"</strong> 클릭</li>
+  <li>기존 문서 클릭 (없으면 우측 상단 <strong>"Create new"</strong>)</li>
+  <li>원하는 필드 수정</li>
+</ol>
+
+<div class="no-break">
+<table>
+<tr><th>필드 이름</th><th>홈페이지 위치</th></tr>
+<tr><td>메인 배너 제목</td><td>히어로 슬라이더 큰 글씨</td></tr>
+<tr><td>메인 배너 부제목</td><td>히어로 슬라이더 작은 글씨</td></tr>
+<tr><td>카카오 배너 제목/설명</td><td>"동백 소통채널" 배너</td></tr>
+<tr><td>조합원 배너 제목/설명</td><td>"부천의료복지…" 배너</td></tr>
+<tr><td>자주 찾는 서비스 제목</td><td>QuickMenu 위 제목</td></tr>
+<tr><td>서비스 신청방법 제목</td><td>신청절차 섹션 제목</td></tr>
+<tr><td>팝업 활성화</td><td>긴급 팝업 ON/OFF</td></tr>
+<tr><td>팝업 제목 / 팝업 내용</td><td>팝업창</td></tr>
+</table>
+</div>
+
+<ol start="4">
+  <li>수정 완료 후 <strong>우측 하단 "Publish" 버튼</strong> 클릭</li>
+  <li>초록색 "Published" 표시 확인 → 완료</li>
+</ol>
+
+<div class="warn-box"><strong>⚠️ 중요:</strong> Publish 버튼을 꼭 눌러야 홈페이지에 반영됩니다!</div>
+
+<h3>1-3. 공지사항 작성</h3>
+<ol>
+  <li>왼쪽 메뉴 <strong>"공지사항"</strong> → <strong>"Create new"</strong></li>
+  <li><strong>Title</strong> (필수): 공지 제목 입력</li>
+  <li><strong>Body</strong>: 본문 내용 (글·사진 첨부 가능)</li>
+  <li><strong>Publish</strong> 클릭</li>
+</ol>
+
+<h3>1-4. 자료실 업로드</h3>
+<ol>
+  <li>왼쪽 메뉴 <strong>"자료실"</strong> 또는 <strong>"이용자자료실"</strong></li>
+  <li><strong>"Create new"</strong> → <strong>"Upload"</strong> 버튼으로 파일 선택</li>
+  <li><strong>Title</strong> 입력 → <strong>Publish</strong></li>
+</ol>
+
+<div class="tip">💡 지원 파일: PDF, HWP, DOCX, XLSX, PNG, JPG 등</div>
+
+<h3>1-5. FAQ 작성</h3>
+<ol>
+  <li><strong>"FAQ"</strong> → <strong>"Create new"</strong></li>
+  <li>Question (질문), Answer (답변), Order (순서) 입력</li>
+  <li><strong>Publish</strong></li>
+</ol>
+
+<!-- ====== PART 2 ====== -->
+<div class="page-break"></div>
+<h2>Part 2 — GitHub 마크다운 편집 방법</h2>
+
+<h3>2-1. 마크다운 기본 문법</h3>
+
+<div class="no-break">
+<table>
+<tr><th>쓰고 싶은 것</th><th>입력 방법</th><th>실제 표시</th></tr>
+<tr><td>큰 제목</td><td><code># 제목</code></td><td><strong>제목</strong> (크게)</td></tr>
+<tr><td>중간 제목</td><td><code>## 중간 제목</code></td><td><strong>중간 제목</strong></td></tr>
+<tr><td>굵은 글씨</td><td><code>**강조**</code></td><td><strong>강조</strong></td></tr>
+<tr><td>목록</td><td><code>- 항목1</code></td><td>• 항목1</td></tr>
+<tr><td>번호 목록</td><td><code>1. 첫째</code></td><td>1. 첫째</td></tr>
+<tr><td>줄바꿈</td><td>빈 줄 하나 넣기</td><td>문단 구분</td></tr>
+</table>
+</div>
+
+<h3>2-2. 어떤 파일을 수정해야 하나요?</h3>
+
+<div class="no-break">
+<table>
+<tr><th>수정하고 싶은 내용</th><th>편집할 파일</th></tr>
+<tr><td>홈페이지 상단 배너 문구, 팝업</td><td><code>public/content/settings/site.md</code></td></tr>
+<tr><td>센터 소개 (동백 이야기)</td><td><code>public/content/about.md</code></td></tr>
+<tr><td>서비스 안내</td><td><code>public/content/service.md</code></td></tr>
+<tr><td>비용 안내</td><td><code>public/content/cost.md</code></td></tr>
+<tr><td>사업 안내</td><td><code>public/content/business.md</code></td></tr>
+<tr><td>신청 절차 (5단계 카드)</td><td><code>public/content/steps.md</code></td></tr>
+<tr><td>신청 방법 상세 안내</td><td><code>public/content/apply.md</code></td></tr>
+</table>
+</div>
+
+<h3>2-3. GitHub에서 편집하는 순서</h3>
+
+<div class="step-box">
+<ol>
+  <li><strong>접속:</strong> <code>github.com/dumjeeckham-oss/dong100-home</code></li>
+  <li><strong>이동:</strong> <code>public</code> → <code>content</code> 폴더 → 원하는 .md 파일 클릭</li>
+  <li><strong>편집:</strong> 우측 상단 <strong>✏️ 연필 아이콘</strong> 클릭 → 내용 수정</li>
+  <li><strong>저장:</strong> 아래로 스크롤 → 설명 간단히 적기 → <strong>"Commit changes"</strong> 클릭</li>
+  <li><strong>확인:</strong> 1~2분 후 <code>https://dong100.org</code> 에서 변경 확인</li>
+</ol>
+</div>
+
+<div class="tip">💡 즉시 확인하려면 <strong>Ctrl+F5</strong> (강력 새로고침)을 누르세요.</div>
+
+<h3>2-4. 마크다운 작성 예시</h3>
+
+<h4>일반 글 (about.md)</h4>
+<pre>## 센터 연혁
+
+- **2015년**: 부천의료복지사회적협동조합 설립
+- **2018년**: 장애인활동지원서비스 제공기관 지정
+- **2019년**: 동백 장애인활동지원센터 개소</pre>
+
+<h4>비용 표 (cost.md)</h4>
+<pre>| 구분 | 1등급 | 2등급 |
+|------|-------|-------|
+| 월 한도액 | 480시간 | 360시간 |
+| 본인부담금 | 72,000원 | 54,000원 |</pre>
+
+<div class="tip">💡 표 작성 팁: <code>|</code> 기호로 칸을 구분하고, <code>---</code>로 헤더 줄을 구분합니다.</div>
+
+<h4>신청 절차 (steps.md)</h4>
+<pre>1. **국민연금공단 방문 신청** — 관할 지사 방문하여 신청
+2. **방문 조사** — 공단 직원이 가정 방문 평가</pre>
+
+<div class="warn-box"><strong>⚠️ 형식 주의:</strong> <code>숫자. **제목** — 설명</code> 순서를 지켜주세요.</div>
+
+<h4>사이트 설정 (site.md)</h4>
+<pre>---
+heroTitle: 장애인의 자립생활을\n함께 만들어갑니다
+popupEnabled: false
+popupTitle: 긴급 안내
+---</pre>
+
+<div class="warn-box"><strong>⚠️ 주의:</strong> <code>---</code> 사이의 형식을 그대로 유지하세요. <code>\n</code>은 줄바꿈입니다.</div>
+
+<!-- ====== PART 3 ====== -->
+<div class="page-break"></div>
+<h2>Part 3 — 긴급 팝업 사용법</h2>
+
+<div class="no-break">
+<h3>3-1. 팝업 켜기</h3>
+<p><code>public/content/settings/site.md</code> 파일에서:</p>
+<pre>popupEnabled: true               ← false → true 로 변경
+popupTitle: "코로나19 관련 안내"
+popupContent: |
+  ### 방역 수칙
+  - 마스크 착용 필수
+  - 방문 전 사전 연락</pre>
+</div>
+
+<h3>3-2. 팝업 끄기</h3>
+<pre>popupEnabled: false</pre>
+
+<h3>3-3. 방문자 동작</h3>
+<ul>
+  <li>팝업 닫기(✕) 또는 <strong>"오늘 하루 보지 않기"</strong> 클릭</li>
+  <li>같은 브라우저에서 <strong>24시간 동안 재표시 안 함</strong></li>
+  <li>24시간 후 또는 다른 기기에서 다시 표시</li>
+</ul>
+
+<!-- ====== PART 4 ====== -->
+<h2>Part 4 — 비주얼 에디팅 (Preview 모드)</h2>
+
+<h3>4-1. 진입 방법</h3>
+<ol>
+  <li><code>https://dong100.org/api/draft</code> 접속</li>
+  <li>화면에 <strong>"Preview Mode"</strong> 배너 표시 → 성공</li>
+</ol>
+
+<h3>4-2. 수정 가능 여부</h3>
+<div class="no-break">
+<table>
+<tr><th>수정 가능 ✅</th><th>수정 불가 ❌</th></tr>
+<tr><td>히어로 슬라이더 문구</td><td>센터 소개 (마크다운)</td></tr>
+<tr><td>배너 문구</td><td>서비스 안내 (마크다운)</td></tr>
+<tr><td>섹션 제목</td><td>비용 안내 (마크다운)</td></tr>
+<tr><td>긴급 팝업 내용</td><td>사업 안내 (마크다운)</td></tr>
+<tr><td>버튼 문구</td><td>신청 절차 (마크다운)</td></tr>
+</table>
+</div>
+
+<div class="warn-box"><strong>⚠️ 주의:</strong> Preview 모드 종료는 <code>/api/draft-exit</code> 접속. Preview 수정 내용은 Sanity에만 저장되므로, 영구 반영하려면 마크다운도 같이 수정하세요.</div>
+
+<!-- ====== PART 5 ====== -->
+<div class="page-break"></div>
+<h2>Part 5 — 문제 해결</h2>
+
+<div class="no-break">
+<table>
+<tr><th>문제</th><th>해결 방법</th></tr>
+<tr><td>Sanity 로그인이 안 돼요</td><td>관리자에게 계정 문의</td></tr>
+<tr><td>수정했는데 반영 안 됨</td><td>Publish 버튼 확인, Ctrl+F5 새로고침</td></tr>
+<tr><td>마크다운 반영 안 됨</td><td>Commit 완료 확인, 2분 대기 후 새로고침</td></tr>
+<tr><td>표가 깨져 보여요</td><td><code>|</code> 기호와 <code>---</code> 줄 확인, 칸 수 일치 확인</td></tr>
+<tr><td>파일을 못 찾겠어요</td><td><code>public/content/</code> 경로 확인</td></tr>
+<tr><td>팝업이 안 꺼져요</td><td>site.md <code>popupEnabled: false</code> 확인</td></tr>
+<tr><td>실수로 파일 삭제</td><td>GitHub History → 이전 버전 복원 또는 관리자 문의</td></tr>
+<tr><td>Preview 편집 안 됨</td><td>Sanity에 siteSettings 문서 생성 필요 (관리자 문의)</td></tr>
+</table>
+</div>
+
+<!-- ====== PART 6 ====== -->
+<h2>Part 6 — 빠른 참고 카드</h2>
+
+<div class="ref-card">
+<h3>🟦 Sanity 편집 (게시판·FAQ·배너)</h3>
+<ol>
+  <li>dong100.org/studio 접속 → 로그인</li>
+  <li>왼쪽 메뉴 → 항목 선택</li>
+  <li>"Create new" 또는 기존 글 클릭</li>
+  <li>내용 작성 후 <strong>Publish</strong> ★★★</li>
+</ol>
+</div>
+
+<div class="ref-card">
+<h3>🟩 마크다운 편집 (콘텐츠 전반)</h3>
+<ol>
+  <li>github.com/dumjeeckham-oss/dong100-home</li>
+  <li>public/content/ → 파일 선택 → ✏️</li>
+  <li>내용 수정 → "Commit changes"</li>
+  <li>1~2분 후 홈페이지 확인</li>
+</ol>
+</div>
+
+<div class="ref-card">
+<h3>🟨 긴급 팝업</h3>
+<p><strong>켜기:</strong> site.md → <code>popupEnabled: true</code><br>
+<strong>끄기:</strong> site.md → <code>popupEnabled: false</code></p>
+</div>
+
+<hr style="margin-top: 10mm;">
+
+<div style="text-align: center; color: #718096; font-size: 10pt;">
+  <p><strong>관리자 연락처</strong></p>
+  <p>홈페이지: https://dong100.org &nbsp;|&nbsp; Sanity Studio: https://dong100.org/studio<br>
+  GitHub: https://github.com/dumjeeckham-oss/dong100-home</p>
+  <p style="margin-top: 4mm;"><em>본 메뉴얼은 A4 용지에 프린트하여 비치용으로 사용할 수 있습니다. | 최종 갱신: 2026년 6월 22일</em></p>
+</div>
+
+</body>
+</html>
