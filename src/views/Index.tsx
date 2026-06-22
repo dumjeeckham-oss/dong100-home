@@ -38,17 +38,32 @@ const Index = () => {
     const handleShowDetails = () => setShowDetails(true);
     window.addEventListener('show-details', handleShowDetails);
 
-    // Scroll to hash target if present
+    // 해시 타겟으로 스크롤 (detailIds는 showDetails 활성화 후 지연 스크롤)
     const detailIds = new Set(['about', 'service', 'cost', 'business']);
-    const hash = window.location.hash?.slice(1);
-    if (hash) {
+    const scrollToHash = () => {
+      const hash = window.location.hash?.slice(1);
+      if (!hash) return;
+
+      // 상세 섹션이면 showDetails 활성화
       if (detailIds.has(hash)) setShowDetails(true);
+
+      // React 렌더링 후 스크롤 (detail은 DOM 생성에 시간이 더 걸림)
       setTimeout(() => {
         const el = document.getElementById(hash);
         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, detailIds.has(hash) ? 350 : 100);
-    }
-    return () => window.removeEventListener('show-details', handleShowDetails);
+    };
+
+    // 페이지 로드 시 해시 처리
+    scrollToHash();
+
+    // QuickMenu 클릭 등으로 해시 변경될 때도 처리
+    window.addEventListener('hashchange', scrollToHash);
+
+    return () => {
+      window.removeEventListener('show-details', handleShowDetails);
+      window.removeEventListener('hashchange', scrollToHash);
+    };
   }, []);
 
   return (

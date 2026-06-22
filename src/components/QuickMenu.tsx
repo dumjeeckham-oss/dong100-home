@@ -45,6 +45,23 @@ const quickItems = [
 ];
 
 const QuickMenu = () => {
+  const detailIds = new Set(['service', 'cost', 'business']);
+
+  const handleClick = (e: React.MouseEvent, item: typeof quickItems[0]) => {
+    if (item.external) return; // 외부 링크는 브라우저 기본 동작
+
+    const hash = item.href.slice(1); // '#service' → 'service'
+
+    // 상세 섹션이면 showDetails 활성화 이벤트 발생
+    if (detailIds.has(hash)) {
+      window.dispatchEvent(new CustomEvent('show-details'));
+    }
+
+    // 해시 변경 → Index의 hashchange 리스너가 처리
+    window.location.hash = item.href;
+    e.preventDefault();
+  };
+
   return (
     <section className="py-12 md:py-16 bg-background" aria-label="퀵 메뉴">
       <div className="container">
@@ -58,7 +75,8 @@ const QuickMenu = () => {
               href={item.href}
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noopener noreferrer' : undefined}
-              className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group"
+              onClick={item.external ? undefined : (e) => handleClick(e, item)}
+              className="flex flex-col items-center gap-2 sm:gap-3 p-4 sm:p-6 min-h-[120px] rounded-xl border border-border bg-card hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all text-center group cursor-pointer"
               aria-label={`${item.label} - ${item.desc}`}
             >
               <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${item.color} flex items-center justify-center text-2xl sm:text-3xl group-hover:scale-110 transition-transform`}>
