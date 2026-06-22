@@ -1,9 +1,14 @@
 // 로컬 마크다운 파일 데이터 로딩
-// 1순위: 빌드타임 번들 (import.meta.glob) → 2순위: 런타임 fetch
+// 1순위: 빌드타임 번들 (명시적 ?raw import) → 2순위: 런타임 fetch
 import matter from 'gray-matter';
 
-// 빌드타임에 public/content/**/*.md 파일들을 번들에 포함
-const markdownModules = import.meta.glob('/public/content/**/*.md', { query: '?raw', import: 'default' });
+// 명시적 ?raw import: 모든 .md 파일을 빌드타임에 문자열로 번들링
+import siteMd from '/public/content/settings/site.md?raw';
+
+// 파일 경로 → 번들 문자열 매핑
+const builtinMarkdown: Record<string, string> = {
+  'settings/site.md': siteMd,
+};
 
 export interface LocalNotice {
   title: string;
@@ -36,18 +41,25 @@ export interface LocalSiteSettings {
   coopBannerDescription?: string;
 }
 
+/** frontmatter가 있으면 gray-matter로 파싱, 없으면 원본 그대로 반환 */
+function parseMarkdownSafe(raw: string): { data: Record<string, any>; body: string } {
+  if (raw.trimStart().startsWith('---')) {
+    try {
+      const result = matter(raw);
+      return { data: result.data, body: result.content };
+    } catch (e) {
+      console.error('matter parse error:', e);
+    }
+  }
+  return { data: {}, body: raw };
+}
+
 // 공용 loader: 번들 우선, fetch 폴백
 async function loadMarkdownContent(relativePath: string): Promise<{ data: Record<string, any>; body: string } | null> {
-  // 1순위: 빌드타임 번들
-  const bundleKey = `/public/content/${relativePath}`;
-  if (markdownModules[bundleKey]) {
-    try {
-      const text = await markdownModules[bundleKey]();
-      const { data, content } = matter(text as string);
-      return { data, body: content };
-    } catch (e) {
-      console.error(`Bundle parse error for ${relativePath}:`, e);
-    }
+  // 1순위: 빌드타임 번들 (명시적 import)
+  const bundled = builtinMarkdown[relativePath];
+  if (bundled !== undefined) {
+    return parseMarkdownSafe(bundled);
   }
 
   // 2순위: 런타임 fetch (수정 후 즉시 반영용)
@@ -56,8 +68,7 @@ async function loadMarkdownContent(relativePath: string): Promise<{ data: Record
     const response = await fetch(url);
     if (response.ok) {
       const text = await response.text();
-      const { data, content } = matter(text);
-      return { data, body: content };
+      return parseMarkdownSafe(text);
     }
   } catch (e) {
     // fetch 실패는 정적 호스팅에서 예상된 동작

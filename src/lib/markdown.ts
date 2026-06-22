@@ -1,35 +1,60 @@
 // 마크다운 파일 로드 유틸리티
 import matter from 'gray-matter';
 
-// 빌드타임에 public/content/**/*.md 파일들을 번들에 포함
-const markdownModules = import.meta.glob('/public/content/**/*.md', { query: '?raw', import: 'default' });
+// 명시적 ?raw import: 모든 .md 파일을 빌드타임에 문자열로 번들링
+import aboutMd from '/public/content/about.md?raw';
+import serviceMd from '/public/content/service.md?raw';
+import costMd from '/public/content/cost.md?raw';
+import businessMd from '/public/content/business.md?raw';
+import stepsMd from '/public/content/steps.md?raw';
+import applyMd from '/public/content/apply.md?raw';
+import guideMd from '/public/content/guide.md?raw';
+
+// 파일명 → 번들 문자열 매핑
+const builtinMarkdown: Record<string, string> = {
+  'about.md': aboutMd,
+  'service.md': serviceMd,
+  'cost.md': costMd,
+  'business.md': businessMd,
+  'steps.md': stepsMd,
+  'apply.md': applyMd,
+  'guide.md': guideMd,
+};
+
+/** frontmatter가 있으면 gray-matter로 파싱, 없으면 원본 그대로 반환 */
+function parseMarkdownSafe(raw: string): { data: Record<string, any>; content: string } {
+  if (raw.trimStart().startsWith('---')) {
+    try {
+      const result = matter(raw);
+      return { data: result.data, content: result.content };
+    } catch (e) {
+      console.error('matter parse error:', e);
+    }
+  }
+  return { data: {}, content: raw };
+}
 
 export async function loadMarkdownFile(filename: string): Promise<{
   frontmatter: Record<string, any>;
   content: string;
 }> {
-  // 1순위: 빌드타임 번들에서 로드 (항상 사용 가능, 네트워크 불필요)
-  const key = `/public/content/${filename}`;
-  if (markdownModules[key]) {
-    try {
-      const text = await markdownModules[key]();
-      const { data, content } = matter(text as string);
-      return { frontmatter: data, content };
-    } catch (e) {
-      console.error(`Bundle parse error for ${filename}:`, e);
-    }
+  // 1순위: 빌드타임 번들 (명시적 import)
+  const bundled = builtinMarkdown[filename];
+  if (bundled !== undefined) {
+    const { data, content } = parseMarkdownSafe(bundled);
+    return { frontmatter: data, content };
   }
 
-  // 2순위: 런타임 fetch (수정된 파일 즉시 반영용)
+  // 2순위: 런타임 fetch (신규 파일, 수정 즉시 반영)
   try {
     const response = await fetch(`/content/${filename}?t=${Date.now()}`);
     if (response.ok) {
       const text = await response.text();
-      const { data, content } = matter(text);
+      const { data, content } = parseMarkdownSafe(text);
       return { frontmatter: data, content };
     }
   } catch (e) {
-    // fetch 실패는 예상된 동작 (프로덕션 정적 호스팅)
+    // fetch 실패는 예상된 동작
   }
 
   console.error(`Cannot load ${filename}: not in bundle and fetch failed`);
