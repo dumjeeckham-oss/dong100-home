@@ -80,11 +80,19 @@ const Index = () => {
           <QuickMenu siteSettings={siteSettings} />
           <BannersContainer siteSettings={siteSettings} />
 
-          {!showDetails ? (
+          {/* 디버그: showDetails 상태 표시 (문제 해결 후 삭제) */}
+          <div style={{textAlign:'center',padding:'4px',background:'#fef3c7',fontSize:'12px'}}>
+            🔍 showDetails: {String(showDetails)}
+          </div>
+
+          {/* 접힘 상태: 펼쳐보기 버튼만 표시 */}
+          {!showDetails && (
             <div className="py-8 bg-background flex justify-center border-b border-border">
               <Button 
                 size="lg" 
-                onClick={() => setShowDetails(true)}
+                onClick={() => {
+                  setShowDetails(true);
+                }}
                 className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
                 data-id={siteSettings?._id}
                 data-field="serviceApplyButton"
@@ -93,7 +101,10 @@ const Index = () => {
                 {siteSettings?.serviceApplyButton || '상세 안내 펼쳐보기'} <ChevronDown />
               </Button>
             </div>
-          ) : (
+          )}
+
+          {/* 펼침 상태: 모든 상세 섹션 표시 */}
+          {showDetails && (
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
               <div id="service-apply">
                 <ApplicationStepsSection siteSettings={siteSettings} />
@@ -103,7 +114,6 @@ const Index = () => {
               <BusinessSection />
               <AboutSection />
               <div className="py-8 bg-muted flex flex-col items-center justify-center gap-4 border-t border-border">
-                {/* 떠있는 접기 버튼 - 스크롤 시 항상 보임 */}
                 <div className="sticky bottom-6 z-40">
                   <Button 
                     variant="outline"
