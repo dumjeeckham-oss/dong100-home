@@ -19,6 +19,7 @@ import Footer from '@/components/Footer';
 import MobileTabBar from '@/components/MobileTabBar';
 import FloatingCallButton from '@/components/FloatingCallButton';
 import EmergencyPopup from '@/components/emergencypopup';
+import GuideSection from '@/components/GuideSection';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 // VisualEditing 사용 시 런타임 오류가 발생하여 일시적으로 주석 처리합니다.
@@ -108,6 +109,7 @@ const Index = () => {
             <CostSection />
             <BusinessSection />
             <AboutSection />
+            <GuideSection />
             <div className="py-8 bg-muted flex flex-col items-center justify-center gap-4 border-t border-border">
               <div className="sticky bottom-6 z-40">
                 <Button 
