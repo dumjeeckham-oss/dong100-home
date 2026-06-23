@@ -72,7 +72,7 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
           </div>
         )}
 
-        {/* 펼쳐보기 버튼 */}
+   {/* 펼쳐보기 버튼 */}
         {applyContent && !showApply && (
           <div className="flex justify-center py-4">
             <Button
@@ -80,7 +80,7 @@ const ApplicationStepsSection = ({ siteSettings }: { siteSettings?: { _id?: stri
               onClick={() => setShowApply(true)}
               className="rounded-full px-8 py-6 text-lg font-bold shadow-md hover:-translate-y-1 transition-all gap-2"
             >
-              상세 신청 안내 <ChevronDown />
+              상세 안내 펼쳐보기 <ChevronDown />
             </Button>
           </div>
         )}
