@@ -36,8 +36,10 @@ export const siteSettings = defineType({
     // --- 배너 ---
     defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', type: 'string', group: 'banners' }),
     defineField({ name: 'kakaoBannerDescription', title: '카카오 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'kakaoBannerImage', title: '카카오 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
     defineField({ name: 'coopBannerTitle', title: '조합원 배너 제목', type: 'string', group: 'banners' }),
     defineField({ name: 'coopBannerDescription', title: '조합원 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'coopBannerImage', title: '조합원 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
 
     // --- 섹션 제목 (Visual Editing 가능) ---
     defineField({ name: 'quickMenuTitle', title: '자주 찾는 서비스 제목', type: 'string', group: 'sections' }),
