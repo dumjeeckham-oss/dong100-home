@@ -151,8 +151,10 @@ export interface SiteSettings {
   slide3Description?: string;
   kakaoBannerTitle?: string;
   kakaoBannerDescription?: string;
+  kakaoBannerImage?: string;
   coopBannerTitle?: string;
   coopBannerDescription?: string;
+  coopBannerImage?: string;
   // section headings (Visual Editing 가능)
   quickMenuTitle?: string;
   serviceApplyTitle?: string;
@@ -289,8 +291,10 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       slide3Description,
       kakaoBannerTitle,
       kakaoBannerDescription,
+      "kakaoBannerImage": kakaoBannerImage.asset->url,
       coopBannerTitle,
       coopBannerDescription,
+      "coopBannerImage": coopBannerImage.asset->url,
       quickMenuTitle,
       serviceApplyTitle,
       serviceApplyButton,

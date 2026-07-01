@@ -13,6 +13,14 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
           {/* 소통채널 배너 */}
           <div className="bg-[#FAE100] text-[#371D1E] rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
+              {siteSettings?.kakaoBannerImage && (
+                <img
+                  src={siteSettings.kakaoBannerImage}
+                  alt={siteSettings?.kakaoBannerTitle || '카카오톡 소통채널'}
+                  className="w-full h-40 object-cover rounded-xl mb-4"
+                  loading="lazy"
+                />
+              )}
               <div className="flex items-center gap-2 mb-3">
                 <MessageCircle size={24} className="fill-current" />
                 <h3 
@@ -56,6 +64,14 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
           {/* 조합원 가입 배너 */}
           <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
             <div>
+              {siteSettings?.coopBannerImage && (
+                <img
+                  src={siteSettings.coopBannerImage}
+                  alt={siteSettings?.coopBannerTitle || '부천의료복지사회적협동조합'}
+                  className="w-full h-40 object-cover rounded-xl mb-4"
+                  loading="lazy"
+                />
+              )}
               <div className="flex items-center gap-2 mb-3">
                 <UserPlus size={24} />
                 <h3 
