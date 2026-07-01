@@ -15,21 +15,21 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
   const phone = siteSettings?.contactNumber || '032-675-7517';
   const defaultSlides = [
     {
-      title: siteSettings?.title || siteSettings?.heroTitle || '장애인의 자립생활을\n함께 만들어갑니다',
-      subtitle: siteSettings?.bannerText || siteSettings?.heroSubtitle || '부천의료복지사회적협동조합 동백 장애인활동지원센터',
-      desc: siteSettings?.description || siteSettings?.heroDescription || '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
+      title: siteSettings?.slide1Title || siteSettings?.title || siteSettings?.heroTitle || '장애인의 자립생활을\n함께 만들어갑니다',
+      subtitle: siteSettings?.slide1Subtitle || siteSettings?.bannerText || siteSettings?.heroSubtitle || '부천의료복지사회적협동조합 동백 장애인활동지원센터',
+      desc: siteSettings?.slide1Description || siteSettings?.description || siteSettings?.heroDescription || '신체적·정신적 장애로 일상생활이 어려운 분들에게\n활동지원서비스를 제공하여 자립생활을 돕습니다.',
       image: hero1,
     },
     {
-      title: '활동지원서비스\n신청 안내',
-      subtitle: '만 6세 ~ 64세 등록 장애인 대상',
-      desc: '활동지원 급여(기본급여 15구간) + 특별지원급여(3종)를\n받으실 수 있습니다.',
+      title: siteSettings?.slide2Title || '활동지원서비스\n신청 안내',
+      subtitle: siteSettings?.slide2Subtitle || '만 6세 ~ 64세 등록 장애인 대상',
+      desc: siteSettings?.slide2Description || '활동지원 급여(기본급여 15구간) + 특별지원급여(3종)를\n받으실 수 있습니다.',
       image: hero2,
     },
     {
-      title: '활동지원사를\n모집합니다',
-      subtitle: '장애인과 함께하는 보람찬 일자리',
-      desc: '활동지원사 교육 이수 후 전문 직업인으로\n함께 일할 수 있습니다.',
+      title: siteSettings?.slide3Title || '활동지원사를\n모집합니다',
+      subtitle: siteSettings?.slide3Subtitle || '장애인과 함께하는 보람찬 일자리',
+      desc: siteSettings?.slide3Description || '활동지원사 교육 이수 후 전문 직업인으로\n함께 일할 수 있습니다.',
       image: hero3,
     },
   ];

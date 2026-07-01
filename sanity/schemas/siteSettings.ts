@@ -6,6 +6,7 @@ export const siteSettings = defineType({
   type: 'document',
   groups: [
     { name: 'hero', title: '메인 히어로' },
+    { name: 'slides', title: '메인 슬라이더' },
     { name: 'banners', title: '배너' },
     { name: 'sections', title: '섹션 제목' },
     { name: 'popup', title: '긴급 팝업' },
@@ -19,6 +20,18 @@ export const siteSettings = defineType({
     defineField({ name: 'heroSubtitle', title: '메인 배너 부제목', type: 'string', group: 'hero' }),
     defineField({ name: 'heroDescription', title: '메인 배너 설명', type: 'text', group: 'hero' }),
     defineField({ name: 'bannerText', title: '메인 배너 문구', type: 'string', group: 'hero' }),
+
+    // --- 메인 슬라이더 (상단 3개 슬라이드) ---
+    // 슬라이드 1: 위 '메인 히어로'의 제목/부제목/설명을 사용합니다.
+    defineField({ name: 'slide1Title', title: '슬라이드 1 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide1Subtitle', title: '슬라이드 1 - 부제목', type: 'string', group: 'slides' }),
+    defineField({ name: 'slide1Description', title: '슬라이드 1 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide2Title', title: '슬라이드 2 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide2Subtitle', title: '슬라이드 2 - 부제목', type: 'string', group: 'slides' }),
+    defineField({ name: 'slide2Description', title: '슬라이드 2 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide3Title', title: '슬라이드 3 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide3Subtitle', title: '슬라이드 3 - 부제목', type: 'string', group: 'slides' }),
+    defineField({ name: 'slide3Description', title: '슬라이드 3 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
 
     // --- 배너 ---
     defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', type: 'string', group: 'banners' }),
