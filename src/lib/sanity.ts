@@ -139,6 +139,16 @@ export interface SiteSettings {
   heroTitle?: string;
   heroSubtitle?: string;
   heroDescription?: string;
+  // 메인 슬라이더 (상단 3개 슬라이드)
+  slide1Title?: string;
+  slide1Subtitle?: string;
+  slide1Description?: string;
+  slide2Title?: string;
+  slide2Subtitle?: string;
+  slide2Description?: string;
+  slide3Title?: string;
+  slide3Subtitle?: string;
+  slide3Description?: string;
   kakaoBannerTitle?: string;
   kakaoBannerDescription?: string;
   coopBannerTitle?: string;
@@ -268,6 +278,15 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       heroTitle,
       heroSubtitle,
       heroDescription,
+      slide1Title,
+      slide1Subtitle,
+      slide1Description,
+      slide2Title,
+      slide2Subtitle,
+      slide2Description,
+      slide3Title,
+      slide3Subtitle,
+      slide3Description,
       kakaoBannerTitle,
       kakaoBannerDescription,
       coopBannerTitle,
