@@ -231,7 +231,7 @@ export const fetchArchivesDualSource = async () => {
     }));
     
     // 데이터 병합 (Decap CMS 데이터를 우선)
-    return [...convertedLocalArchives, ...sanityArchives];
+    return [...convertedLocalArchives, ...sanityArchives] as ArchiveItem[];
   } catch (error) {
     console.error('Error fetching dual source archives:', error);
     // Fallback to Sanity only
