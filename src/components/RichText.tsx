@@ -29,8 +29,10 @@ const RichText = ({ children, fallback, inline, className }: RichTextProps) => {
       }
     : {};
 
+  const Wrapper = inline ? 'span' : 'div';
+
   return (
-    <div className={className}>
+    <Wrapper className={className}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeRaw]}
@@ -38,7 +40,7 @@ const RichText = ({ children, fallback, inline, className }: RichTextProps) => {
       >
         {text}
       </ReactMarkdown>
-    </div>
+    </Wrapper>
   );
 };
 
