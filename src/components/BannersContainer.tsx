@@ -1,5 +1,6 @@
 import { MessageCircle, UserPlus, ArrowRight } from 'lucide-react';
 import type { SiteSettings } from '@/lib/sanity';
+import RichText from '@/components/RichText';
 
 interface BannersContainerProps {
   siteSettings: SiteSettings | null;
