@@ -75,7 +75,7 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
             data-type="siteSettings"
           >
             {siteSettings.popupContent ? (
-              <ReactMarkdown>{siteSettings.popupContent}</ReactMarkdown>
+              <RichText>{siteSettings.popupContent}</RichText>
             ) : (
               !siteSettings.popupImage && <p className="text-muted-foreground">긴급 공지사항이 없습니다.</p>
             )}
