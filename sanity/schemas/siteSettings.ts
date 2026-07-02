@@ -1,5 +1,9 @@
 import { defineField, defineType } from 'sanity'
 
+// 마크다운 + HTML 사용 안내 (색/굵기/글씨체 등 서식 적용 가능)
+const MD_HELP =
+  '마크다운/HTML 사용 가능 — 예) **굵게**, *기울임*, <span style="color:#e11d48">빨간 글씨</span>, <span style="font-size:1.4em;font-weight:800">크고 굵게</span>'
+
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: '사이트 설정',
