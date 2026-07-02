@@ -167,8 +167,10 @@ export interface SiteSettings {
   footerText?: string;
   // popup
   popupEnabled?: boolean;
+  popupEmoji?: string;
   popupTitle?: string;
   popupContent?: string;
+  popupImage?: string;
 }
 
 export interface FaqItem {
