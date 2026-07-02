@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import RichText from '@/components/RichText';
 
 interface Props {
   siteSettings?: {
