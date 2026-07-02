@@ -30,7 +30,7 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
                   data-field="kakaoBannerTitle"
                   data-type="siteSettings"
                 >
-                  {siteSettings?.kakaoBannerTitle || '카카오톡 소통채널'}
+                  <RichText inline fallback="카카오톡 소통채널">{siteSettings?.kakaoBannerTitle}</RichText>
                 </h3>
               </div>
               <p 
@@ -39,7 +39,7 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
                 data-field="kakaoBannerDescription"
                 data-type="siteSettings"
               >
-                {siteSettings?.kakaoBannerDescription || '센터의 최신 소식을 받고 언제든 1:1 상담을 남겨주세요.'}
+                <RichText inline fallback="센터의 최신 소식을 받고 언제든 1:1 상담을 남겨주세요.">{siteSettings?.kakaoBannerDescription}</RichText>
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
