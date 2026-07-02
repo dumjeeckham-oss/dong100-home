@@ -54,7 +54,7 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
               data-field="popupTitle"
               data-type="siteSettings"
             >
-              {siteSettings.popupTitle || '긴급 안내'}
+              <RichText inline fallback="긴급 안내">{siteSettings.popupTitle}</RichText>
             </h3>
           </div>
           <button onClick={handleClose} className="w-8 h-8 rounded-full bg-card hover:bg-accent flex items-center justify-center transition-colors" aria-label="닫기">
