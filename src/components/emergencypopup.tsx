@@ -5,8 +5,10 @@ import ReactMarkdown from 'react-markdown';
 interface Props {
   siteSettings?: {
     popupEnabled?: boolean;
+    popupEmoji?: string;
     popupTitle?: string;
     popupContent?: string;
+    popupImage?: string;
     _id?: string;
   };
 }
