@@ -1,5 +1,9 @@
 import { defineField, defineType } from 'sanity'
 
+// 마크다운 + HTML 사용 안내 (색/굵기/글씨체 등 서식 적용 가능)
+const MD_HELP =
+  '마크다운/HTML 사용 가능 — 예) **굵게**, *기울임*, <span style="color:#e11d48">빨간 글씨</span>, <span style="font-size:1.4em;font-weight:800">크고 굵게</span>'
+
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: '사이트 설정',
@@ -23,22 +27,22 @@ export const siteSettings = defineType({
 
     // --- 메인 슬라이더 (상단 3개 슬라이드) ---
     // 슬라이드 1: 위 '메인 히어로'의 제목/부제목/설명을 사용합니다.
-    defineField({ name: 'slide1Title', title: '슬라이드 1 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
-    defineField({ name: 'slide1Subtitle', title: '슬라이드 1 - 부제목', type: 'string', group: 'slides' }),
-    defineField({ name: 'slide1Description', title: '슬라이드 1 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
-    defineField({ name: 'slide2Title', title: '슬라이드 2 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
-    defineField({ name: 'slide2Subtitle', title: '슬라이드 2 - 부제목', type: 'string', group: 'slides' }),
-    defineField({ name: 'slide2Description', title: '슬라이드 2 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
-    defineField({ name: 'slide3Title', title: '슬라이드 3 - 제목 (줄바꿈은 Enter)', type: 'text', rows: 2, group: 'slides' }),
-    defineField({ name: 'slide3Subtitle', title: '슬라이드 3 - 부제목', type: 'string', group: 'slides' }),
-    defineField({ name: 'slide3Description', title: '슬라이드 3 - 설명 (줄바꿈은 Enter)', type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide1Title', title: '슬라이드 1 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide1Subtitle', title: '슬라이드 1 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide1Description', title: '슬라이드 1 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide2Title', title: '슬라이드 2 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide2Subtitle', title: '슬라이드 2 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide2Description', title: '슬라이드 2 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide3Title', title: '슬라이드 3 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide3Subtitle', title: '슬라이드 3 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
+    defineField({ name: 'slide3Description', title: '슬라이드 3 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
 
     // --- 배너 ---
-    defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', type: 'string', group: 'banners' }),
-    defineField({ name: 'kakaoBannerDescription', title: '카카오 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
+    defineField({ name: 'kakaoBannerDescription', title: '카카오 배너 설명', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
     defineField({ name: 'kakaoBannerImage', title: '카카오 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
-    defineField({ name: 'coopBannerTitle', title: '조합원 배너 제목', type: 'string', group: 'banners' }),
-    defineField({ name: 'coopBannerDescription', title: '조합원 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'coopBannerTitle', title: '조합원 배너 제목', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
+    defineField({ name: 'coopBannerDescription', title: '조합원 배너 설명', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
     defineField({ name: 'coopBannerImage', title: '조합원 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
 
     // --- 섹션 제목 (Visual Editing 가능) ---
@@ -55,8 +59,8 @@ export const siteSettings = defineType({
     // --- 긴급 팝업 ---
     defineField({ name: 'popupEnabled', title: '팝업 활성화', type: 'boolean', group: 'popup', initialValue: false }),
     defineField({ name: 'popupEmoji', title: '팝업 이모티콘 (예: 🚨)', type: 'string', group: 'popup' }),
-    defineField({ name: 'popupTitle', title: '팝업 제목', type: 'string', group: 'popup' }),
-    defineField({ name: 'popupContent', title: '팝업 내용 (마크다운)', type: 'text', group: 'popup' }),
+    defineField({ name: 'popupTitle', title: '팝업 제목', description: MD_HELP, type: 'text', rows: 2, group: 'popup' }),
+    defineField({ name: 'popupContent', title: '팝업 내용 (마크다운/HTML)', description: MD_HELP, type: 'text', rows: 5, group: 'popup' }),
     defineField({ name: 'popupImage', title: '팝업 이미지', type: 'image', options: { hotspot: true }, group: 'popup' }),
   ],
 })

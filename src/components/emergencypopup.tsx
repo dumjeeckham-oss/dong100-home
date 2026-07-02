@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
+import RichText from '@/components/RichText';
 
 interface Props {
   siteSettings?: {
@@ -54,7 +54,7 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
               data-field="popupTitle"
               data-type="siteSettings"
             >
-              {siteSettings.popupTitle || '긴급 안내'}
+              <RichText inline fallback="긴급 안내">{siteSettings.popupTitle}</RichText>
             </h3>
           </div>
           <button onClick={handleClose} className="w-8 h-8 rounded-full bg-card hover:bg-accent flex items-center justify-center transition-colors" aria-label="닫기">
@@ -75,7 +75,7 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
             data-type="siteSettings"
           >
             {siteSettings.popupContent ? (
-              <ReactMarkdown>{siteSettings.popupContent}</ReactMarkdown>
+              <RichText>{siteSettings.popupContent}</RichText>
             ) : (
               !siteSettings.popupImage && <p className="text-muted-foreground">긴급 공지사항이 없습니다.</p>
             )}

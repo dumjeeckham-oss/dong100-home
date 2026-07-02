@@ -4,6 +4,7 @@ import hero1 from '@/assets/hero-1.jpg';
 import hero2 from '@/assets/hero-2.jpg';
 import hero3 from '@/assets/hero-3.jpg';
 import type { SiteSettings } from '@/lib/sanity';
+import RichText from '@/components/RichText';
 
 interface HeroSliderProps {
   siteSettings: SiteSettings | null;
@@ -83,7 +84,7 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
                 data-field="heroSubtitle"
                 data-type="siteSettings"
               >
-                {slide.subtitle}
+                <RichText inline>{slide.subtitle}</RichText>
               </p>
               <h1 
                 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight whitespace-pre-line mb-6 text-white"
@@ -91,7 +92,7 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
                 data-field="heroTitle"
                 data-type="siteSettings"
               >
-                {slide.title}
+                <RichText inline>{slide.title}</RichText>
               </h1>
               <p 
                 className="text-white/90 text-base md:text-lg max-w-xl whitespace-pre-line leading-relaxed"
@@ -99,7 +100,7 @@ const HeroSlider = ({ siteSettings }: HeroSliderProps) => {
                 data-field="heroDescription"
                 data-type="siteSettings"
               >
-                {slide.desc}
+                <RichText inline>{slide.desc}</RichText>
               </p>
             </div>
           ))}
