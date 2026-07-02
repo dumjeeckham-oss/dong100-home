@@ -307,8 +307,10 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       directionsTitle,
       footerText,
       popupEnabled,
+      popupEmoji,
       popupTitle,
-      popupContent
+      popupContent,
+      "popupImage": popupImage.asset->url
     }
   `);
   return data ?? null;
