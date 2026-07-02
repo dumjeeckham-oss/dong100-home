@@ -81,7 +81,7 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
                   data-field="coopBannerTitle"
                   data-type="siteSettings"
                 >
-                  {siteSettings?.coopBannerTitle || '부천의료복지사회적협동조합'}
+                  <RichText inline fallback="부천의료복지사회적협동조합">{siteSettings?.coopBannerTitle}</RichText>
                 </h3>
               </div>
               <p 
@@ -90,7 +90,7 @@ const BannersContainer = ({ siteSettings }: BannersContainerProps) => {
                 data-field="coopBannerDescription"
                 data-type="siteSettings"
               >
-                {siteSettings?.coopBannerDescription || '조합원이 되어 건강한 지역사회를 만드는 데 동참해 주세요.'}
+                <RichText inline fallback="조합원이 되어 건강한 지역사회를 만드는 데 동참해 주세요.">{siteSettings?.coopBannerDescription}</RichText>
               </p>
             </div>
             <a 
