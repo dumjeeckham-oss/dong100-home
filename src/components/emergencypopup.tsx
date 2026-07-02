@@ -42,7 +42,13 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
       <div className="relative w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="bg-destructive/10 px-6 py-4 flex items-center justify-between border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🚨</span>
+            <span className="text-xl"
+              data-id={siteSettings._id}
+              data-field="popupEmoji"
+              data-type="siteSettings"
+            >
+              {siteSettings.popupEmoji || '🚨'}
+            </span>
             <h3 className="text-lg font-bold text-destructive"
               data-id={siteSettings._id}
               data-field="popupTitle"
