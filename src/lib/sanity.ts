@@ -50,7 +50,7 @@ const getClient = () => {
 export const sanityClient = new Proxy({} as ReturnType<typeof createClient>, {
   get(_, prop: string) {
     const client = getClient();
-    const value = (client as Record<string, unknown>)[prop];
+    const value = (client as unknown as Record<string, unknown>)[prop];
     if (typeof value === 'function') {
       return (value as Function).bind(client);
     }
@@ -167,8 +167,10 @@ export interface SiteSettings {
   footerText?: string;
   // popup
   popupEnabled?: boolean;
+  popupEmoji?: string;
   popupTitle?: string;
   popupContent?: string;
+  popupImage?: string;
 }
 
 export interface FaqItem {
@@ -231,7 +233,7 @@ export const fetchArchivesDualSource = async () => {
     }));
     
     // 데이터 병합 (Decap CMS 데이터를 우선)
-    return [...convertedLocalArchives, ...sanityArchives];
+    return [...convertedLocalArchives, ...sanityArchives] as ArchiveItem[];
   } catch (error) {
     console.error('Error fetching dual source archives:', error);
     // Fallback to Sanity only
@@ -305,8 +307,10 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       directionsTitle,
       footerText,
       popupEnabled,
+      popupEmoji,
       popupTitle,
-      popupContent
+      popupContent,
+      "popupImage": popupImage.asset->url
     }
   `);
   return data ?? null;

@@ -5,8 +5,10 @@ import ReactMarkdown from 'react-markdown';
 interface Props {
   siteSettings?: {
     popupEnabled?: boolean;
+    popupEmoji?: string;
     popupTitle?: string;
     popupContent?: string;
+    popupImage?: string;
     _id?: string;
   };
 }
@@ -40,7 +42,13 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
       <div className="relative w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="bg-destructive/10 px-6 py-4 flex items-center justify-between border-b border-border">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🚨</span>
+            <span className="text-xl"
+              data-id={siteSettings._id}
+              data-field="popupEmoji"
+              data-type="siteSettings"
+            >
+              {siteSettings.popupEmoji || '🚨'}
+            </span>
             <h3 className="text-lg font-bold text-destructive"
               data-id={siteSettings._id}
               data-field="popupTitle"
@@ -54,6 +62,13 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
           </button>
         </div>
         <div className="px-6 py-5 max-h-[50vh] overflow-y-auto">
+          {siteSettings.popupImage && (
+            <img
+              src={siteSettings.popupImage}
+              alt={siteSettings.popupTitle || '긴급 안내 이미지'}
+              className="w-full rounded-lg mb-4 object-cover"
+            />
+          )}
           <div className="prose prose-sm max-w-none text-foreground/90"
             data-id={siteSettings._id}
             data-field="popupContent"
@@ -62,7 +77,7 @@ const EmergencyPopup = ({ siteSettings }: Props) => {
             {siteSettings.popupContent ? (
               <ReactMarkdown>{siteSettings.popupContent}</ReactMarkdown>
             ) : (
-              <p className="text-muted-foreground">긴급 공지사항이 없습니다.</p>
+              !siteSettings.popupImage && <p className="text-muted-foreground">긴급 공지사항이 없습니다.</p>
             )}
           </div>
         </div>

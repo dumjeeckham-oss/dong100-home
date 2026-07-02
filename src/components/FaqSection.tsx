@@ -21,12 +21,13 @@ const FaqSection = () => {
     () =>
       items.filter((item) => {
         // 검색 로직: 질문 및 답변에서 검색 (한글 검색 지원)
+        const answer = item.answer as unknown;
         const searchMatch = searchQuery === '' || 
           item.question.includes(searchQuery) ||
-          (item.answer && 
-            (typeof item.answer === 'string' 
-              ? item.answer.includes(searchQuery)
-              : JSON.stringify(item.answer).includes(searchQuery)
+          (answer && 
+            (typeof answer === 'string' 
+              ? answer.includes(searchQuery)
+              : JSON.stringify(answer).includes(searchQuery)
             )
           );
         

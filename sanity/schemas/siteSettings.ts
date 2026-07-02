@@ -54,7 +54,9 @@ export const siteSettings = defineType({
 
     // --- 긴급 팝업 ---
     defineField({ name: 'popupEnabled', title: '팝업 활성화', type: 'boolean', group: 'popup', initialValue: false }),
+    defineField({ name: 'popupEmoji', title: '팝업 이모티콘 (예: 🚨)', type: 'string', group: 'popup' }),
     defineField({ name: 'popupTitle', title: '팝업 제목', type: 'string', group: 'popup' }),
     defineField({ name: 'popupContent', title: '팝업 내용 (마크다운)', type: 'text', group: 'popup' }),
+    defineField({ name: 'popupImage', title: '팝업 이미지', type: 'image', options: { hotspot: true }, group: 'popup' }),
   ],
 })
