@@ -38,11 +38,11 @@ export const siteSettings = defineType({
     defineField({ name: 'slide3Description', title: '슬라이드 3 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
 
     // --- 배너 ---
-    defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', type: 'string', group: 'banners' }),
-    defineField({ name: 'kakaoBannerDescription', title: '카카오 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'kakaoBannerTitle', title: '카카오 배너 제목', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
+    defineField({ name: 'kakaoBannerDescription', title: '카카오 배너 설명', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
     defineField({ name: 'kakaoBannerImage', title: '카카오 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
-    defineField({ name: 'coopBannerTitle', title: '조합원 배너 제목', type: 'string', group: 'banners' }),
-    defineField({ name: 'coopBannerDescription', title: '조합원 배너 설명', type: 'string', group: 'banners' }),
+    defineField({ name: 'coopBannerTitle', title: '조합원 배너 제목', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
+    defineField({ name: 'coopBannerDescription', title: '조합원 배너 설명', description: MD_HELP, type: 'text', rows: 2, group: 'banners' }),
     defineField({ name: 'coopBannerImage', title: '조합원 배너 이미지', type: 'image', options: { hotspot: true }, group: 'banners' }),
 
     // --- 섹션 제목 (Visual Editing 가능) ---
