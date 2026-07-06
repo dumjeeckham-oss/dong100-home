@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "dongbaek-center-mcp",
+      "version": "0.1.0",
+      "title": "동백 장애인활동지원센터 MCP"
+    },
+    "tools": [
+      {
+        "name": "get_center_info",
+        "title": "Get center info",
+        "description": "Get key facts about the 부천 동백 장애인활동지원센터 (Dongbaek Personal Assistance Service Center, Bucheon): what it does, address, phone, hours, services, and how to use them.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": null,
+        "outputSchema": null
+      },
+      {
+        "name": "list_notices",
+        "title": "List notices",
+        "description": "List the latest announcements (공지사항) published by the 부천 동백 장애인활동지원센터. Returns titles, publish dates, and content.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum number of notices to return (default 10)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_faq",
+        "title": "Search FAQ",
+        "description": "Search the frequently asked questions (자주 묻는 질문) of the 부천 동백 장애인활동지원센터. Optionally filter by a keyword that matches the question text.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "keyword": {
+              "type": "string",
+              "description": "Optional keyword to filter questions (case-insensitive substring match)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_archives",
+        "title": "List archive documents",
+        "description": "List documents, forms, and reference materials from the 자료실 (archive) of the 부천 동백 장애인활동지원센터, including downloadable file URLs when available.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Maximum number of documents to return (default 15)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
