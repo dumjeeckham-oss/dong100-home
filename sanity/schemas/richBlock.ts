@@ -1,5 +1,133 @@
-import { defineArrayMember, defineField } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 import { colorDecorators, highlightDecorators, sizeDecorators } from "./marks";
+
+// 표 내부 텍스트 블록 (한 셀 안에 여러 줄·서식 가능한 rich text)
+const tableCellBlock = defineArrayMember({
+  type: "block",
+  styles: [
+    { title: "본문", value: "normal" },
+    { title: "제목 3", value: "h3" },
+    { title: "제목 4", value: "h4" },
+  ],
+  lists: [
+    { title: "글머리", value: "bullet" },
+    { title: "번호", value: "number" },
+  ],
+  marks: {
+    decorators: [
+      { title: "굵게", value: "strong" },
+      { title: "기울임", value: "em" },
+      { title: "밑줄", value: "underline" },
+      { title: "취소선", value: "strike-through" },
+      ...colorDecorators,
+      ...highlightDecorators,
+      ...sizeDecorators,
+    ],
+    annotations: [
+      {
+        name: "color",
+        title: "글자 색상",
+        type: "color",
+      },
+      {
+        name: "highlight",
+        title: "글자 배경색",
+        type: "color",
+      },
+      {
+        name: "link",
+        title: "링크",
+        type: "object",
+        fields: [
+          defineField({ name: "href", title: "URL", type: "url" }),
+        ],
+      },
+    ],
+  },
+});
+
+// 표(Table) 커스텀 타입: 행(row) × 열(col)을 직접 입력하는 구조
+const tableType = defineType({
+  name: "richTable",
+  title: "표",
+  type: "object",
+  fields: [
+    defineField({
+      name: "caption",
+      title: "표 제목 (선택)",
+      type: "string",
+    }),
+    defineField({
+      name: "rows",
+      title: "행",
+      type: "array",
+      of: [
+        defineType({
+          name: "tableRow",
+          title: "행",
+          type: "object",
+          fields: [
+            defineField({
+              name: "cells",
+              title: "열",
+              type: "array",
+              of: [
+                defineType({
+                  name: "tableCell",
+                  title: "셀",
+                  type: "object",
+                  fields: [
+                    defineField({
+                      name: "content",
+                      title: "내용",
+                      type: "array",
+                      of: [tableCellBlock],
+                    }),
+                    defineField({
+                      name: "header",
+                      title: "헤더 셀 (굵게 + 가운데 정렬)",
+                      type: "boolean",
+                      initialValue: false,
+                    }),
+                  ],
+                  preview: {
+                    select: {
+                      content: "content",
+                      header: "header",
+                    },
+                    prepare: ({ content, header }: { content?: any[]; header?: boolean }) => {
+                      const text = content?.find((b: any) => b._type === "block")?.children?.find((c: any) => c._type === "span")?.text || "(빈 셀)";
+                      return { title: (header ? "[헤더] " : "") + text };
+                    },
+                  },
+                }),
+              ],
+            }),
+          ],
+          preview: {
+            select: { cells: "cells" },
+            prepare: ({ cells }: { cells?: any[] }) => {
+              const cellCount = cells?.length ?? 0;
+              return { title: `${cellCount}개 열` };
+            },
+          },
+        }),
+      ],
+    }),
+  ],
+  preview: {
+    select: {
+      caption: "caption",
+      rows: "rows",
+    },
+    prepare: ({ caption, rows }: { caption?: string; rows?: any[] }) => {
+      const rowCount = rows?.length ?? 0;
+      return { title: caption || `표 (${rowCount}행)` };
+    },
+  },
+});
+
+export { tableType };
 
 // Reusable rich content (Block Content) with color, text size, headings, table, and image with size/alignment.
 export const richBlock = [
@@ -79,6 +207,7 @@ export const richBlock = [
       ],
     },
   }),
+  defineArrayMember({ type: "richTable" }),
   defineArrayMember({
     type: "image",
     options: { hotspot: true },

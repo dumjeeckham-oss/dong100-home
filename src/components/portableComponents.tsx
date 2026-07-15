@@ -1,4 +1,5 @@
 import type { PortableTextComponents } from "@portabletext/react";
+import { PortableText } from "@portabletext/react";
 import { urlFor } from "@/lib/sanity";
 import { TEXT_COLORS, HIGHLIGHT_COLORS, TEXT_SIZES } from "../../sanity/schemas/textStyles";
 
@@ -87,6 +88,55 @@ export const portableComponents: PortableTextComponents = {
     "strike-through": ({ children }) => <span className="line-through">{children}</span>,
   },
   types: {
+    richTable: ({
+      value,
+    }: {
+      value?: { caption?: string; rows?: Array<{ _key: string; cells?: Array<{ _key: string; content?: any[]; header?: boolean }> }> };
+    }) => {
+      if (!value?.rows || value.rows.length === 0) return null;
+      return (
+        <figure className="my-6 overflow-x-auto">
+          {value.caption && (
+            <figcaption className="text-sm text-center text-muted-foreground mb-2 font-medium">
+              {value.caption}
+            </figcaption>
+          )}
+          <table className="w-full border-collapse border border-border text-sm">
+            <tbody>
+              {value.rows.map((row) => (
+                <tr key={row._key} className="border-b border-border">
+                  {row.cells?.map((cell) => {
+                    const CellTag = cell.header ? 'th' : 'td';
+                    return (
+                      <CellTag
+                        key={cell._key}
+                        className={
+                          cell.header
+                            ? 'px-3 py-2 bg-muted font-bold text-center align-middle border-r border-border last:border-r-0'
+                            : 'px-3 py-2 align-middle border-r border-border last:border-r-0'
+                        }
+                      >
+                        {cell.content ? (
+                          <PortableText
+                            value={cell.content}
+                            components={{
+                              block: {
+                                normal: ({ children }) => <span className="leading-relaxed">{children}</span>,
+                              },
+                              marks: decoratorMarks,
+                            } as PortableTextComponents}
+                          />
+                        ) : null}
+                      </CellTag>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </figure>
+      );
+    },
     image: ({
       value,
     }: {

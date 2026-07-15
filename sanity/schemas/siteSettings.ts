@@ -4,6 +4,8 @@ import { defineField, defineType } from 'sanity'
 const MD_HELP =
   '마크다운/HTML 사용 가능 — 예) **굵게**, *기울임*, <span style="color:#e11d48">빨간 글씨</span>, <span style="font-size:1.4em;font-weight:800">크고 굵게</span>'
 
+const IMG_HINT = '권장 규격: 1920×1080px (16:9), 최대 5MB, JPG/PNG/WebP. 업로드하지 않으면 기본 이미지가 사용됩니다.'
+
 export const siteSettings = defineType({
   name: 'siteSettings',
   title: '사이트 설정',
@@ -27,12 +29,15 @@ export const siteSettings = defineType({
 
     // --- 메인 슬라이더 (상단 3개 슬라이드) ---
     // 슬라이드 1: 위 '메인 히어로'의 제목/부제목/설명을 사용합니다.
+    defineField({ name: 'slide1Image', title: '슬라이드 1 - 배경 이미지', description: IMG_HINT, type: 'image', options: { hotspot: true }, group: 'slides' }),
     defineField({ name: 'slide1Title', title: '슬라이드 1 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide1Subtitle', title: '슬라이드 1 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide1Description', title: '슬라이드 1 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide2Image', title: '슬라이드 2 - 배경 이미지', description: IMG_HINT, type: 'image', options: { hotspot: true }, group: 'slides' }),
     defineField({ name: 'slide2Title', title: '슬라이드 2 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide2Subtitle', title: '슬라이드 2 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide2Description', title: '슬라이드 2 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
+    defineField({ name: 'slide3Image', title: '슬라이드 3 - 배경 이미지', description: IMG_HINT, type: 'image', options: { hotspot: true }, group: 'slides' }),
     defineField({ name: 'slide3Title', title: '슬라이드 3 - 제목 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide3Subtitle', title: '슬라이드 3 - 부제목', description: MD_HELP, type: 'text', rows: 2, group: 'slides' }),
     defineField({ name: 'slide3Description', title: '슬라이드 3 - 설명 (줄바꿈은 Enter)', description: MD_HELP, type: 'text', rows: 3, group: 'slides' }),
