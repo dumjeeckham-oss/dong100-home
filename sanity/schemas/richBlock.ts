@@ -62,7 +62,7 @@ const tableType = defineType({
       title: "행",
       type: "array",
       of: [
-        defineType({
+        defineArrayMember({
           name: "tableRow",
           title: "행",
           type: "object",
@@ -72,7 +72,7 @@ const tableType = defineType({
               title: "열",
               type: "array",
               of: [
-                defineType({
+                defineArrayMember({
                   name: "tableCell",
                   title: "셀",
                   type: "object",

@@ -174,6 +174,14 @@ export interface SiteSettings {
   popupTitle?: string;
   popupContent?: string;
   popupImage?: string;
+  partners?: Partner[];
+}
+
+export interface Partner {
+  _key?: string;
+  name?: string;
+  url?: string;
+  logo?: string;
 }
 
 export interface FaqItem {
@@ -276,7 +284,7 @@ export const fetchSiteSettingsDualSource = async () => {
 // ===== GROQ 쿼리 =====
 export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
   const data = await sanityClient.fetch<SiteSettings>(`
-    *[_type == "siteSettings"][0] {
+    *[_type == "siteSettings" && !(_id in path("drafts.**"))][0] {
       _id,
       title,
       description,
@@ -316,7 +324,8 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       popupEmoji,
       popupTitle,
       popupContent,
-      "popupImage": popupImage.asset->url
+      "popupImage": popupImage.asset->url,
+      "partners": partners[]{ _key, name, url, "logo": logo.asset->url }
     }
   `);
   return data ?? null;
@@ -324,7 +333,7 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
 
 export const fetchFaqItems = async (): Promise<FaqItem[]> => {
   const data = await sanityClient.fetch<FaqItem[]>(`
-    *[_type == "faq"] | order(order asc, _createdAt desc) {
+    *[_type == "faq" && !(_id in path("drafts.**"))] | order(order asc, _createdAt desc) {
       _id,
       question,
       answer,
@@ -341,7 +350,7 @@ export const fetchFaqItems = async (): Promise<FaqItem[]> => {
 //   - 두 값 모두 있어서 resolveFileUrl()이 정상 동작함
 export const fetchArchives = async (): Promise<ArchiveItem[]> => {
   const data = await sanityClient.fetch<any[]>(`
-    *[_type == "archive"] | order(publishedAt desc) {
+    *[_type == "archive" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
       _id,
       title,
       description,
@@ -362,7 +371,7 @@ export const fetchArchives = async (): Promise<ArchiveItem[]> => {
 
 export const fetchArchive = async (id: string): Promise<ArchiveItem | null> => {
   const data = await sanityClient.fetch<any>(`
-    *[_type == "archive" && _id == $id][0] {
+    *[_type == "archive" && _id == $id && !(_id in path("drafts.**"))][0] {
       _id,
       title,
       description,
@@ -385,7 +394,7 @@ export const fetchArchive = async (id: string): Promise<ArchiveItem | null> => {
 
 export const fetchArchivesPreview = async (): Promise<ArchiveItem[]> => {
   const data = await sanityClient.fetch<any[]>(`
-    *[_type == "archive"] | order(publishedAt desc)[0...5] {
+    *[_type == "archive" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...5] {
       _id,
       title,
       publishedAt,
@@ -405,7 +414,7 @@ export const fetchArchivesPreview = async (): Promise<ArchiveItem[]> => {
 // ===== 이용자 자료실 (userArchive) =====
 export const fetchUserArchives = async (): Promise<ArchiveItem[]> => {
   const data = await sanityClient.fetch<any[]>(`
-    *[_type == "userArchive"] | order(publishedAt desc) {
+    *[_type == "userArchive" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
       _id,
       title,
       category,
@@ -427,7 +436,7 @@ export const fetchUserArchives = async (): Promise<ArchiveItem[]> => {
 
 export const fetchUserArchive = async (id: string): Promise<ArchiveItem | null> => {
   const data = await sanityClient.fetch<any>(`
-    *[_type == "userArchive" && _id == $id][0] {
+    *[_type == "userArchive" && _id == $id && !(_id in path("drafts.**"))][0] {
       _id,
       title,
       category,
@@ -451,7 +460,7 @@ export const fetchUserArchive = async (id: string): Promise<ArchiveItem | null> 
 
 export const fetchUserArchivesPreview = async (): Promise<ArchiveItem[]> => {
   const data = await sanityClient.fetch<any[]>(`
-    *[_type == "userArchive"] | order(publishedAt desc)[0...5] {
+    *[_type == "userArchive" && !(_id in path("drafts.**"))] | order(publishedAt desc)[0...5] {
       _id,
       title,
       category,
@@ -471,7 +480,7 @@ export const fetchUserArchivesPreview = async (): Promise<ArchiveItem[]> => {
 
 export const fetchNotices = async (): Promise<NoticeItem[]> => {
   const data = await sanityClient.fetch(`
-    *[_type == "notice"] | order(important desc, publishedAt desc) {
+    *[_type == "notice" && !(_id in path("drafts.**"))] | order(important desc, publishedAt desc) {
       _id, title, content, publishedAt, important, coverImage
     }
   `);
@@ -480,7 +489,7 @@ export const fetchNotices = async (): Promise<NoticeItem[]> => {
 
 export const fetchNotice = async (id: string): Promise<NoticeItem | null> => {
   const data = await sanityClient.fetch(`
-    *[_type == "notice" && _id == $id][0] {
+    *[_type == "notice" && _id == $id && !(_id in path("drafts.**"))][0] {
       _id, title, content, publishedAt, important, images
     }
   `, { id });
@@ -489,7 +498,7 @@ export const fetchNotice = async (id: string): Promise<NoticeItem | null> => {
 
 export const fetchNoticesPreview = async (): Promise<NoticeItem[]> => {
   const data = await sanityClient.fetch(`
-    *[_type == "notice"] | order(important desc, publishedAt desc)[0...5] {
+    *[_type == "notice" && !(_id in path("drafts.**"))] | order(important desc, publishedAt desc)[0...5] {
       _id, title, publishedAt, important
     }
   `);

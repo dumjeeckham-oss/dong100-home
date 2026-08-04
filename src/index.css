@@ -93,3 +93,17 @@
     .container { padding-left: 1rem; padding-right: 1rem; }
   }
 }
+
+/* 협약기관 가로 슬라이딩(마퀴) 배너 */
+@layer utilities {
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-track {
+    animation: marquee-scroll 30s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+}

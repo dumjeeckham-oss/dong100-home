@@ -2,7 +2,202 @@
 // To take ownership, delete this banner line; the plugin then leaves the file alone.
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
+// src/lib/mcp/index.ts
+import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.1";
+
+// src/lib/mcp/tools/list-notices.ts
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.1";
+import { z } from "npm:zod@^3.25.76";
+
+// src/lib/mcp/sanityQuery.ts
+var SANITY_PROJECT_ID = "xczp11sl";
+var SANITY_DATASET = "production";
+var SANITY_API_VERSION = "2024-01-01";
+async function sanityFetch(query, params = {}) {
+  const url = new URL(
+    `https://${SANITY_PROJECT_ID}.apicdn.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}`
+  );
+  url.searchParams.set("query", query);
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.set(`$${key}`, JSON.stringify(value));
+  }
+  const res = await fetch(url.toString(), {
+    headers: { Accept: "application/json" }
+  });
+  if (!res.ok) {
+    throw new Error(`Sanity query failed: ${res.status} ${res.statusText}`);
+  }
+  const json = await res.json();
+  return json.result;
+}
+function blocksToText(blocks) {
+  if (!Array.isArray(blocks)) return "";
+  return blocks.map((block) => {
+    const b = block;
+    if (b?._type !== "block" || !Array.isArray(b.children)) return "";
+    return b.children.map((c) => c?.text ?? "").join("");
+  }).filter(Boolean).join("\n");
+}
+
+// src/lib/mcp/tools/list-notices.ts
+var list_notices_default = defineTool({
+  name: "list_notices",
+  title: "List notices",
+  description: "List the latest announcements (\uACF5\uC9C0\uC0AC\uD56D) published by the \uBD80\uCC9C \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130. Returns titles, publish dates, and content.",
+  inputSchema: {
+    limit: z.number().int().min(1).max(50).optional().describe("Maximum number of notices to return (default 10).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ limit }) => {
+    const max = limit ?? 10;
+    const notices = await sanityFetch(
+      `*[_type == "notice"] | order(publishedAt desc)[0...$max]{ _id, title, content, publishedAt, important }`,
+      { max }
+    );
+    const items = (notices ?? []).map((n) => ({
+      id: n._id,
+      title: n.title,
+      important: !!n.important,
+      publishedAt: n.publishedAt ?? null,
+      content: blocksToText(n.content)
+    }));
+    return {
+      content: [{ type: "text", text: JSON.stringify(items, null, 2) }],
+      structuredContent: { notices: items }
+    };
+  }
+});
+
+// src/lib/mcp/tools/search-faq.ts
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.20.1";
+import { z as z2 } from "npm:zod@^3.25.76";
+var search_faq_default = defineTool2({
+  name: "search_faq",
+  title: "Search FAQ",
+  description: "Search the frequently asked questions (\uC790\uC8FC \uBB3B\uB294 \uC9C8\uBB38) of the \uBD80\uCC9C \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130. Optionally filter by a keyword that matches the question text.",
+  inputSchema: {
+    keyword: z2.string().optional().describe("Optional keyword to filter questions (case-insensitive substring match).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ keyword }) => {
+    const faqs = await sanityFetch(
+      `*[_type == "faq"] | order(order asc){ _id, question, answer, category, order }`
+    );
+    let items = (faqs ?? []).map((f) => ({
+      id: f._id,
+      question: f.question,
+      category: f.category ?? null,
+      answer: blocksToText(f.answer)
+    }));
+    if (keyword && keyword.trim()) {
+      const kw = keyword.trim().toLowerCase();
+      items = items.filter(
+        (f) => f.question.toLowerCase().includes(kw) || f.answer.toLowerCase().includes(kw)
+      );
+    }
+    return {
+      content: [{ type: "text", text: JSON.stringify(items, null, 2) }],
+      structuredContent: { faqs: items }
+    };
+  }
+});
+
+// src/lib/mcp/tools/list-archives.ts
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.20.1";
+import { z as z3 } from "npm:zod@^3.25.76";
+var list_archives_default = defineTool3({
+  name: "list_archives",
+  title: "List archive documents",
+  description: "List documents, forms, and reference materials from the \uC790\uB8CC\uC2E4 (archive) of the \uBD80\uCC9C \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130, including downloadable file URLs when available.",
+  inputSchema: {
+    limit: z3.number().int().min(1).max(50).optional().describe("Maximum number of documents to return (default 15).")
+  },
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async ({ limit }) => {
+    const max = limit ?? 15;
+    const archives = await sanityFetch(
+      `*[_type == "archive"] | order(publishedAt desc)[0...$max]{
+        _id, title, category, description, body, publishedAt,
+        "fileUrl": file.asset->url
+      }`,
+      { max }
+    );
+    const items = (archives ?? []).map((a) => ({
+      id: a._id,
+      title: a.title,
+      category: a.category ?? null,
+      description: a.description ?? blocksToText(a.body).slice(0, 500),
+      publishedAt: a.publishedAt ?? null,
+      fileUrl: a.fileUrl ?? null
+    }));
+    return {
+      content: [{ type: "text", text: JSON.stringify(items, null, 2) }],
+      structuredContent: { archives: items }
+    };
+  }
+});
+
+// src/lib/mcp/tools/get-center-info.ts
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.20.1";
+var get_center_info_default = defineTool4({
+  name: "get_center_info",
+  title: "Get center info",
+  description: "Get key facts about the \uBD80\uCC9C \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130 (Dongbaek Personal Assistance Service Center, Bucheon): what it does, address, phone, hours, services, and how to use them.",
+  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  handler: async () => {
+    let settings = null;
+    try {
+      settings = await sanityFetch(
+        `*[_type == "siteSettings"][0]{ title, description, contactNumber }`
+      );
+    } catch {
+      settings = null;
+    }
+    const info = {
+      name: "\uBD80\uCC9C\uC758\uB8CC\uBCF5\uC9C0\uC0AC\uD68C\uC801\uD611\uB3D9\uC870\uD569 \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130",
+      englishName: "Dongbaek Personal Assistance Service Center (Bucheon)",
+      description: settings?.description ?? "\uBD80\uCC9C\uC758\uB8CC\uBCF5\uC9C0\uC0AC\uD68C\uC801\uD611\uB3D9\uC870\uD569 \uC0B0\uD558\uC758 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0 \uC804\uBB38 \uAE30\uAD00\uC73C\uB85C, \uC77C\uC0C1\uC0DD\uD65C\uC774 \uC5B4\uB824\uC6B4 \uC7A5\uC560\uC778\uC5D0\uAC8C \uD65C\uB3D9\uC9C0\uC6D0\uC11C\uBE44\uC2A4\uB97C \uC81C\uACF5\uD558\uC5EC \uC790\uB9BD\uC0DD\uD65C\uC744 \uB3D5\uC2B5\uB2C8\uB2E4.",
+      serviceType: "\uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC11C\uBE44\uC2A4 (\uAD6D\uBBFC\uC5F0\uAE08\uACF5\uB2E8 \uC9C0\uC815 \uAE30\uAD00)",
+      address: "\uACBD\uAE30\uB3C4 \uBD80\uCC9C\uC2DC \uC6D0\uBBF8\uB85C97\uBC88\uAE38 31 3\uCE35 (\uC6B0\uD3B8\uBC88\uD638 14548)",
+      phone: settings?.contactNumber ?? "032-675-7517",
+      fax: "032-675-7518",
+      email: "dong100@naver.com",
+      website: "https://dong100.org",
+      kakaoChannel: '\uCE74\uCE74\uC624\uD1A1 \uCC44\uB110 "\uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130" \uAC80\uC0C9',
+      hours: "\uD3C9\uC77C 09:00~18:00 (\uC8FC\uB9D0\xB7\uACF5\uD734\uC77C \uD734\uBB34)",
+      eligibility: "\uB9CC 6\uC138 \uC774\uC0C1 65\uC138 \uBBF8\uB9CC \uB4F1\uB85D \uC7A5\uC560\uC778 \uC911 \uAD6D\uBBFC\uC5F0\uAE08\uACF5\uB2E8 \uD65C\uB3D9\uC9C0\uC6D0 \uC218\uAE09\uC790\uACA9 \uC778\uC815\uC790",
+      services: [
+        "\uC2E0\uCCB4 \uD65C\uB3D9 \uC9C0\uC6D0 (\uC2DD\uC0AC, \uBC30\uC124, \uBAA9\uC695, \uC774\uB3D9 \uB4F1)",
+        "\uAC00\uC0AC \uD65C\uB3D9 \uC9C0\uC6D0 (\uCCAD\uC18C, \uC138\uD0C1, \uCDE8\uC0AC \uB4F1)",
+        "\uC0AC\uD68C \uD65C\uB3D9 \uC9C0\uC6D0 (\uC678\uCD9C\xB7\uBCD1\uC6D0\xB7\uAD00\uACF5\uC11C \uB3D9\uD589 \uB4F1)",
+        "\uBC29\uBB38 \uBAA9\uC695 \uC11C\uBE44\uC2A4",
+        "\uBC29\uBB38 \uAC04\uD638 \uC11C\uBE44\uC2A4",
+        "\uD65C\uB3D9\uC9C0\uC6D0\uC0AC \uBAA8\uC9D1 \uBC0F \uAD50\uC721"
+      ],
+      howToApply: [
+        "\uAD6D\uBBFC\uC5F0\uAE08\uACF5\uB2E8 \uAD00\uD560 \uC9C0\uC0AC \uBC29\uBB38\uD558\uC5EC \uD65C\uB3D9\uC9C0\uC6D0\uAE09\uC5EC \uC2E0\uCCAD",
+        "\uACF5\uB2E8 \uBC29\uBB38 \uC870\uC0AC (\uC11C\uBE44\uC2A4 \uD544\uC694\uB3C4 \uD3C9\uAC00)",
+        "\uC218\uAE09 \uC790\uACA9 \uBC0F \uAE09\uC5EC\uB7C9 \uACB0\uC815",
+        "\uB3D9\uBC31 \uC13C\uD130 \uBC29\uBB38\uD558\uC5EC \uC774\uC6A9 \uACC4\uC57D \uBC0F \uD65C\uB3D9\uC9C0\uC6D0\uC0AC \uB9E4\uCE6D",
+        "\uC11C\uBE44\uC2A4 \uC774\uC6A9 \uC2DC\uC791"
+      ]
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(info, null, 2) }],
+      structuredContent: info
+    };
+  }
+});
+
+// src/lib/mcp/index.ts
+var mcp_default = defineMcp({
+  name: "dongbaek-center-mcp",
+  title: "\uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130 MCP",
+  version: "0.1.0",
+  instructions: "Public tools for the \uBD80\uCC9C \uB3D9\uBC31 \uC7A5\uC560\uC778\uD65C\uB3D9\uC9C0\uC6D0\uC13C\uD130 (Dongbaek Personal Assistance Service Center, Bucheon). Use `get_center_info` for facts about the center (address, phone, hours, services, how to apply), `list_notices` for the latest announcements, `search_faq` to answer common questions, and `list_archives` for downloadable forms and reference documents.",
+  tools: [get_center_info_default, list_notices_default, search_faq_default, list_archives_default]
+});
+
 // lovable-mcp-supabase-entry.ts
-import mcp from "npm:E:\\\uAD11\uBBFC\\ai\\\uB3D9\uBC31 \uD648\uD398\uC774\uC9C0\\git lovable\\dong100-home\\src\\lib\\mcp\\index.ts";
 import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.20.1/stacks/supabase";
-Deno.serve(createSupabaseHandler(mcp, { functionName: "mcp" }));
+Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));
