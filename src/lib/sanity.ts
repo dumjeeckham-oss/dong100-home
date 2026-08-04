@@ -174,6 +174,14 @@ export interface SiteSettings {
   popupTitle?: string;
   popupContent?: string;
   popupImage?: string;
+  partners?: Partner[];
+}
+
+export interface Partner {
+  _key?: string;
+  name?: string;
+  url?: string;
+  logo?: string;
 }
 
 export interface FaqItem {
@@ -316,7 +324,8 @@ export const fetchSiteSettings = async (): Promise<SiteSettings | null> => {
       popupEmoji,
       popupTitle,
       popupContent,
-      "popupImage": popupImage.asset->url
+      "popupImage": popupImage.asset->url,
+      "partners": partners[]{ _key, name, url, "logo": logo.asset->url }
     }
   `);
   return data ?? null;
