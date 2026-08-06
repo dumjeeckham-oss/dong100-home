@@ -33,7 +33,9 @@ const PartnersMarquee = ({ siteSettings }: Props) => {
   const partners = (siteSettings?.partners || []).filter(Boolean);
   if (partners.length === 0) return null;
 
-  const loop = [...partners, ...partners];
+  // 기관 수가 적으면 복제하지 않고 가운데 정렬로 표시 (중복 노출 방지)
+  const shouldScroll = partners.length >= 5;
+  const loop = shouldScroll ? [...partners, ...partners] : partners;
 
   return (
     <section className="border-t border-border bg-muted py-10" aria-label="협약기관">
@@ -41,12 +43,19 @@ const PartnersMarquee = ({ siteSettings }: Props) => {
         <h2 className="text-center text-xl font-bold md:text-2xl">협약기관</h2>
       </div>
       <div className="group relative overflow-hidden">
-        <div className="marquee-track flex w-max gap-6 group-hover:[animation-play-state:paused]">
+        <div
+          className={
+            shouldScroll
+              ? 'marquee-track flex w-max gap-6 group-hover:[animation-play-state:paused]'
+              : 'flex flex-wrap items-center justify-center gap-6 px-4'
+          }
+        >
           {loop.map((p, i) => (
             <PartnerItem key={`${p._key || p.name}-${i}`} p={p} />
           ))}
         </div>
       </div>
+
     </section>
   );
 };
