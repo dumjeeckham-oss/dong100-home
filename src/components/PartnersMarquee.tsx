@@ -38,9 +38,9 @@ const PartnersMarquee = ({ siteSettings }: Props) => {
   const loop = shouldScroll ? [...partners, ...partners] : partners;
 
   return (
-    <section className="border-t border-border bg-muted py-10" aria-label="협약기관">
+    <section className="border-t border-border bg-muted py-10" aria-label="관련기관">
       <div className="container mb-6">
-        <h2 className="text-center text-xl font-bold md:text-2xl">협약기관</h2>
+        <h2 className="text-center text-xl font-bold md:text-2xl">관련기관</h2>
       </div>
       <div className="group relative overflow-hidden">
         <div
