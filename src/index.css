@@ -94,7 +94,7 @@
   }
 }
 
-/* 협약기관 가로 슬라이딩(마퀴) 배너 */
+/* 관련기관 가로 슬라이딩(마퀴) 배너 */
 @layer utilities {
   @keyframes marquee-scroll {
     from { transform: translateX(0); }

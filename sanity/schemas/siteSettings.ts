@@ -16,7 +16,7 @@ export const siteSettings = defineType({
     { name: 'banners', title: '배너' },
     { name: 'sections', title: '섹션 제목' },
     { name: 'popup', title: '긴급 팝업' },
-    { name: 'partners', title: '협약기관' },
+    { name: 'partners', title: '관련기관' },
   ],
   fields: [
     // --- 메인 히어로 ---
@@ -69,17 +69,17 @@ export const siteSettings = defineType({
     defineField({ name: 'popupContent', title: '팝업 내용 (마크다운/HTML)', description: MD_HELP, type: 'text', rows: 5, group: 'popup' }),
     defineField({ name: 'popupImage', title: '팝업 이미지', type: 'image', options: { hotspot: true }, group: 'popup' }),
 
-    // --- 협약기관 (하단 슬라이딩 배너) ---
+    // --- 관련기관 (하단 슬라이딩 배너) ---
     defineField({
       name: 'partners',
-      title: '협약기관 목록',
+      title: '관련기관 목록',
       description: '하단 가로 슬라이딩 배너에 표시됩니다. 추가/수정/삭제하면 홈페이지에 바로 반영됩니다.',
       type: 'array',
       group: 'partners',
       of: [
         defineField({
           name: 'partner',
-          title: '협약기관',
+          title: '관련기관',
           type: 'object',
           fields: [
             defineField({ name: 'name', title: '기관명', type: 'string', validation: (r) => r.required() }),
