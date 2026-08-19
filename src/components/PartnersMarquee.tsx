@@ -10,7 +10,7 @@ const PartnerItem = ({ p }: { p: Partner }) => {
       {p.logo ? (
         <img
           src={p.logo}
-          alt={p.name || '협약기관 로고'}
+          alt={p.name || '관련기관 로고'}
           loading="lazy"
           className="max-h-full max-w-full object-contain"
         />
