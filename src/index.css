@@ -103,6 +103,11 @@
   .marquee-track {
     animation: marquee-scroll 30s linear infinite;
   }
+  @media (max-width: 768px) {
+    .marquee-track {
+      animation-duration: 22s;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .marquee-track { animation: none; }
   }
