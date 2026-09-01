@@ -1,4 +1,5 @@
 import type { SiteSettings, Partner } from '@/lib/sanity';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Props {
   siteSettings?: SiteSettings | null;
