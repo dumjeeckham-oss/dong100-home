@@ -32,11 +32,22 @@ const PartnerItem = ({ p }: { p: Partner }) => {
 
 const PartnersMarquee = ({ siteSettings }: Props) => {
   const partners = (siteSettings?.partners || []).filter(Boolean);
+  const isMobile = useIsMobile();
   if (partners.length === 0) return null;
 
-  // 기관 수가 적으면 복제하지 않고 가운데 정렬로 표시 (중복 노출 방지)
-  const shouldScroll = partners.length >= 5;
-  const loop = shouldScroll ? [...partners, ...partners] : partners;
+  // 모바일에서는 항상 한 줄 무한 스크롤, 데스크톱은 5개 이상일 때만 마퀴
+  const shouldScroll = isMobile || partners.length >= 5;
+
+  // 무한 스크롤이 자연스럽게 보이도록 최소 개수만큼 복제
+  let loop = partners;
+  if (shouldScroll) {
+    const minItems = isMobile ? 12 : 8;
+    while (loop.length < minItems) {
+      loop = [...loop, ...partners];
+    }
+    // 원본 + 복제본을 이어 붙여 translateX(-50%)가 매끄럽게 연결되도록 함
+    loop = [...loop, ...partners];
+  }
 
   return (
     <section className="border-t border-border bg-muted py-10" aria-label="관련기관">
@@ -47,7 +58,7 @@ const PartnersMarquee = ({ siteSettings }: Props) => {
         <div
           className={
             shouldScroll
-              ? 'marquee-track flex w-max gap-6 group-hover:[animation-play-state:paused]'
+              ? 'marquee-track flex w-max gap-4 md:gap-6 group-hover:[animation-play-state:paused]'
               : 'flex flex-wrap items-center justify-center gap-6 px-4'
           }
         >
@@ -56,7 +67,6 @@ const PartnersMarquee = ({ siteSettings }: Props) => {
           ))}
         </div>
       </div>
-
     </section>
   );
 };
