@@ -414,6 +414,17 @@ export const fetchArchives = async (): Promise<ArchiveItem[]> => {
           "size": file.asset->size,
           "extension": file.asset->extension
         }
+      },
+      "attachments": attachments[]{
+        _key,
+        label,
+        "asset": {
+          "_ref": asset._ref,
+          "url": asset->url,
+          "originalFilename": asset->originalFilename,
+          "size": asset->size,
+          "extension": asset->extension
+        }
       }
     }
   `);
@@ -436,6 +447,17 @@ export const fetchArchive = async (id: string): Promise<ArchiveItem | null> => {
           "originalFilename": file.asset->originalFilename,
           "size": file.asset->size,
           "extension": file.asset->extension
+        }
+      },
+      "attachments": attachments[]{
+        _key,
+        label,
+        "asset": {
+          "_ref": asset._ref,
+          "url": asset->url,
+          "originalFilename": asset->originalFilename,
+          "size": asset->size,
+          "extension": asset->extension
         }
       }
     }
