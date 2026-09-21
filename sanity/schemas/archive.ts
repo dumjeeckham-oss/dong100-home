@@ -33,8 +33,30 @@ export const archive = defineType({
     }),
     defineField({
       name: "file",
-      title: "첨부 파일 (HWP, PDF, DOCX 등) — 선택",
+      title: "첨부 파일 1 (HWP, PDF, DOCX 등) — 선택",
       type: "file",
+    }),
+    defineField({
+      name: "attachments",
+      title: "추가 첨부 파일 (PDF + 편집용 원본 등 여러 개 가능)",
+      description: "예: 보기용 PDF와 편집 가능한 HWP/DOCX 파일을 함께 올릴 때 사용하세요.",
+      type: "array",
+      of: [
+        defineField({
+          name: "attachment",
+          title: "첨부 파일",
+          type: "file",
+          fields: [
+            defineField({
+              name: "label",
+              title: "표시 이름 (선택)",
+              type: "string",
+              description: "비워두면 원본 파일명이 표시됩니다. 예: 편집용(HWP)",
+            }),
+          ],
+        }),
+      ],
+      options: { layout: "list" },
     }),
     defineField({
       name: "images",
