@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, Download, FileText } from "lucide-react";
 import { PortableText } from "@portabletext/react";
-import { fileUrl, formatBytes, fetchArchive } from "@/lib/sanity";
+import { formatBytes, fetchArchive, getArchiveFiles } from "@/lib/sanity";
 import { portableComponents } from "@/components/portableComponents";
 import ImageGallery from "@/components/ImageGallery";
 import { Button } from "@/components/ui/button";
@@ -54,8 +54,7 @@ const ArchiveDetailPage = () => {
     );
   }
 
-  const url = item.file?.asset?.url || fileUrl(item);
-  const fname = item.file?.asset?.originalFilename || `${item.title || "file"}.${item.file?.asset?.extension || "file"}`;
+  const files = getArchiveFiles(item);
 
   return (
     <div className="min-h-screen bg-muted">
@@ -86,20 +85,25 @@ const ArchiveDetailPage = () => {
             </div>
           ) : null}
 
-          {url && (
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex items-center gap-2 text-sm min-w-0">
-                <FileText size={18} className="text-primary shrink-0" />
-                <span className="font-medium truncate">{fname}</span>
-                {item.file?.asset?.size && (
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">
-                    ({formatBytes(item.file.asset.size)})
-                  </span>
-                )}
-              </div>
-              <a href={url} download={fname} target="_blank" rel="noopener noreferrer">
-                <Button size="sm" className="gap-1.5"><Download size={14} /> 다운로드</Button>
-              </a>
+          {files.length > 0 && (
+            <div className="mt-6 space-y-2">
+              <p className="text-sm font-semibold">첨부 파일 {files.length > 1 ? `(${files.length}개)` : ""}</p>
+              {files.map((f, i) => (
+                <div key={i} className="p-4 bg-muted/50 rounded-lg flex items-center justify-between gap-3 flex-wrap">
+                  <div className="flex items-center gap-2 text-sm min-w-0">
+                    <FileText size={18} className="text-primary shrink-0" />
+                    <span className="font-medium truncate">{f.name}</span>
+                    {f.size ? (
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        ({formatBytes(f.size)})
+                      </span>
+                    ) : null}
+                  </div>
+                  <a href={f.url} download={f.name} target="_blank" rel="noopener noreferrer">
+                    <Button size="sm" className="gap-1.5"><Download size={14} /> 다운로드</Button>
+                  </a>
+                </div>
+              ))}
             </div>
           )}
         </article>
