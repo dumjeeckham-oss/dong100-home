@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Download, FileText } from "lucide-react";
-import { sanityClient, fileUrl, formatBytes, fetchArchivesDualSource, type SanityArchive } from "@/lib/sanity";
+import { formatBytes, fetchArchivesDualSource, getArchiveFiles, type SanityArchive } from "@/lib/sanity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -14,8 +14,7 @@ const ArchivePage = () => {
     staleTime: 1000 * 60,
   });
 
-  const getDownloadUrl = (item: SanityArchive) =>
-    item.file?.asset?.url || fileUrl(item);
+  const getFiles = (item: SanityArchive) => getArchiveFiles(item);
 
   return (
     <div className="min-h-screen bg-muted">
