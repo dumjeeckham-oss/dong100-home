@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Calendar, Download, FileText } from "lucide-react";
-import { sanityClient, fileUrl, formatBytes, fetchArchivesDualSource, type SanityArchive } from "@/lib/sanity";
+import { formatBytes, fetchArchivesDualSource, getArchiveFiles, type SanityArchive } from "@/lib/sanity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -14,8 +14,7 @@ const ArchivePage = () => {
     staleTime: 1000 * 60,
   });
 
-  const getDownloadUrl = (item: SanityArchive) =>
-    item.file?.asset?.url || fileUrl(item);
+  const getFiles = (item: SanityArchive) => getArchiveFiles(item);
 
   return (
     <div className="min-h-screen bg-muted">
@@ -57,8 +56,7 @@ const ArchivePage = () => {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {items.map((it) => {
-                    const url = getDownloadUrl(it);
-                    const fname = it.file?.asset?.originalFilename || `${it.title}.${it.file?.asset?.extension || "file"}`;
+                    const files = getFiles(it);
                     return (
                       <tr key={it._id} className="hover:bg-accent/30">
                         <td className="px-5 py-4">
@@ -69,20 +67,36 @@ const ArchivePage = () => {
                             <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{it.description}</p>
                           )}
                         </td>
-                        <td className="px-5 py-4 text-sm text-muted-foreground truncate max-w-[14rem]">
-                          <span className="inline-flex items-center gap-1.5">
-                            <FileText size={14} /> {fname}
-                          </span>
+                        <td className="px-5 py-4 text-sm text-muted-foreground max-w-[14rem]">
+                          <div className="space-y-1">
+                            {files.map((f, i) => (
+                              <span key={i} className="flex items-center gap-1.5 truncate">
+                                <FileText size={14} className="shrink-0" /> <span className="truncate">{f.name}</span>
+                              </span>
+                            ))}
+                          </div>
                         </td>
-                        <td className="px-5 py-4 text-sm text-muted-foreground">{formatBytes(it.file?.asset?.size)}</td>
+                        <td className="px-5 py-4 text-sm text-muted-foreground">
+                          <div className="space-y-1">
+                            {files.map((f, i) => (
+                              <div key={i}>{formatBytes(f.size)}</div>
+                            ))}
+                          </div>
+                        </td>
                         <td className="px-5 py-4 text-sm text-muted-foreground">
                           {it.publishedAt ? new Date(it.publishedAt).toLocaleDateString("ko-KR") : ""}
                         </td>
                         <td className="px-5 py-4 text-right">
-                          {url ? (
-                            <a href={url} download={fname} target="_blank" rel="noopener noreferrer">
-                              <Button size="sm" className="gap-1.5"><Download size={14} /> 다운로드</Button>
-                            </a>
+                          {files.length > 0 ? (
+                            <div className="space-y-1.5 inline-flex flex-col items-stretch">
+                              {files.map((f, i) => (
+                                <a key={i} href={f.url} download={f.name} target="_blank" rel="noopener noreferrer">
+                                  <Button size="sm" className="gap-1.5 w-full">
+                                    <Download size={14} /> 다운로드{files.length > 1 ? ` ${i + 1}` : ""}
+                                  </Button>
+                                </a>
+                              ))}
+                            </div>
                           ) : (
                             <Link to={`/archive/${it._id}`}>
                               <Button size="sm" variant="outline">자세히</Button>
@@ -98,8 +112,7 @@ const ArchivePage = () => {
               {/* Mobile cards */}
               <ul className="md:hidden divide-y divide-border" role="list">
                 {items.map((it) => {
-                  const url = getDownloadUrl(it);
-                  const fname = it.file?.asset?.originalFilename || `${it.title}.${it.file?.asset?.extension || "file"}`;
+                  const files = getFiles(it);
                   return (
                     <li key={it._id} className="p-4 space-y-2">
                       <Link to={`/archive/${it._id}`} className="block font-semibold text-base hover:text-primary">
@@ -107,14 +120,23 @@ const ArchivePage = () => {
                       </Link>
                       {it.description && <p className="text-sm text-muted-foreground line-clamp-2">{it.description}</p>}
                       <div className="text-xs text-muted-foreground flex flex-wrap gap-x-3 gap-y-1">
-                        {url && <span className="inline-flex items-center gap-1"><FileText size={12} />{fname}</span>}
-                        {it.file?.asset?.size && <span>{formatBytes(it.file.asset.size)}</span>}
+                        {files.map((f, i) => (
+                          <span key={i} className="inline-flex items-center gap-1">
+                            <FileText size={12} />{f.name}{f.size ? ` (${formatBytes(f.size)})` : ""}
+                          </span>
+                        ))}
                         <span className="inline-flex items-center gap-1"><Calendar size={12} />{it.publishedAt ? new Date(it.publishedAt).toLocaleDateString("ko-KR") : ""}</span>
                       </div>
-                      {url ? (
-                        <a href={url} download={fname} target="_blank" rel="noopener noreferrer" className="block">
-                          <Button size="sm" className="w-full gap-1.5 mt-1"><Download size={14} /> 다운로드</Button>
-                        </a>
+                      {files.length > 0 ? (
+                        <div className="space-y-1.5">
+                          {files.map((f, i) => (
+                            <a key={i} href={f.url} download={f.name} target="_blank" rel="noopener noreferrer" className="block">
+                              <Button size="sm" className="w-full gap-1.5 mt-1">
+                                <Download size={14} /> {files.length > 1 ? f.name : "다운로드"}
+                              </Button>
+                            </a>
+                          ))}
+                        </div>
                       ) : (
                         <Link to={`/archive/${it._id}`} className="block">
                           <Button size="sm" variant="outline" className="w-full mt-1">자세히 보기</Button>
