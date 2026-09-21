@@ -102,6 +102,18 @@ export function formatFileSize(bytes: number | undefined): string {
 export const formatBytes = formatFileSize;
 
 // ===== 타입 =====
+export interface ArchiveAttachment {
+  _key: string;
+  label?: string;
+  asset?: {
+    _ref?: string;
+    url?: string | null;
+    originalFilename?: string;
+    size?: number;
+    extension?: string;
+  };
+}
+
 export interface ArchiveItem {
   _id: string;
   title: string;
@@ -118,7 +130,46 @@ export interface ArchiveItem {
       extension?: string;
     };
   };
+  attachments?: ArchiveAttachment[];
   images?: Array<{ image: any; alt?: string }>;
+}
+
+export interface ArchiveFileInfo {
+  url: string;
+  name: string;
+  size?: number;
+  extension?: string;
+}
+
+// 메인 첨부 파일 + 추가 첨부 파일을 하나의 다운로드 목록으로 합침
+export function getArchiveFiles(item: ArchiveItem): ArchiveFileInfo[] {
+  const out: ArchiveFileInfo[] = [];
+  const main = item.file?.asset;
+  if (main) {
+    const url = main.url || getFileUrl(main._ref);
+    if (url) {
+      out.push({
+        url,
+        name: main.originalFilename || `${item.title || 'file'}.${main.extension || 'file'}`,
+        size: main.size,
+        extension: main.extension,
+      });
+    }
+  }
+  for (const att of item.attachments ?? []) {
+    const a = att?.asset;
+    if (!a) continue;
+    const url = a.url || getFileUrl(a._ref);
+    if (url) {
+      out.push({
+        url,
+        name: att.label || a.originalFilename || `첨부파일.${a.extension || 'file'}`,
+        size: a.size,
+        extension: a.extension,
+      });
+    }
+  }
+  return out;
 }
 
 export interface NoticeItem {
