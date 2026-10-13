@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, AlertCircle } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import { urlFor, fetchNotice } from "@/lib/sanity";
-import { portableComponents } from "@/components/portableComponents";
+import { portableComponents, linkifyBlocks, LinkifiedText } from "@/components/portableComponents";
 import ImageGallery from "@/components/ImageGallery";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
