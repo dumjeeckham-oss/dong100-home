@@ -159,3 +159,57 @@ export const portableComponents: PortableTextComponents = {
     },
   },
 };
+
+// 본문에 그냥 입력한 URL(https://..., www....)을 자동으로 클릭 가능한 링크로 변환
+const URL_RE = /((?:https?:\/\/|www\.)[^\s<>"']+[^\s<>"'.,!?)\]])/g;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function linkifyBlocks(blocks: any): any {
+  if (!Array.isArray(blocks)) return blocks;
+  return blocks.map((block) => {
+    if (block?._type !== "block" || !Array.isArray(block.children)) {
+      if (block?._type === "richTable" && Array.isArray(block.rows)) {
+        return { ...block, rows: block.rows.map((r: any) => ({ ...r, cells: r.cells?.map((c: any) => ({ ...c, content: linkifyBlocks(c.content) })) })) };
+      }
+      return block;
+    }
+    const markDefs = [...(block.markDefs ?? [])];
+    const linkKeys = new Set(markDefs.filter((m: any) => m._type === "link").map((m: any) => m._key));
+    const children: any[] = [];
+    block.children.forEach((span: any, si: number) => {
+      const marks: string[] = span.marks ?? [];
+      if (span._type !== "span" || typeof span.text !== "string" || marks.some((m) => linkKeys.has(m))) {
+        children.push(span);
+        return;
+      }
+      const parts = span.text.split(URL_RE);
+      if (parts.length === 1) { children.push(span); return; }
+      parts.forEach((part: string, pi: number) => {
+        if (!part) return;
+        if (pi % 2 === 1) {
+          const key = `auto-${si}-${pi}`;
+          markDefs.push({ _key: key, _type: "link", href: part.startsWith("http") ? part : `https://${part}`, openInNewTab: true });
+          children.push({ ...span, _key: `${span._key}-${pi}`, text: part, marks: [...marks, key] });
+        } else {
+          children.push({ ...span, _key: `${span._key}-${pi}`, text: part });
+        }
+      });
+    });
+    return { ...block, markDefs, children };
+  });
+}
+
+export function LinkifiedText({ text }: { text: string }) {
+  const parts = text.split(URL_RE);
+  return (
+    <>
+      {parts.map((p, i) =>
+        i % 2 === 1 ? (
+          <a key={i} href={p.startsWith("http") ? p : `https://${p}`} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 break-all hover:opacity-80">{p}</a>
+        ) : (
+          <span key={i}>{p}</span>
+        ),
+      )}
+    </>
+  );
+}

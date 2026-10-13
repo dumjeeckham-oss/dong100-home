@@ -52,7 +52,7 @@ const NoticeDetailPage = () => {
               <div className="prose prose-sm md:prose-base max-w-none text-foreground">
                 {notice.content ? (
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <PortableText value={notice.content as any} components={portableComponents} />
+                  <PortableText value={linkifyBlocks(notice.content)} components={portableComponents} />
                 ) : (
                   <p className="text-muted-foreground">내용이 없습니다.</p>
                 )}

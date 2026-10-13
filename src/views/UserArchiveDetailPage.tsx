@@ -72,7 +72,7 @@ const UserArchiveDetailPage = () => {
               <Calendar size={14} />
               {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" }) : ""}
             </p>
-            {item.description && <p className="text-sm text-muted-foreground mt-2">{item.description}</p>}
+            {item.description && <p className="text-sm text-muted-foreground mt-2"><LinkifiedText text={item.description} /></p>}
           </header>
 
           {item.images && item.images.length > 0 && (
@@ -82,7 +82,7 @@ const UserArchiveDetailPage = () => {
           {item.body ? (
             <div className="prose prose-sm md:prose-base max-w-none text-foreground mb-6">
               {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              <PortableText value={item.body as any} components={portableComponents} />
+              <PortableText value={linkifyBlocks(item.body)} components={portableComponents} />
             </div>
           ) : null}
 
