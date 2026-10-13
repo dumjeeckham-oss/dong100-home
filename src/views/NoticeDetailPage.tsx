@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, AlertCircle } from "lucide-react";
 import { PortableText } from "@portabletext/react";
 import { urlFor, fetchNotice } from "@/lib/sanity";
-import { portableComponents } from "@/components/portableComponents";
+import { portableComponents, linkifyBlocks, LinkifiedText } from "@/components/portableComponents";
 import ImageGallery from "@/components/ImageGallery";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -52,7 +52,7 @@ const NoticeDetailPage = () => {
               <div className="prose prose-sm md:prose-base max-w-none text-foreground">
                 {notice.content ? (
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <PortableText value={notice.content as any} components={portableComponents} />
+                  <PortableText value={linkifyBlocks(notice.content)} components={portableComponents} />
                 ) : (
                   <p className="text-muted-foreground">내용이 없습니다.</p>
                 )}
