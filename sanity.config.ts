@@ -9,7 +9,6 @@ export default defineConfig({
   title: 'Dongbaek Studio',
 
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID || 'xczp11sl',
-  dataset: 'production',
   dataset: import.meta.env.VITE_SANITY_DATASET || 'production',
   basePath: '/studio',
 
