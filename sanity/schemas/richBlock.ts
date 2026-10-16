@@ -129,10 +129,44 @@ const tableType = defineType({
 
 export { tableType };
 
+// 인라인 링크: 본문 안 글자 사이에 들어가는 링크.
+// 이미지 올리기(+)와 같은 "삽입" 메뉴에서 바로 고를 수 있다.
+const inlineLinkType = defineType({
+  name: "inlineLink",
+  title: "링크",
+  type: "object",
+  fields: [
+    defineField({
+      name: "text",
+      title: "표시할 글자",
+      type: "string",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "href",
+      title: "주소(URL)",
+      type: "url",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "openInNewTab",
+      title: "새 창에서 열기",
+      type: "boolean",
+      initialValue: true,
+    }),
+  ],
+  preview: {
+    select: { title: "text", subtitle: "href" },
+  },
+});
+
+export { inlineLinkType };
+
 // Reusable rich content (Block Content) with color, text size, headings, table, and image with size/alignment.
 export const richBlock = [
   defineArrayMember({
     type: "block",
+    of: [defineArrayMember({ type: "inlineLink" })],
     styles: [
       { title: "본문", value: "normal" },
       { title: "제목 1", value: "h1" },

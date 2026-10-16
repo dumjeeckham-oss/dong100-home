@@ -5,6 +5,6 @@ import { userArchive } from "./userArchive";
 import { siteSettings } from "./siteSettings";
 import { faq } from "./faq";
 
-import { tableType } from "./richBlock";
+import { tableType, inlineLinkType } from "./richBlock";
 
-export const schemaTypes = [notice, archive, userArchive, post, siteSettings, faq, tableType];
+export const schemaTypes = [notice, archive, userArchive, post, siteSettings, faq, tableType, inlineLinkType];
