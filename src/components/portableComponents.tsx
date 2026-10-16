@@ -88,6 +88,23 @@ export const portableComponents: PortableTextComponents = {
     "strike-through": ({ children }) => <span className="line-through">{children}</span>,
   },
   types: {
+    inlineLink: ({
+      value,
+    }: {
+      value?: { text?: string; href?: string; openInNewTab?: boolean };
+    }) => {
+      if (!value?.href) return null;
+      return (
+        <a
+          href={value.href}
+          target={value.openInNewTab === false ? undefined : "_blank"}
+          rel="noopener noreferrer"
+          className="text-primary underline underline-offset-2 hover:opacity-80"
+        >
+          {value.text || value.href}
+        </a>
+      );
+    },
     richTable: ({
       value,
     }: {
