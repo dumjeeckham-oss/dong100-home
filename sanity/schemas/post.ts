@@ -1,5 +1,6 @@
 // Sanity Studio schema. Place this file in your Sanity Studio project's `schemas/` folder.
 import { defineField, defineType } from "sanity";
+import { SpellcheckInput } from '../components/SpellcheckInput';
 
 export const post = defineType({
   name: "post",
@@ -23,12 +24,14 @@ export const post = defineType({
       name: "title",
       title: "제목",
       type: "string",
+      components: { input: SpellcheckInput },
       validation: (r) => r.required().max(120),
     }),
     defineField({
       name: "content",
       title: "내용",
       type: "text",
+      components: { input: SpellcheckInput },
       rows: 6,
     }),
     defineField({
