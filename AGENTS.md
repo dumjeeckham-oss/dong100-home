@@ -1,4 +1,8 @@
-# AGENTS.md - Your Workspace
+# AGENTS.md
+<!-- LOVABLE:BEGIN -->
+## Application architecture
+- Studio board spellchecking uses shared input wrappers and keyed text-only patches so corrections preserve images, links, and rich formatting without requiring paid services.
+<!-- LOVABLE:END -->
 
 This folder is home. Treat it that way.
 

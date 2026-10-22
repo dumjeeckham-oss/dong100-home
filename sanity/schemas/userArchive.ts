@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { richBlock } from "./richBlock";
+import { SpellcheckInput } from '../components/SpellcheckInput';
 
 export const userArchive = defineType({
   name: "userArchive",
@@ -10,6 +11,7 @@ export const userArchive = defineType({
       name: "title",
       title: "제목",
       type: "string",
+      components: { input: SpellcheckInput },
       validation: (r) => r.required().max(150),
     }),
     {
@@ -28,6 +30,7 @@ export const userArchive = defineType({
       name: "description",
       title: "한 줄 요약 (목록 표시용)",
       type: "text",
+      components: { input: SpellcheckInput },
       rows: 2,
     }),
     defineField({
@@ -35,6 +38,7 @@ export const userArchive = defineType({
       title: "본문 (이미지·서식 포함)",
       type: "array",
       of: richBlock,
+      components: { input: SpellcheckInput },
     }),
     defineField({
       name: "publishedAt",

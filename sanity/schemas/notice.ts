@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { richBlock } from "./richBlock";
+import { SpellcheckInput } from '../components/SpellcheckInput';
 
 export const notice = defineType({
   name: "notice",
@@ -10,6 +11,7 @@ export const notice = defineType({
       name: "title",
       title: "제목",
       type: "string",
+      components: { input: SpellcheckInput },
       validation: (r) => r.required().max(150),
     }),
     defineField({
@@ -17,6 +19,7 @@ export const notice = defineType({
       title: "내용",
       type: "array",
       of: richBlock,
+      components: { input: SpellcheckInput },
     }),
     defineField({
       name: "publishedAt",
