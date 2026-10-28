@@ -1,6 +1,6 @@
 # Tasks
 - [x] Remove the obsolete fixed homepage share screenshot so hosting can supply the current published preview.
-- [ ] Verify the refreshed image on dong100.org — requires publication of the head change.
+- [ ] Set and verify the refreshed image on dong100.org — Vercel does not inject Lovable share screenshots; requires an approved share image and deployment there.
 - [ ] Give individual posts their own crawler-visible previews — requires approval for server-rendered template migration.
 - [x] Add free basic Korean spellcheck to Studio board writing, with reviewable corrections preserving rich content and a separate free checker link.
 - [x] Verify correction behavior, stale-result protection, read-only fields, formatting paths and existing inline links (8 tests passed).
