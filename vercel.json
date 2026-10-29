@@ -3,6 +3,9 @@
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/:path*", "destination": "/admin/index.html" },
     { "source": "/content/:path*", "destination": "/content/:path*" },
+    { "source": "/notice/:id", "destination": "/api/share?type=notice&id=:id" },
+    { "source": "/archive/:id", "destination": "/api/share?type=archive&id=:id" },
+    { "source": "/user-archive/:id", "destination": "/api/share?type=user-archive&id=:id" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "trailingSlash": true,
